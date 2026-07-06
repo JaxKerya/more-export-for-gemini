@@ -1,0 +1,295 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+  \usepackage{textcomp}
+  \usepackage{newunicodechar}
+  \newunicodechar{⁰}{\textsuperscript{0}}
+  \newunicodechar{⁴}{\textsuperscript{4}}
+  \newunicodechar{⁵}{\textsuperscript{5}}
+  \newunicodechar{⁶}{\textsuperscript{6}}
+  \newunicodechar{⁷}{\textsuperscript{7}}
+  \newunicodechar{⁸}{\textsuperscript{8}}
+  \newunicodechar{⁹}{\textsuperscript{9}}
+  \newunicodechar{⁺}{\textsuperscript{+}}
+  \newunicodechar{⁻}{\textsuperscript{\textendash}}
+  \newunicodechar{ⁿ}{\textsuperscript{n}}
+  \newunicodechar{ⁱ}{\textsuperscript{i}}
+  \newunicodechar{₀}{\textsubscript{0}}
+  \newunicodechar{₁}{\textsubscript{1}}
+  \newunicodechar{₂}{\textsubscript{2}}
+  \newunicodechar{₃}{\textsubscript{3}}
+  \newunicodechar{₄}{\textsubscript{4}}
+  \newunicodechar{₅}{\textsubscript{5}}
+  \newunicodechar{₆}{\textsubscript{6}}
+  \newunicodechar{₇}{\textsubscript{7}}
+  \newunicodechar{₈}{\textsubscript{8}}
+  \newunicodechar{₉}{\textsubscript{9}}
+  \newunicodechar{₊}{\textsubscript{+}}
+  \newunicodechar{₋}{\textsubscript{\textendash}}
+  \newunicodechar{√}{\ensuremath{\surd}}
+  \newunicodechar{∞}{\ensuremath{\infty}}
+  \newunicodechar{∑}{\ensuremath{\sum}}
+  \newunicodechar{∏}{\ensuremath{\prod}}
+  \newunicodechar{∫}{\ensuremath{\int}}
+  \newunicodechar{∂}{\ensuremath{\partial}}
+  \newunicodechar{∇}{\ensuremath{\nabla}}
+  \newunicodechar{≈}{\ensuremath{\approx}}
+  \newunicodechar{≠}{\ensuremath{\neq}}
+  \newunicodechar{≤}{\ensuremath{\leq}}
+  \newunicodechar{≥}{\ensuremath{\geq}}
+  \newunicodechar{≡}{\ensuremath{\equiv}}
+  \newunicodechar{→}{\ensuremath{\rightarrow}}
+  \newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+  \newunicodechar{Δ}{\ensuremath{\Delta}}
+  \newunicodechar{Ω}{\ensuremath{\Omega}}
+  \newunicodechar{µ}{\ensuremath{\mu}}
+  \newunicodechar{€}{\texteuro{}}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hyphens,spaces]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{fvextra}
+\usepackage{microtype}
+
+\renewcommand{\familydefault}{\sfdefault}
+\begin{document}
+\emergencystretch=3em
+
+\title{Büyük Dil Modellerinde (LLM) Dikkat Mekanizmaları: Matematiksel Temeller, Verimlilik Optimizasyonları ve Çok Dilli Değerlendirme}
+\author{}
+\date{}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\textbf{Özet (Abstract):} Bu rapor, Büyük Dil Modellerinin (Large Language Models - LLM) hesaplamasal ve dilbilimsel temellerini oluşturan dikkat (attention) mekanizmalarının teorik, algoritmik ve pratik analizini derinlemesine sunmaktadır. Doğal dil işleme (NLP) literatüründe bir dönüm noktası olan Transformer mimarisinin karmaşık matematiksel kökenlerinden başlayarak, donanım seviyesinde asimetrik bellek erişimini optimize eden gelişmiş yaklaşımlara (FlashAttention, Multi-Query Attention, Grouped-Query Attention) kadar uzanan geniş bir yelpaze incelenmektedir. Ayrıca, modellerin evrensel ölçekte uygulanabilirliğini doğrudan etkileyen çok dilli (multilingual) değerlendirme kıyaslamaları (MMLU, Belebele), tokenizasyon asimetrileri ve bu asimetrilerin neden olduğu yapısal dilsel önyargılar kapsamlı bir biçimde analiz edilmektedir. Donanım verimliliği ve dil kapsayıcılığı arasındaki dengenin, gelecekteki yapay zeka sistemlerinin demokratikleşmesinde oynadığı rol tartışılmaktadır.
+
+\textbf{Anahtar Kelimeler:} Büyük Dil Modelleri, Transformer Mimaris, Öz-Dikkat (Self-Attention), FlashAttention, Çok Dilli Değerlendirme, Tokenizasyon Önyargısı, Bellek Optimizasyonu, Yapay Zeka.
+
+\subsection{Giriş ve Arka Plan (النموذج اللغوي)}
+Yapay zeka ve makine öğrenimi alanında son on yılda yaşanan sismik ilerlemeler, özellikle ardışık veri işleme kapasitesindeki algoritmik sıçramalara dayanmaktadır. Tarihsel olarak, istatistiksel makine çevirisi (Statistical Machine Translation - SMT) sistemlerinin yerini alan ilk Nöral Makine Çevirisi (Neural Machine Translation - NMT) mimarileri, genellikle uzun kısa süreli bellek (Long Short-Term Memory - LSTM) gibi tekrarlayan sinir ağları (RNN) üzerine inşa edilmekteydi. Ancak bu mimariler, doğaları gereği kelimeleri veya alt kelime (subword) parçalarını adım adım işlemek zorunda oldukları için, modern grafik işlem birimlerinin (GPU) sunduğu devasa paralel işleme kapasitesinden faydalanamıyorlardı.
+
+Bu yapısal darboğaz, 2014 yılında Dzmitry Bahdanau, Kyunghyun Cho ve Yoshua Bengio tarafından yayımlanan "Neural Machine Translation by Jointly Learning to Align and Translate" başlıklı çalışma ile esnetilmeye başlanmıştır. Bu çığır açan araştırmada, sabit uzunluklu bir vektörün tüm cümlenin anlamını sıkıştırmadaki yetersizliği teşhis edilmiş ve kod çözücünün (decoder) çıktı üretirken kaynak cümlenin farklı bölümlerine "yumuşak" (soft) bir şekilde odaklanmasını sağlayan ilk hizalama ve dikkat mekanizması önerilmiştir. Bahdanau'nun sunduğu bu temel, Ian Goodfellow, Yoshua Bengio ve Aaron Courville tarafından kaleme alınan derin öğrenme literatürünün temel eseri \textit{Deep Learning} (ISBN: 9780262035613) kitabında da vurgulandığı üzere, derin ağların bilgi darboğazlarını aşmada istatistiksel hizalamanın önemini kanıtlamıştır.
+
+Ancak gerçek paradigma değişimi, 2017 yılında Ashish Vaswani ve Google'daki bir grup araştırmacı tarafından https://doi.org/10.48550/arXiv.1706.03762 DOI numarasıyla yayımlanan "Attention Is All You Need" çalışmasıyla gerçekleşmiştir. Bu çalışma, tekrarlayan ve evrişimli (convolutional) katmanları tamamen ortadan kaldırarak sadece dikkat mekanizmalarına dayanan Transformer mimarisini tanıtmıştır. Makalenin girişinde bu radikal değişim şu sözlerle ifade edilmektedir:
+
+\begin{quote}
+"The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
+\end{quote}
+Bu yeni yaklaşım, girdi dizisindeki tüm elemanların birbirleriyle olan ilişkisini eşzamanlı olarak hesaplayarak benzersiz bir paralelleştirme imkanı sunmuş ve modern Büyük Dil Modellerinin (LLM) temel yapı taşı haline gelmiştir.
+
+\subsection{Matematiksel Temeller ve Öz-Dikkat (Внимание)}
+Transformer mimarisinin bilgi işleme yeteneğinin kalbinde, Öz-Dikkat (Self-Attention) adı verilen karmaşık bir doğrusal cebirsel izdüşüm mekanizması yatar. Bu mekanizma, her bir kelimenin veya belirtecin (token), bağlam içindeki diğer tüm kelimelerle olan ilişkisel sözdizimsel ve anlamsal bağlarını hesaplar. Temel işlem; girdilerin üç farklı ağırlık matrisi ile çarpılarak Sorgu (Query - \(Q\)), Anahtar (Key - \(K\)) ve Değer (Value - \(V\)) tensörlerine dönüştürülmesiyle başlar.
+
+Öncelikle, modelin öğrenilebilir parametrelerini barındıran ağırlık matrisi (\(W^Q\)) ele alındığında, bu dönüşüm çok boyutlu bir uzayda şu şekilde ifade edilir:
+
+\[
+W^Q = \begin{bmatrix} w_{11} & w_{12} & \cdots & w_{1d} \\ w_{21} & w_{22} & \cdots & w_{2d} \\ \vdots & \vdots & \ddots & \vdots \\ w_{d1} & w_{d2} & \cdots & w_{dd} \end{bmatrix}
+\]
+Bu matrisler aracılığıyla elde edilen \(Q\), \(K\) ve \(V\) bileşenleri, bilgi teorisi açısından bağlamsal önem derecelerini belirlemek üzere Ölçekli Nokta-Çarpım Dikkati (Scaled Dot-Product Attention) formülüne tabi tutulur:
+
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\left( \frac{QK^T}{\sqrt{d_k}} \right)V
+\]
+Bu zarif denklemin merkezinde, \(Q\) ve \(K^T\) arasındaki nokta çarpımının, her bir kelimenin diğeriyle olan anlamsal eşleşme skorunu üretmesi yatar. Elde edilen bu ham skorlar (logits), bir yumuşak maksimum (softmax) fonksiyonu ile normalize edilerek \(0\) ile \(1\) arasında bir olasılık dağılımına dönüştürülür ve toplamları \(1\) olacak şekilde ayarlanır. Softmax fonksiyonunun ayrık uzaydaki tanımı, \(\sum\) operatörü ile şu şekilde gösterilir:
+
+\[
+\text{softmax}(x_i) = \frac{\exp(x_i)}{\sum_{j=1}^{N} \exp(x_j)}
+\]
+Matematiksel olarak bu işlem, dizideki her bir eleman için uzaydaki diğer tüm elemanların katkısının ağırlıklı ortalamasını almaktır. Eğer bu mekanizmayı ayrık (discrete) kelime dizilerinden çıkarıp, sinyal işleme veya teorik fizikteki gibi sürekli (continuous) bir zaman veya uzay ekseninde tanımlamak istersek, toplam operatörü yerini bir integrale (\(\int\)) bırakır. Sürekli uzayda dikkat ağırlıklarının hesabı, bir olasılık yoğunluk fonksiyonu üzerinden beklenen değer (expected value) hesabına dönüşür:
+
+\[
+\mathbb{E}[V] = \int_{-\infty}^{\infty} \frac{\exp\left( \frac{q \cdot k(x)}{\sqrt{d_k}} \right)}{\int_{-\infty}^{\infty} \exp\left( \frac{q \cdot k(y)}{\sqrt{d_k}} \right) dy} v(x) dx
+\]
+Bu integral gösterimi, dikkat mekanizmasının aslında sürekli bir bilgi akışı üzerinden, maksimum ilgiye sahip bölgesel sinyalleri izole eden sofistike bir filtreleme operatörü olduğunu kanıtlamaktadır.
+
+\paragraph{Esneyen Semboller ve Varyans Optimizasyonu}
+Formülasyondaki karekök ifadesi (\(\sqrt{d_k}\)), derin öğrenme ağlarının optimizasyon dinamikleri açısından kritik bir role sahiptir. Matris boyutlarının (\(d_k\)) esnemesi ve büyümesi durumunda, iki bağımsız vektörün nokta çarpımından elde edilen sonucun varyansı \(d_k\) ile doğru orantılı olarak artar. Yüksek varyanslı skorlar softmax fonksiyonuna beslendiğinde, eksponansiyel büyüme nedeniyle dağılım tek bir değere doğru sivrilir (peaking) ve diğer tüm olasılıklar sıfıra yaklaşır.
+
+Bu durum, geri yayılım (backpropagation) sırasında gradyanların kaybolmasına (vanishing gradients) yol açar ve ağın öğrenme sürecini tamamen durdurur. Esneyen parantezlerin ve kök sembollerinin içindeki bu \(\sqrt{d_k}\) faktörü, elde edilen skor dizisinin varyansını \(1\)'e ölçeklendirerek (temperature scaling) softmax fonksiyonunun her zaman güvenli, türevlenebilir ve pürüzsüz bir gradyan alanında çalışmasını garanti altına alır.
+
+\subsection{Yöntem}
+Büyük dil modellerinde mimari tasarımı kısıtlayan en temel fiziksel problem, yukarıda denklemleri verilen dikkat mekanizmasının asimptotik karmaşıklığıdır. Eğer girdi dizisinin uzunluğu \(N\) ise, \(Q\) ve \(K^T\) matrislerinin çarpımı \(N \times N\) boyutunda devasa bir dikkat skor matrisi üretir. Bu durum, bellek karmaşıklığının \(O(N^2)\) oranında artması anlamına gelir. Bu matematiksel gerekliliğin kod düzeyindeki yansıması, donanım kaynaklarının nasıl hızla tükendiğini net bir şekilde gösterir.
+
+Aşağıdaki dil etiketli Python kod bloğu, bellek hiyerarşisi farkındalığı olmayan, standart ve naif bir PyTorch dikkat mekanizması sözde-kodunu (pseudocode) temsil etmektedir:
+
+\begin{Verbatim}[breaklines=true,breakanywhere=true,fontsize=\small]
+import torch
+import torch.nn.functional as F
+
+def standard_scaled_dot_product_attention(query, key, value, mask=None):
+    """
+    Standart O(N^2) Bellek Karmaşıklığına Sahip Dikkat Mekanizması Uygulaması
+    """
+    # K matrisinin son iki boyutunun yerini değiştir (Transpose)
+    d_k = query.size(-1)
+    
+    # Adım 1: Nokta Çarpım (O(N^2) boyutunda bellek tahsisi başlar)
+    # Bu adımda devasa boyutlu bir S matrisi GPU'nun HBM birimine yazılır.
+    scores = torch.matmul(query, key.transpose(-2, -1)) 
+    
+    # Adım 2: Varyans ölçeklendirme işlemi
+    scores = scores / (d_k ** 0.5)
+    
+    # Nedensel (causal) dil modelleri için geleceğe bakmayı engelleyen maskeleme
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+        
+    # Adım 3: Softmax ile skorları olasılığa dönüştürme (Yine HBM'ye okuma/yazma)
+    attention_weights = F.softmax(scores, dim=-1)
+    
+    # Adım 4: Olasılık ağırlıklarının V matrisi ile çarpılarak nihai çıktının alınması
+    output = torch.matmul(attention_weights, value)
+    
+    return output, attention_weights
+\end{Verbatim}
+Yukarıdaki naif yöntemde, \texttt{scores} ve \texttt{attention\_weights} ara değişkenleri tam boyutlu birer matris olarak grafik işlemcinin (GPU) Yüksek Bant Genişlikli Belleğine (High Bandwidth Memory - HBM) yazılmak ve oradan tekrar okunmak zorundadır. Modern NLP görevlerinde dizi uzunlukları 128.000 veya 1.000.000 token seviyelerine çıktığında, bu \(O(N^2)\) okuma/yazma döngüsü donanım limitlerini aşar. Bu nedenle, endüstri standardı haline gelen LLM'lerde donanım seviyesi IO (Giriş/Çıkış) bilinçli algoritmalar geliştirilmek zorunda kalınmıştır.
+
+\subsubsection{Donanım Bilinçli Optimizasyonlar ve Bellek Hiyerarşisi}
+Standart dikkat mekanizmasının yarattığı bu darboğazı aşmak amacıyla geliştirilen algoritmik çözümlerin başında, Tri Dao ve arkadaşları tarafından Stanford Üniversitesi'nde tasarlanan ve https://doi.org/10.48550/arXiv.2205.14135 DOI numarasıyla yayımlanan \textbf{FlashAttention} gelmektedir. FlashAttention, GPU'ların asimetrik bellek hiyerarşisinden faydalanan tam (exact) bir dikkat algoritmasıdır. GPU'larda devasa kapasiteye sahip ancak yavaş olan HBM ile, sadece birkaç megabayt kapasiteli ancak muazzam hızlı çalışan çip-içi Statik Rastgele Erişimli Bellek (SRAM) bulunur. FlashAttention, \(N \times N\) matrisin tamamını HBM'ye yazıp okumak yerine, hesaplamayı küçük bloklara bölerek (tiling tekniği) yalnızca SRAM üzerinde gerçekleştirir. Bu yöntem, HBM erişim sayısını \(O(N^2)\)'den \(O(N^2 d^2 M^{-1})\) (burada \(M\) SRAM boyutudur) seviyesine indirerek bellek tüketimini doğrusal (\(O(N)\)) hale getirir ve hızı 2 ile 4 kat arasında artırır.
+
+FlashAttention'ın ilk sürümünün sağladığı devasa sıçramanın ardından, donanım mimarilerindeki değişimlere entegre edilen yeni sürümler ortaya çıkmıştır:
+
+\begin{itemize}
+  \item \textbf{FlashAttention-2:} 2023 yılında Tri Dao tarafından sunulan (https://doi.org/10.48550/arXiv.2307.08691) bu güncelleme, GPU üzerindeki farklı iş parçacığı blokları (thread blocks) ve "warp"lar arasındaki iş bölümünü optimize etmiştir. Matris çarpımı dışındaki (non-matmul) FLOP sayısını azaltarak ve iletişim yükünü düşürerek, NVIDIA A100 GPU'larda teorik maksimum FLOP/s kapasitesinin \%73'üne (saniyede 225 TeraFLOP) ulaşmayı başarmıştır.
+  \item \textbf{FlashAttention-3:} NVIDIA'nın yeni nesil Hopper (H100) mimarisinin yeteneklerini sonuna kadar kullanmak üzere 2024 yılında geliştirilmiştir (https://doi.org/10.48550/arXiv.2407.08608). Bu sürüm, Tensor Çekirdekleri ile Tensor Bellek Hızlandırıcısı'nın (TMA) asenkron yapısından faydalanarak hesaplama ve veri taşıma işlemlerini eşzamanlı yürütür (overlap). Matris çarpımı ile softmax işlemlerinin blok bazında iç içe geçirilmesi ve FP8 düşük hassasiyet (low-precision) formatının kullanılması sayesinde, hız saniyede 1.2 PetaFLOP (PFLOP/s) seviyelerine kadar çıkarılmıştır.
+\end{itemize}
+\subsubsection{Çoklu Sorgu ve Gruplandırılmış Sorgu Dikkati}
+Dikkat mekanizmasının eğitim (training) sırasındaki en büyük sorunu dizin uzunluğunun karesel karmaşıklığı iken, modelin üretim (inference / decoding) aşamasındaki en büyük sorunu Anahtar-Değer Önbelleği (KV Cache) kısıtlamalarıdır. Otoregresif olarak her yeni token üretildiğinde, geçmiş tüm token'ların \(K\) ve \(V\) tensörlerinin bellekte tutulması gerekir. Bu durum, özellikle çok kullanıcılı eşzamanlı çıkarım (batch inference) senaryolarında bellek bant genişliğini hızla tüketir.
+
+Bu sorunu çözmek için Noam Shazeer tarafından https://doi.org/10.48550/arXiv.1911.02150 DOI ile yayımlanan çalışmada Çoklu Sorgu Dikkati (Multi-Query Attention - MQA) önerilmiştir. MQA, her bir dikkat başlığının (attention head) kendi bağımsız \(K\) ve \(V\) matrislerini öğrenmesi yerine, tüm sorgu başlıklarının tek bir paylaşımlı \(K\) ve \(V\) matrisini kullanmasını sağlar. Bu mimari, önbellek boyutunu ve bellek bant genişliği ihtiyacını dramatik biçimde düşürür; ancak dil modelinin doğruluğunda ve akıl yürütme kapasitesinde hafif kalite kayıplarına (quality degradation) neden olur.
+
+Kalite kaybı ile donanım verimliliği arasındaki bu zıtlaşmayı çözmek için Joshua Ainslie ve arkadaşları tarafından 2023 yılında https://doi.org/10.48550/arXiv.2305.13245 DOI numaralı "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints" makalesi yayımlanmıştır. Gruplandırılmış Sorgu Dikkati (Grouped-Query Attention - GQA) olarak adlandırılan bu yaklaşım, MQA ve standart Çok Başlıklı Dikkat (Multi-Head Attention - MHA) arasında ideal bir denge noktası (Pareto frontier) bulur. Tüm başlıkların tek bir KV matrisini paylaşması yerine, başlıklar belirli "gruplara" ayrılır ve her grup kendi içinde bağımsız bir KV matrisini paylaşır.
+
+GQA'nın başarısı, LLaMA 3 gibi devasa modellerin temel yapı taşı olmasını sağlamıştır. Sadece \%5'lik bir eğitim bütçesiyle (uptraining) standart MHA kontrol noktalarından (checkpoints) GQA yapısına geçiş yapılabilmektedir. GQA, MHA'nın yüksek model kalitesini korurken, MQA'nın çıkarım hızına ulaşarak endüstri standardı haline gelmiştir.
+
+\subsection{Çok Dilli Değerlendirme ve Çapraz Dil Kapsayıcılığı (注意力机制)}
+Büyük dil modellerinin mimari seviyedeki donanım verimlilikleri olağanüstü seviyelere ulaşsa da, bu modellerin küresel ölçekte, farklı dilleri konuşan kullanıcılara sunduğu hizmet kalitesi eşit değildir. İnternet verisinin orantısız şekilde İngilizce ağırlıklı olması, LLM'lerin ön-eğitim (pre-training) aşamalarında anlamsal temsillerini İngilizce merkezli kurmasına neden olmaktadır. Lewis Tunstall, Leandro von Werra ve Thomas Wolf tarafından yazılan ve \href{https://huggingface.co}{Hugging Face} kütüphanelerinin temelini anlatan \textit{Natural Language Processing with Transformers} (ISBN: 9781098136796) eserinde de vurgulandığı gibi, modellerin çapraz dil aktarımı (cross-lingual transfer learning) kapasitesi, donanım optimizasyonlarından bağımsız, sosyo-dilbilimsel ve algoritmik bir sorundur.
+
+Son araştırmalar, çok dilli LLM'lerin içsel temsillerini anlamak için Çapraz-Katman Dönüştürücüleri (Cross-Layer Transcoders - CLTs) kullanmaktadır. Bu çalışmalara göre, ağın erken katmanları farklı dillerdeki kelimeleri işlerken, orta katmanlarda dilden bağımsız, soyut bir "Ortak Pivot Uzayı" (Pivot Language Hypothesis) oluşmaktadır. Model, soyut kavramsal uzayda mantıksal çıkarımını tamamladıktan sonra, son katmanlarda çıktıyı tekrar hedef dile (örneğin Türkçe veya Japonca'ya) dönüştürür. Ancak bu işlemin başarısı, modelin o dile ait alt birimleri (token) ne kadar iyi tanıdığına bağlıdır.
+
+\subsection{Yöntem}
+Çok dilli modellerin değerlendirilmesi (evaluation), salt makine çevirisi metrikleriyle (BLEU veya ROUGE) ölçülemeyecek kadar karmaşıktır. Daniel Jurafsky ve James H. Martin'in klasikleşmiş \textit{Speech and Language Processing} (ISBN: 9780131873216) adlı kitabında açıklanan temel NLP kuralları, yerini artık karmaşık dünya bilgisini test eden statik kıyaslamalara bırakmıştır. Bu bağlamda, İngilizce dışı dillerdeki performansı ölçmek için yeni yöntemler ve devasa veri setleri geliştirilmiştir.
+
+\textbf{1. MMLU (Massive Multitask Language Understanding):} Dan Hendrycks ve arkadaşları tarafından (https://doi.org/10.48550/arXiv.2009.03300) oluşturulan bu kıyaslama, yapay zeka değerlendirmesinde bir endüstri standardıdır. MMLU; kök hücre biyolojisinden ABD tarihine, anayasa hukukundan soyut cebire kadar uzanan 57 farklı akademik ve profesyonel disiplini kapsar. Yakın zamana kadar modellerin rastgele tahmin (\%25) ile insan uzmanlığı (\%89) arasında zorlandığı bu test, güncel LLM'lerin İngilizce'de >\%90 doğruluk oranlarına ulaşmasıyla doymuş (saturated) durumdadır. Ancak bu testin çok dilli türevleri (örneğin EU20-MMLU), Avrupa dilleri veya Hint dillerine çevrildiğinde performansta keskin düşüşler gözlenmektedir.
+
+\textbf{2. Belebele Veri Seti:} \href{https://ai.meta.com/}{Meta AI} araştırmacıları tarafından https://doi.org/10.18653/v1/2024.acl-long.44 DOI adresiyle yayımlanan Belebele veri seti, 122 farklı dil varyantını kapsayan, tamamen paralel bir makine okuduğunu anlama (Machine Reading Comprehension) testidir. FLORES-200 bağlamları kullanılarak insan denetmenler tarafından oluşturulan bu veri seti, diller arasındaki yapısal eşitsizliği doğrudan ölçmeyi sağlar. Yeni türevleri olan 2M-BELEBELE (https://doi.org/10.48550/arXiv.2412.08274), bu kapsamı konuşma (speech) ve Amerikan İşaret Dili'ne (ASL) kadar genişleterek, modellerin metin dışı çoklu modalitelerdeki çok dilli kapasitesini test etmektedir.
+
+\subsubsection{Tokenizasyon Asimetrileri ve Entropi (Εντροπία) Etkileri}
+Yapay zeka modellerinin farklı dillerdeki başarısızlıklarının temel nedeni, sanıldığının aksine modelin parametre sayısı veya mimarisinden ziyade, girdinin nasıl bölündüğüyle (tokenizasyon) ilgilidir. Modern modeller Byte Pair Encoding (BPE) veya Unigram gibi yöntemler kullanır. İngilizce merkezli bir kelime dağarcığına (vocabulary) sahip bir model, yüksek kaynaklı dilleri çok az token ile temsil edebilirken, düşük kaynaklı veya morfolojik olarak zengin dillerde metni parçalamakta zorlanır.
+
+Aşağıdaki yapı, çok dilli LLM ekosistemindeki tokenizasyon asimetrilerini hiyerarşik bir düzende özetlemektedir:
+
+\begin{enumerate}
+  \item \textbf{Alt Kelime Doğurganlığı (Subword Fertility):}
+\begin{itemize}
+  \item Bir kelimenin ortalama kaç tokene bölündüğünü ölçen metriktir. İdeal değer 1.0'a ne kadar yakınsa, model kelimeyi o kadar bütünsel kavramış demektir.
+  \item İngilizce gibi dillerde bu oran 1.1 ile 1.3 arasındayken, Hintçe, Bengalce veya Telugu dili gibi Hint dillerinde bu oran 3.0'ın üzerine çıkabilmektedir.
+\end{itemize}
+  \item \textbf{Normalize Edilmiş Dizi Uzunluğu (Normalized Sequence Length - NSL):}
+\begin{itemize}
+  \item Farklı tokenizer'ların aynı anlamı ifade eden metinler için ürettikleri dizi uzunluklarının kıyaslamasıdır.
+  \item Yüksek NSL, kelimenin çok fazla anlamsız parçaya bölündüğünü gösterir.
+  \item \textit{SUTRA Tokenizer:} Yapılan analizlerde, GPT-4o ve LLaMA 3'e kıyasla Hint dillerinde 14 farklı dilde NSL metriğinde üstünlük sağlamıştır.
+\end{itemize}
+  \item \textbf{Performans ve Maliyet Yansımaları:}
+\begin{itemize}
+  \item \textbf{Çıkarım (Inference) Darboğazı:} Bir dilde aynı cümleyi üretmek için 10 token, diğer dilde 30 token gerekiyorsa, otoregresif model ikinci dil için 3 kat daha fazla hesaplama döngüsü harcar. Bu doğrudan API maliyetlerinin artması ve kullanıcı bekleme süresinin uzaması anlamına gelir.
+  \item \textbf{Bağlam Penceresi Sıkışması:} 128K tokenlik bir bağlam penceresi, İngilizce'de devasa bir kitabı kapsayabilirken, Bengalce veya Türkçe'de token enflasyonu nedeniyle sadece birkaç uzun makaleyi kapsayabilir.
+\end{itemize}
+\end{enumerate}
+Farklı alfabelerdeki metinlerin sembolik veya kural tabanlı dillerde nasıl parçalandığını göstermek için, aşağıda C++ dili kullanılarak yazılmış, bir karakterin veya boşluğun doğrudan sınır kabul edildiği naif bir dize (string) ayrıştırma örneği sunulmuştur. Bu örnek, BPE gibi modern istatistiksel algoritmaların yokluğunda morfolojinin ne kadar zorlu olabileceğini gösterir:
+
+\begin{Verbatim}[breaklines=true,breakanywhere=true,fontsize=\small]
+#include <iostream>
+#include <vector>
+#include <string>
+
+// Metni sadece boşluk karakterine göre ayıran basit (naif) C++ tokenizasyon fonksiyonu
+// Not: Bu kural tabanlı yaklaşım sondan eklemeli dillerin morfolojisini yakalayamaz.
+std::vector<std::string> naive_whitespace_tokenize(const std::string& text) {
+    std::vector<std::string> tokens;
+    std::string current_token = "";
+    
+    for (char c : text) {
+        if (c == ' ') {
+            if (!current_token.empty()) {
+                tokens.push_back(current_token);
+                current_token = ""; // Yeni token için sıfırla
+            }
+        } else {
+            current_token += c; // Karakterleri birleştir
+        }
+    }
+    // Döngü sonrası elde kalan son tokenin listeye eklenmesi
+    if (!current_token.empty()) {
+        tokens.push_back(current_token);
+    }
+    
+    return tokens;
+}
+
+int main() {
+    std::string sample_text = "Çok dilli modeller entropi asimetrisi yaşar.";
+    std::vector<std::string> result = naive_whitespace_tokenize(sample_text);
+    
+    for(size_t i = 0; i < result.size(); ++i) {
+        std::cout << "Token " << i+1 << ": [" << result[i] << "]\n";
+    }
+    return 0;
+}
+\end{Verbatim}
+Bu naif kural tabanlı yaklaşımların aksine, LLaMA 3 gibi modern yapılar, İngilizce dışındaki dillerin performansını artırmak için devasa BPE sözlük boyutları (örneğin 128.000 kelimelik kelime dağarcığı) kullanmaktadır. Tokenizer bias'ı (belirteç önyargısı) sadece teknik bir veri israfı değil, aynı zamanda yapısal bir adaletsizliktir (structural bias); zira Amerikan İngilizcesine (AmE) optimize edilmiş ağlar, Afrika veya Asya dillerine geçerken hesaplamasal cezalar üretmektedir.
+
+\subsubsection{Değerlendirme Kıyaslamaları (Benchmarks)}
+Modellerin hem dilsel yeteneklerini hem de donanımsal optimizasyonlarının (FlashAttention, GQA vb.) uç noktalardaki performansını anlayabilmek için, endüstride kabul gören kıyaslama veri setleri kullanılmaktadır. Tablo 1, çok dilli LLM değerlendirmelerinde günümüzde kullanılan temel testleri özetlemektedir.
+
+\textbf{Tablo 1: LLM Değerlendirme Veri Setleri ve Karakteristik Özellikleri}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.3333\textwidth-2\tabcolsep}>{\raggedright\arraybackslash}p{\dimexpr0.3333\textwidth-2\tabcolsep}>{\raggedright\arraybackslash}p{\dimexpr0.3333\textwidth-2\tabcolsep}}
+\toprule
+\textbf{Benchmark (Kıyaslama)} & \textbf{Temel Amacı ve Odak Noktası} & \textbf{Kapsam ve Yapısal Açıklamalar} \\
+\midrule
+\endhead
+\textbf{MMLU}[cite: 35] & Profesyonel Uzmanlık ve Dünya Bilgisi & 57 farklı disiplini kapsar (Hukuk, Tıp, İleri Matematik).Modelin ön-eğitimde (pre-training) gördüğü bilgileri "Zero-shot" (sıfır örnek) ayarlarında test eder.İngilizce'de LLM'ler \%90 başarıyla testi doygunluğa ulaştırmıştır. \\
+\textbf{Belebele}[cite: 41] & Küresel Ölçekte Çapraz Dilde Okuduğunu Anlama & Tamamen paralel 122 farklı dil varyantını kapsar (yüksek ve düşük kaynaklı diller bir arada).FLORES-200 bağlamlarını kullanarak tasarlanmış çoktan seçmeli sorulardan oluşur.İngilizce merkezli (English-centric) büyük modellerle, dengeleyici çok dilli (multilingual) modeller arasındaki farkı gösterir. \\
+\textbf{2M-BELEBELE}[cite: 44] & Çok Modlu (Multimodal) Anlama Kapasitesi & Belebele veri setini konuşma (speech) tanıma ve Amerikan İşaret Dili (ASL) yönünde genişletir.Okuduğunu anlama (reading) ile işittiğini anlama arasındaki \%10'luk performans farkını analiz eder. \\
+\textbf{MM-JudgeBench}[cite: 50] & Hakem Model (LLM-as-a-Judge) Performansı & Modellerin diğer modelleri değerlendirme kapasitesini 25 tipolojik olarak farklı dilde ölçer.Açık ve kapalı kaynaklı 22 adet görsel-dil (LVLM) modelinin tarafsızlığını kıyaslar. \\
+\bottomrule
+\end{longtable}
+Öte yandan, algoritmik ilerlemelerin donanımdaki fiziksel etkilerini gözlemlemek için, modellerin altında yatan mimarilerin verimliliğini değerlendirmek de elzemdir.
+
+\textbf{Tablo 2: Dikkat Algoritmalarının Karşılaştırmalı Verimlilik Analizi}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.2500\textwidth-2\tabcolsep}>{\raggedright\arraybackslash}p{\dimexpr0.2500\textwidth-2\tabcolsep}>{\raggedright\arraybackslash}p{\dimexpr0.2500\textwidth-2\tabcolsep}>{\raggedright\arraybackslash}p{\dimexpr0.2500\textwidth-2\tabcolsep}}
+\toprule
+\textbf{Algoritma Modeli} & \textbf{Bellek Karmaşıklığı (IO)} & \textbf{Hızlandırıcı Entegrasyonu} & \textbf{Endüstriyel Etki ve Çıkarım Performansı} \\
+\midrule
+\endhead
+\textbf{Geleneksel MHA} & Karesel: \(O(N^2)\) & Yok / Sınırlı & Devasa boyutlu KV önbelleği nedeniyle yavaştır. \\
+\textbf{FlashAttention-1} & Doğrusal: \(O(N)\) & SRAM Döşeme (Tiling) & GPU okuma/yazma döngülerini minimuma indirerek hız sağlar. \\
+\textbf{FlashAttention-2} & Doğrusal: \(O(N)\) & İş Bölümü Dağıtımı & NVIDIA A100'lerde donanım limitinin \%73'üne (225 TFLOP/s) ulaşır. \\
+\textbf{FlashAttention-3} & Doğrusal: \(O(N)\) & TMA ve Asenkronizasyon & Hopper (H100) mimarisinde FP8 desteği ile 1.2 PFLOP/s gücüne ulaşır. \\
+\textbf{GQA} (Ainslie vd.) & Değişken / Ara Form & MHA ve MQA Melezi & Çıkarım sırasında bellek tüketimini azaltırken kaliteden ödün vermez. \\
+\bottomrule
+\end{longtable}
+\subsection{Sonuç}
+Doğal dil işleme ve üretken yapay zeka sistemleri, Bahdanau'nun hizalama konsepti ile atılan tohumların, Vaswani'nin Transformer mimarisi ile yeşermesi sonucu benzeri görülmemiş bir noktaya ulaşmıştır. Karesel zaman ve bellek kısıtlamalarına sahip standart dikkat mekanizmaları, fiziksel donanım darboğazlarına çarptığında, FlashAttention serisi (1, 2 ve 3) gibi Giriş/Çıkış (IO) bilinçli algoritmalar ve Grouped-Query Attention (GQA) gibi mimari inovasyonlar sayesinde modellerin yüz binlerce token'ı işlemesi sağlanmıştır. Çip içi SRAM'in etkin kullanımı ve asenkron Tensor Çekirdeği operasyonları, yapay zekanın işlem süresini matematiksel olarak mümkün olan alt sınırlara çekmiştir.
+
+Ancak bu etkileyici mimari ilerlemeler, küresel dil kapsayıcılığı söz konusu olduğunda aynı başarıyı sergilemekte zorlanmaktadır. MMLU gibi testlerin İngilizce başarıları göz kamaştırıcı olsa da; Belebele veri setleri, Çapraz-Katman Dönüştürücü analizleri ve SUTRA tabanlı Normalize Edilmiş Dizi Uzunluğu (NSL) araştırmaları, modellerin İngilizce dışındaki dillerde ciddi kısıtlamalar yaşadığını kanıtlamaktadır. Morfolojik olarak zengin ve düşük kaynaklı diller, alt kelime doğurganlığı (subword fertility) ve tokenizasyon önyargıları nedeniyle hem hesaplama maliyeti hem de kalite açısından cezalandırılmaktadır.
+
+Gelecekteki yapay zeka araştırmalarının temel hedefi; sadece silikon tabanlı donanımları sınırlarına kadar zorlayan algoritmalar (FlashAttention-4 vb.) geliştirmekle kalmamalı, aynı zamanda dilden bağımsız (language-agnostic), evrensel tokenizasyon stratejileri üreterek dijital dil uçurumunu ortadan kaldırmak olmalıdır. Etik, adil ve sürdürülebilir bir yapay zeka ekosistemi, ancak modellerin farklı kültürlere, diyalektlere ve morfolojilere "dikkatini" eşit ve önyargısız bir biçimde dağıtabilmesiyle mümkün olacaktır.
+
+
+\end{document}

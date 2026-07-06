@@ -1,0 +1,228 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Google Sans Text", "Segoe UI", Roboto, Arial, sans-serif;
+  background: #131314;
+  color: #e3e3e3;
+  width: 320px;
+}
+
+.container {
+  padding: 16px;
+}
+
+/* ── Header ── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.version {
+  font-size: 10px;
+  color: #9aa0a6;
+  margin-top: 1px;
+}
+
+/* ── Beta notice ── */
+.beta-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: rgba(252, 201, 52, 0.08);
+  border: 1px solid rgba(252, 201, 52, 0.18);
+  font-size: 10px;
+  line-height: 1.4;
+  color: #f3cf7a;
+}
+
+.beta-notice svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.85;
+}
+
+/* ── Status pill ── */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  color: #9aa0a6;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #5f6368;
+}
+
+.status-dot.active {
+  background: #81c995;
+  box-shadow: 0 0 6px rgba(129, 201, 149, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-dot.inactive {
+  background: #f28b82;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(129, 201, 149, 0.4); }
+  50% { box-shadow: 0 0 10px rgba(129, 201, 149, 0.8); }
+}
+
+/* ── Stats row ── */
+.stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 12px 8px;
+  margin-bottom: 12px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8ab4f8;
+}
+
+.stat-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9aa0a6;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+/* ── Enabled formats chips ── */
+.enabled-formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 14px;
+  min-height: 20px;
+}
+
+.format-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  background: rgba(138, 180, 248, 0.12);
+  color: #8ab4f8;
+  white-space: nowrap;
+}
+
+.format-chip.doc { background: rgba(129, 201, 149, 0.12); color: #81c995; }
+.format-chip.ref { background: rgba(252, 201, 52, 0.12); color: #fcc934; }
+.format-chip.data { background: rgba(242, 139, 130, 0.12); color: #f28b82; }
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.action-btn.primary {
+  flex: 1;
+  background: rgba(138, 180, 248, 0.12);
+  color: #8ab4f8;
+  border: 1px solid rgba(138, 180, 248, 0.15);
+}
+
+.action-btn.primary:hover {
+  background: rgba(138, 180, 248, 0.2);
+  border-color: rgba(138, 180, 248, 0.3);
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #9aa0a6;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 10px;
+}
+
+.action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fcc934;
+}
+
+/* ── Hint ── */
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #5f6368;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}

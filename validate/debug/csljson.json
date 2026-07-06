@@ -1,0 +1,434 @@
+[
+  {
+    "id": "source-1",
+    "type": "webpage",
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate | BibSonomy",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "bibsonomy.org",
+    "URL": "https://www.bibsonomy.org/bibtex/2713375898fd7d2477f6ab6dc3dd66c2c/albinzehe"
+  },
+  {
+    "id": "source-4",
+    "type": "webpage",
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate - ResearchGate",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "researchgate.net",
+    "URL": "https://www.researchgate.net/publication/265252627_Neural_Machine_Translation_by_Jointly_Learning_to_Align_and_Translate"
+  },
+  {
+    "id": "source-5",
+    "type": "webpage",
+    "title": "Deep Learning by Ian Goodfellow (71 results) - AbeBooks",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "abebooks.com",
+    "URL": "https://www.abebooks.com/book-search/title/deep-learning/author/ian-goodfellow/"
+  },
+  {
+    "id": "source-6",
+    "type": "webpage",
+    "title": "Ian Goodfellow, Yoshua Bengio, and Aaron Courville: Deep learning: The MIT Press, 2016, 800 pp, ISBN: 0262035618 - ResearchGate",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "researchgate.net",
+    "URL": "https://www.researchgate.net/publication/320703571_Ian_Goodfellow_Yoshua_Bengio_and_Aaron_Courville_Deep_learning_The_MIT_Press_2016_800_pp_ISBN_0262035618"
+  },
+  {
+    "id": "source-8",
+    "type": "webpage",
+    "title": "Attention Is All You Need - Wikipedia",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "en.wikipedia.org",
+    "URL": "https://en.wikipedia.org/wiki/Attention_Is_All_You_Need"
+  },
+  {
+    "id": "source-10",
+    "type": "webpage",
+    "title": "[1706.03762] Attention Is All You Need - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/abs/1706.03762"
+  },
+  {
+    "id": "source-12",
+    "type": "webpage",
+    "title": "FLASHATTENTION: Fast and Memory-Efficient Exact Attention with IO-Awareness - OpenReview",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "openreview.net",
+    "URL": "https://openreview.net/references/pdf?id=_MLiUszuOPD"
+  },
+  {
+    "id": "source-13",
+    "type": "webpage",
+    "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/abs/2205.14135"
+  },
+  {
+    "id": "source-16",
+    "type": "webpage",
+    "title": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning | OpenReview",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "openreview.net",
+    "URL": "https://openreview.net/forum?id=mZn2Xyh9Ec&noteId=bX7ADEhzWC"
+  },
+  {
+    "id": "source-17",
+    "type": "webpage",
+    "title": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning - Tri Dao",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "tridao.me",
+    "URL": "https://tridao.me/publications/flash2/flash2.pdf"
+  },
+  {
+    "id": "source-19",
+    "type": "webpage",
+    "title": "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision - Tri Dao",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "tridao.me",
+    "URL": "https://tridao.me/publications/flash3/flash3.pdf"
+  },
+  {
+    "id": "source-20",
+    "type": "webpage",
+    "title": "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/abs/2407.08608"
+  },
+  {
+    "id": "source-22",
+    "type": "webpage",
+    "title": "Fast Transformer Decoding: One Write-Head is All You Need | Request PDF - ResearchGate",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "researchgate.net",
+    "URL": "https://www.researchgate.net/publication/337074940_Fast_Transformer_Decoding_One_Write-Head_is_All_You_Need"
+  },
+  {
+    "id": "source-24",
+    "type": "webpage",
+    "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "aclanthology.org",
+    "URL": "https://aclanthology.org/2023.emnlp-main.298/"
+  },
+  {
+    "id": "source-27",
+    "type": "webpage",
+    "title": "LLaMA 3 vs. State-of-the-Art Large Language Models: Performance in Detecting Nuanced Fake News - MDPI",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "mdpi.com",
+    "URL": "https://www.mdpi.com/2073-431X/13/11/292"
+  },
+  {
+    "id": "source-28",
+    "type": "webpage",
+    "title": "Natural Language Processing with Transformers, Revised Edition - Ingram Academic",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "ingramacademic.com",
+    "URL": "https://ingramacademic.com/products/natural-language-processing-with-transformers-revised-edition-9781098136796"
+  },
+  {
+    "id": "source-31",
+    "type": "webpage",
+    "title": "Tracing Multilingual Representations in LLMs with Cross-Layer Transcoders - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/html/2511.10840v2"
+  },
+  {
+    "id": "source-33",
+    "type": "webpage",
+    "title": "(PDF) Speech and Language Processing (second edition) Daniel Jurafsky and James H. Martin (Stanford University and University of Colorado at Boulder) Pearson Prentice Hall, 2009, xxxi+988 pp; hardbound, ISBN 978-0-13-187321-6, $115.00 - ResearchGate",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "researchgate.net",
+    "URL": "https://www.researchgate.net/publication/220355425_Speech_and_Language_Processing_second_edition_Daniel_Jurafsky_and_James_H_Martin_Stanford_University_and_University_of_Colorado_at_Boulder_Pearson_Prentice_Hall_2009_xxxi988_pp_hardbound_ISBN_978-0-13"
+  },
+  {
+    "id": "source-35",
+    "type": "webpage",
+    "title": "Measuring Massive Multitask Language Understanding - ResearchGate",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "researchgate.net",
+    "URL": "https://www.researchgate.net/publication/344159828_Measuring_Massive_Multitask_Language_Understanding"
+  },
+  {
+    "id": "source-37",
+    "type": "webpage",
+    "title": "A benchmark of expert-level academic questions to assess AI capabilities - AVESİS",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "avesis.ankara.edu.tr",
+    "URL": "https://avesis.ankara.edu.tr/yayin/cc54c2d8-c469-4461-ba94-762be7025672/a-benchmark-of-expert-level-academic-questions-to-assess-ai-capabilities/document.pdf"
+  },
+  {
+    "id": "source-38",
+    "type": "webpage",
+    "title": "[PDF] Towards Multilingual LLM Evaluation for European Languages | Semantic Scholar",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "semanticscholar.org",
+    "URL": "https://www.semanticscholar.org/paper/Towards-Multilingual-LLM-Evaluation-for-European-Thellmann-Stadler/0bbef27ae2d4df771b19330a2f4c59070b45cd6d"
+  },
+  {
+    "id": "source-40",
+    "type": "webpage",
+    "title": "Knowledge Distillation for Embeddings of Low-Resource Turkic Family Languages - Gazi University Journal of Science Part A: Engineering and Innovation - DergiPark",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "dergipark.org.tr",
+    "URL": "https://dergipark.org.tr/en/pub/gujsa/article/1844025"
+  },
+  {
+    "id": "source-43",
+    "type": "webpage",
+    "title": "[2412.08274] 2M-BELEBELE: Highly Multilingual Speech and American Sign Language Comprehension Dataset - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/abs/2412.08274"
+  },
+  {
+    "id": "source-45",
+    "type": "webpage",
+    "title": "Evaluating Tokenizer Performance of Large Language Models Across Official Indian Languages - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/pdf/2411.12240"
+  },
+  {
+    "id": "source-46",
+    "type": "webpage",
+    "title": "Evaluating Tokenizer Performance of Large Language Models Across Official Indian Languages - arXiv",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "arxiv.org",
+    "URL": "https://arxiv.org/html/2411.12240v1"
+  },
+  {
+    "id": "source-47",
+    "type": "webpage",
+    "title": "Tokenization efficiency of current foundational large language models for the Ukrainian language - Frontiers",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "frontiersin.org",
+    "URL": "https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1538165/full"
+  },
+  {
+    "id": "source-49",
+    "type": "webpage",
+    "title": "Quantifying Gender Bias in Large Language Models Using Information-Theoretic and Statistical Analysis - ResearchGate",
+    "accessed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          2
+        ]
+      ]
+    },
+    "container-title": "researchgate.net",
+    "URL": "https://www.researchgate.net/publication/391298386_Quantifying_Gender_Bias_in_Large_Language_Models_Using_Information-Theoretic_and_Statistical_Analysis"
+  }
+]

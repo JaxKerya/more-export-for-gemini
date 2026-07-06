@@ -1,0 +1,27 @@
+{
+  "name": "more-export-for-gemini",
+  "version": "2.1.0",
+  "description": "Adds Markdown, TXT, HTML, JSON, DOCX, PDF, EPUB, LaTeX and many more export options to Gemini Deep Research.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/edge-cases.mjs && node test/validate.mjs && node test/extractor.mjs",
+    "test:edge": "node test/edge-cases.mjs",
+    "test:validate": "node test/validate.mjs",
+    "test:extractor": "node test/extractor.mjs",
+    "lint": "eslint src/lib src/exporters src/popup src/options src/content.js src/background.js test scripts",
+    "typecheck": "tsc --noEmit",
+    "validate:external": "node scripts/external-validate.mjs",
+    "validate:rtl": "node scripts/validate-rtl.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/chrome": "^0.1.36",
+    "ajv": "^8.20.0",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
+    "katex": "^0.17.0",
+    "linkedom": "^0.18.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "manifest_version": 3,
+  "name": "More Export for Gemini",
+  "version": "2.1.0",
+  "version_name": "2.1.0 Beta",
+  "description": "Adds Markdown, TXT, HTML, JSON, DOCX, PDF, EPUB, LaTeX and more export options to Gemini Deep Research.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["activeTab", "contextMenus", "storage", "tabs"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "export_primary": {
+      "suggested_key": { "default": "Ctrl+Shift+E", "mac": "Command+Shift+E" },
+      "description": "Export the report in your primary format"
+    },
+    "copy_markdown": {
+      "suggested_key": { "default": "Ctrl+Shift+M", "mac": "Command+Shift+M" },
+      "description": "Copy the report as Markdown"
+    },
+    "download_all": {
+      "suggested_key": { "default": "Ctrl+Shift+L", "mac": "Command+Shift+L" },
+      "description": "Download the report in all enabled formats (ZIP)"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "run_at": "document_idle",
+      "world": "ISOLATED",
+      "js": [
+        "src/vendor/katex.js",
+        "src/vendor/highlight.js",
+        "src/lib/texmath.js",
+        "src/lib/docmeta.js",
+        "src/lib/export-opts.js",
+        "src/lib/source-hygiene.js",
+        "src/exporters/zip.js",
+        "src/exporters/markdown.js",
+        "src/exporters/txt.js",
+        "src/exporters/docx.js",
+        "src/exporters/pdf.js",
+        "src/exporters/html.js",
+        "src/exporters/reader.js",
+        "src/exporters/json.js",
+        "src/exporters/latex.js",
+        "src/exporters/csv.js",
+        "src/exporters/epub.js",
+        "src/exporters/bibtex.js",
+        "src/exporters/ris.js",
+        "src/exporters/csljson.js",
+        "src/exporters/rtf.js",
+        "src/exporters/vault.js",
+        "src/lib/extractor.js",
+        "src/lib/validator.js",
+        "src/lib/download.js",
+        "src/lib/settings.js",
+        "src/lib/citation.js",
+        "src/lib/toc.js",
+        "src/lib/ir-filter.js",
+        "src/lib/menu-injector.js",
+        "src/content.js"
+      ],
+      "css": ["src/content.css"]
+    }
+  ]
+}

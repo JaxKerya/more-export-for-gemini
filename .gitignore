@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+store/*.zip
+
+# Local validation / export scratch
+validate/tp/
+validate/tpbin/
+Manuel-Validate/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# LaTeX / external tool artifacts
+*.aux
+*.log
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Secrets (never commit)
+.env
+.env.*

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--
+  Synthetic but structurally faithful Gemini Deep Research export fixture.
+  Mirrors the real DOM the extractor relies on: a #extended-response-markdown-content
+  root with rich prose, nested lists, a thead+tbody table, a figure, a blockquote,
+  a Gemini <code-block> (header-labelled language), both MathML-annotated KaTeX and
+  Gemini's data-math (.math-inline / .math-block) formulas, source-footnote markers,
+  and a separate .source-list.used-sources panel that maps indices -> {url, title}.
+-->
+<html lang="en">
+<head><meta charset="utf-8"><title>The Ontology of Sound — Gemini</title></head>
+<body>
+  <deep-research-immersive-panel>
+    <div id="extended-response-markdown-content" class="markdown markdown-main-panel">
+      <h1>The Ontology of Sound</h1>
+
+      <h2>Introduction</h2>
+      <p>
+        Sound sits at the intersection of <strong>physics</strong>, <em>perception</em>
+        and <code>signal processing</code>. See the overview at
+        <a href="https://example.org/sound">this reference</a> for context.<source-footnote><sup class="superscript" data-turn-source-index="1">1</sup></source-footnote>
+      </p>
+      <p>
+        A classic relation is the inline identity
+        <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>=</mo><mi>m</mi><msup><mi>c</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">E = mc^2</annotation></semantics></math><span class="katex-html" aria-hidden="true"><span class="base">E=mc²</span></span></span>
+        which connects energy and mass.<source-footnote><sup class="superscript" data-turn-source-index="2">2</sup></source-footnote>
+      </p>
+
+      <span class="katex-display"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mi>d</mi><mi>x</mi><mo>=</mo><mfrac><mn>1</mn><mn>3</mn></mfrac></mrow><annotation encoding="application/x-tex">\int_0^1 x^2\,dx = \frac{1}{3}</annotation></semantics></math><span class="katex-html" aria-hidden="true"><span class="base">∫₀¹x²dx=⅓</span></span></span></span>
+
+      <p>
+        Gemini's own inline form, e.g.
+        <span class="math-inline" data-math="a^2 + b^2 = c^2"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base">a²+b²=c²</span></span></span></span>,
+        keeps the LaTeX in a data-math attribute.<source-footnote><sup class="superscript" data-turn-source-index="2">2</sup></source-footnote>
+      </p>
+
+      <div data-path-to-node="99"><div class="math-block" data-math="f_s \geq 2B"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base">fs≥2B</span></span></span></span></div></div>
+
+      <h2>Key Properties</h2>
+      <ul>
+        <li>Frequency
+          <ul>
+            <li>Measured in hertz</li>
+            <li>Determines pitch</li>
+          </ul>
+        </li>
+        <li>Amplitude</li>
+      </ul>
+
+      <h3>Comparison Table</h3>
+      <table>
+        <thead>
+          <tr><th>Property</th><th>Unit</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Frequency</td><td>Hz</td></tr>
+          <tr><td>Amplitude</td><td>dB</td></tr>
+        </tbody>
+      </table>
+
+      <blockquote>Sound is the vocabulary of nature.<source-footnote><sup class="superscript" data-turn-source-index="3">3</sup></source-footnote></blockquote>
+
+      <figure>
+        <img src="https://example.org/wave.png" alt="A sine wave diagram">
+        <figcaption>A sine wave diagram</figcaption>
+      </figure>
+
+      <code-block class="enable-luminous-code-block">
+        <div class="code-block">
+          <div class="formatted-code-block-internal-container">
+            <div class="animated-opacity">
+              <div class="code-block-decoration header-formatted gds-emphasized-body-m"><span>JavaScript</span><div class="buttons"><gem-icon-button arialabel="Kodu indir"></gem-icon-button></div></div>
+              <pre><code>const f = 440; // A4 in Hz</code></pre>
+            </div>
+          </div>
+        </div>
+      </code-block>
+    </div>
+  </deep-research-immersive-panel>
+
+  <div class="source-list used-sources">
+    <browse-web-item>
+      <a href="https://acoustics.example.com/intro" data-test-id="browse-web-item-link">
+        <div class="title-container">
+          <div class="display-name">acoustics.example.com</div>
+          <div class="sub-title">An Introduction to Acoustics</div>
+        </div>
+      </a>
+    </browse-web-item>
+    <browse-web-item>
+      <a href="https://physics.example.org/energy" data-test-id="browse-web-item-link">
+        <div class="title-container">
+          <div class="display-name">physics.example.org</div>
+          <div class="sub-title">Energy, Mass and Equivalence</div>
+        </div>
+      </a>
+    </browse-web-item>
+    <browse-web-item>
+      <a href="https://nature.example.net/sound" data-test-id="browse-web-item-link">
+        <div class="title-container">
+          <div class="display-name">nature.example.net</div>
+          <div class="sub-title">The Language of Natural Sound</div>
+        </div>
+      </a>
+    </browse-web-item>
+  </div>
+</body>
+</html>
