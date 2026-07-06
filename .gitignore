@@ -1,23 +1,23 @@
-# Dependencies
+# ── Dependencies ─────────────────────────────────────────────
 node_modules/
 
-# Build output
+# ── Build / package output ──────────────────────────────────
 store/*.zip
 
-# Local validation / export scratch
+# ── Test & validation scratch (regenerated on demand) ───────
+# Golden files in validate/debug and validate/render stay tracked;
+# only ad-hoc export/re-validation output is ignored.
+validate/output/
 validate/tp/
 validate/tpbin/
 Manuel-Validate/
 
-# OS / editor
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.vscode/
-.idea/
+# ── Tooling caches ───────────────────────────────────────────
+.eslintcache
+*.tsbuildinfo
+npm-debug.log*
 
-# LaTeX / external tool artifacts
+# ── LaTeX / external validator artifacts ─────────────────────
 *.aux
 *.log
 *.out
@@ -25,6 +25,21 @@ Thumbs.db
 *.fls
 *.synctex.gz
 
-# Secrets (never commit)
+# ── OS clutter ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ── Editor / IDE ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Secrets (never commit) ───────────────────────────────────
 .env
 .env.*
+*.pem
+credentials.json
