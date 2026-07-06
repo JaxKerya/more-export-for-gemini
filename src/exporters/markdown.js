@@ -11,7 +11,7 @@
     // Only escape characters that reliably trigger Markdown formatting.
     // Dots and hyphens are intentionally left unescaped — they only matter
     // as list/hr markers at line start, not inside running prose.
-    return text.replace(/([\\`*_{}\[\]#+!|~>])/g, "\\$1");
+    return text.replace(/([\\`*_{}[\]#+!|~>])/g, "\\$1");
   }
 
   function runToMd(run, flavor, includeFootnotes) {

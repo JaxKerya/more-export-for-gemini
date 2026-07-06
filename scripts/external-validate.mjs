@@ -219,7 +219,7 @@ function extractMath(src) {
   s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => { push(m, true); return " "; });   // $$…$$  (md display)
   s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => { push(m, true); return " "; });    // \[…\]  display
   s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_, m) => { push(m, false); return " "; });   // \(…\)  inline
-  s = s.replace(/(^|[^\\$])\$([^\n$]+?)\$/g, (_, pre, m) => { push(m, false); return pre + " "; }); // $…$ (md inline)
+  s.replace(/(^|[^\\$])\$([^\n$]+?)\$/g, (_, pre, m) => { push(m, false); return pre + " "; }); // $…$ (md inline)
   return out;
 }
 function validateMath(file) {

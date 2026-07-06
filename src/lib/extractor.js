@@ -73,14 +73,6 @@
   // Tags to skip entirely — footnote-related tags are NOT skipped now.
   const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT"]);
 
-  // UI wrapper tags that should be traversed but not produce content themselves.
-  // The children may contain useful footnote data.
-  const UI_WRAPPER_TAGS = new Set([
-    "RESPONSE-ELEMENT",
-    "SOURCES-CAROUSEL-INLINE",
-    "SOURCES-CAROUSEL",
-  ]);
-
   function findContentRoot() {
     // Try explicit selectors first
     for (const selector of CONTENT_SELECTORS) {
@@ -178,7 +170,7 @@
     // collapse into a bogus identifier ("kodsnippeti") and trip code
     // highlighters — treat them as "no language".
     if (/\s/.test(s)) return "";
-    return s.replace(/[^a-z0-9#+.\-]/g, "");
+    return s.replace(/[^a-z0-9#+.-]/g, "");
   }
 
   /**
@@ -199,7 +191,7 @@
     ];
     for (const raw of candidates) {
       if (!raw || typeof raw !== "string") continue;
-      const m = raw.match(/(?:language|lang|highlight-source|highlight)-([a-z0-9#+.\-]+)/i);
+      const m = raw.match(/(?:language|lang|highlight-source|highlight)-([a-z0-9#+.-]+)/i);
       if (m) return normalizeLang(m[1]);
     }
     // Gemini renders code inside a <code-block> whose header shows the language

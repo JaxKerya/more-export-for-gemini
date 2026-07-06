@@ -51,7 +51,6 @@
 
   function showMaxToast() {
     const el = badge;
-    const origText = el.textContent;
     el.textContent = "";
     const icon = document.createElement("span");
     icon.textContent = "⚠ ";

@@ -22,16 +22,22 @@ export default [
       globals: {
         ...globals.browser,
         chrome: "readonly",
+        importScripts: "readonly",
         GEP: "writable",
         GEP_LINKS: "writable",
       },
     },
     rules: {
       ...js.configs.recommended.rules,
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_", caughtErrors: "none" }],
+      "no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", caughtErrors: "none", ignoreRestSiblings: true },
+      ],
       "no-empty": ["error", { allowEmptyCatch: true }],
       "no-redeclare": "off",
       "no-regex-spaces": "off",
+      // Control-character classes are used deliberately to strip them from output.
+      "no-control-regex": "off",
     },
   },
   {
@@ -43,8 +49,13 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", caughtErrors: "none", ignoreRestSiblings: true },
+      ],
       "no-empty": ["error", { allowEmptyCatch: true }],
+      "no-regex-spaces": "off",
+      "no-control-regex": "off",
     },
   },
 ];

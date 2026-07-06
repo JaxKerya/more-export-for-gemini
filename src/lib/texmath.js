@@ -759,7 +759,7 @@
       .replace(/\\begin\{([a-zA-Z*]+)\}(\{[^}]*\})?/g, (_, e) => (ENV_OPEN[e] !== undefined ? ENV_OPEN[e] : ""))
       .replace(/\\end\{([a-zA-Z*]+)\}/g, (_, e) => (ENV_CLOSE[e] !== undefined ? ENV_CLOSE[e] : ""));
     // Row/column separators only matter inside the now-flattened environments.
-    if (/[\[({|\u2016]/.test(s)) s = s.replace(/\\\\/g, "; ").replace(/&/g, ", ");
+    if (/[[({|\u2016]/.test(s)) s = s.replace(/\\\\/g, "; ").replace(/&/g, ", ");
     return s;
   }
 
