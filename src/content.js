@@ -117,7 +117,7 @@
 
   function toast(message, opts) {
     const options = typeof opts === "boolean" ? { isError: opts } : (opts || {});
-    const { isError = false, retryFn } = options;
+    const { isError = false, retryFn, actionLabel, actionFn } = options;
 
     const el = getToastEl();
     el.textContent = "";
@@ -126,24 +126,28 @@
     textSpan.textContent = message;
     el.appendChild(textSpan);
 
-    if (retryFn) {
-      const retryBtn = document.createElement("button");
-      retryBtn.className = "gep-toast-retry";
-      retryBtn.textContent = "Retry";
-      retryBtn.addEventListener("click", (e) => {
+    const addButton = (label, fn) => {
+      const btn = document.createElement("button");
+      btn.className = "gep-toast-retry";
+      btn.textContent = label;
+      btn.addEventListener("click", (e) => {
         e.stopPropagation();
         el.classList.remove("gep-toast-visible");
         Promise.resolve()
-          .then(() => retryFn())
-          .catch((err) => console.error("[GEP] retry failed", err));
+          .then(() => fn())
+          .catch((err) => console.error("[GEP] toast action failed", err));
       });
-      el.appendChild(retryBtn);
-    }
+      el.appendChild(btn);
+    };
+
+    if (retryFn) addButton("Retry", retryFn);
+    if (actionFn) addButton(actionLabel || "Details", actionFn);
+    const hasButton = !!(retryFn || actionFn);
 
     el.classList.toggle("gep-toast-error", isError);
     el.classList.add("gep-toast-visible");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove("gep-toast-visible"), retryFn ? 8000 : 3200);
+    toastTimer = setTimeout(() => el.classList.remove("gep-toast-visible"), hasButton ? 8000 : 3200);
   }
 
   /** Show a sticky progress toast (no auto-dismiss). */
@@ -185,6 +189,30 @@
     return `${(root.textContent || "").length}:${root.childElementCount}`;
   }
 
+  /**
+   * Generates and downloads the diagnostics report. Shared by the Options-page
+   * "Run Diagnostics" tool (GEP_DIAGNOSE) and the extraction-failure toast, so
+   * users can attach the report to a bug form when the Gemini DOM changes.
+   */
+  function downloadDiagnostics() {
+    const report = GEP.extractor.diagnose();
+    const text = formatDiagnostics(report);
+    GEP.download.downloadBlob(text, "gep-diagnostics.txt", "text/plain;charset=utf-8");
+    return report;
+  }
+
+  /** Failure toast that offers a one-click diagnostics download. */
+  function extractionFailedToast(message) {
+    toast(message, {
+      isError: true,
+      actionLabel: "Get diagnostics",
+      actionFn: () => {
+        downloadDiagnostics();
+        toast("Diagnostics report downloaded. You can attach it to a bug report from Settings.");
+      },
+    });
+  }
+
   function getIR() {
     try {
       let root = null;
@@ -196,7 +224,7 @@
 
       const ir = GEP.extractor.extract();
       if (!ir || !ir.blocks.length) {
-        toast("No Deep Research content found to export.", { isError: true });
+        extractionFailedToast("No Deep Research content found to export.");
         return null;
       }
 
@@ -206,7 +234,7 @@
       return ir;
     } catch (err) {
       console.error("[GEP] extraction failed", err);
-      toast("Failed to read page content.", { isError: true });
+      extractionFailedToast("Failed to read page content.");
       return null;
     }
   }
@@ -570,9 +598,7 @@
 
     if (msg.type === "GEP_DIAGNOSE") {
       try {
-        const report = GEP.extractor.diagnose();
-        const text = formatDiagnostics(report);
-        GEP.download.downloadBlob(text, "gep-diagnostics.txt", "text/plain;charset=utf-8");
+        const report = downloadDiagnostics();
         toast(report.ok ? "Diagnostics OK - report downloaded." : "Diagnostics found issues - report downloaded.", { isError: !report.ok });
         sendResponse({ ok: true, report });
       } catch (err) {
@@ -623,6 +649,16 @@
         `  panel items    : ${r.footnotes.panelItemCount}`,
         `  matched        : ${r.footnotes.matched}`,
         `  unmatched      : ${r.footnotes.unmatched.join(", ") || "(none)"}`,
+        ""
+      );
+    }
+    const menuStats = GEP.menuInjector && GEP.menuInjector.stats;
+    if (menuStats) {
+      lines.push(
+        "Menu injection (this session)",
+        `  menus seen      : ${menuStats.menusSeen}`,
+        `  export menus    : ${menuStats.exportMenusMatched}`,
+        `  injected        : ${menuStats.injected}`,
         ""
       );
     }

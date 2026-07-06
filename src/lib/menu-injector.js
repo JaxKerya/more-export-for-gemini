@@ -192,10 +192,21 @@
     return div;
   }
 
+  // Exact selectors first (today's Gemini markup), then substring fallbacks so
+  // a renamed test id (e.g. "copy-report-button") still identifies the export
+  // menu instead of silently disabling injection.
+  const EXPORT_MENU_SELECTOR = [
+    '[data-test-id="copy-button"]',
+    '[data-test-id="export-to-docs-button"]',
+    "copy-button",
+    "export-to-docs-button",
+    '[data-test-id*="copy"]',
+    '[data-test-id*="export"]',
+    '[data-test-id*="share"]',
+  ].join(", ");
+
   function isExportMenu(menuContent) {
-    return !!menuContent.querySelector(
-      '[data-test-id="copy-button"], [data-test-id="export-to-docs-button"], copy-button, export-to-docs-button'
-    );
+    return !!menuContent.querySelector(EXPORT_MENU_SELECTOR);
   }
 
   /**
@@ -228,9 +239,16 @@
    * @param {Function} onExport
    * @param {Object} enabledFormats - { format_key: boolean }
    */
+  // Lightweight session counters surfaced in the diagnostics report, so a
+  // silent injection failure (Gemini renamed its menu markup) becomes visible
+  // when a user shares diagnostics.
+  const stats = { menusSeen: 0, exportMenusMatched: 0, injected: 0 };
+
   function inject(menuContent, onExport, enabledFormats) {
     if (!menuContent || menuContent.getAttribute(PROCESSED_ATTR) === "1") return false;
+    stats.menusSeen++;
     if (!isExportMenu(menuContent)) return false;
+    stats.exportMenusMatched++;
 
     menuContent.setAttribute(PROCESSED_ATTR, "1");
 
@@ -276,8 +294,9 @@
       menuContent.appendChild(createLimitNotice());
     }
 
+    stats.injected++;
     return true;
   }
 
-  GEP.menuInjector = { inject, isExportMenu, GROUPS };
+  GEP.menuInjector = { inject, isExportMenu, GROUPS, stats };
 })();
