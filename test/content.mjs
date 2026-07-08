@@ -75,7 +75,9 @@ const sandbox = {
 sandbox.window.location = sandbox.location;
 vm.createContext(sandbox);
 
-// Same order as manifest.json content_scripts.
+// Full GEP stack: static core (manifest content_scripts) + lazy exporter
+// stack (web_accessible_resources), preloaded here so loadExporters()
+// short-circuits — vm sandboxes can't service dynamic import().
 const STACK = [
   "src/vendor/katex.js", "src/vendor/highlight.js",
   "src/lib/texmath.js", "src/lib/docmeta.js", "src/lib/export-opts.js",

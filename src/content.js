@@ -32,6 +32,35 @@
     rtf:      () => GEP.rtf,
   };
 
+  // --- Lazy exporter stack -------------------------------------------------
+  // Only the core (extraction, menu injection, settings) loads on every Gemini
+  // page; the heavy conversion stack (KaTeX/highlight vendors + 16 exporters)
+  // is imported on demand at the first export. The files are side-effectful
+  // IIFEs that register themselves on window.GEP, so importing them as
+  // modules in the isolated world is enough — no exports needed.
+
+  let exportersReady = null;
+
+  function loadExporters() {
+    // Already present (options-page sandbox and tests preload the full stack).
+    if (GEP.vault && GEP.texmath) return Promise.resolve();
+    if (!exportersReady) {
+      const war = chrome.runtime.getManifest().web_accessible_resources || [];
+      const files = (war[0] && war[0].resources) || [];
+      const t0 = Date.now();
+      exportersReady = (async () => {
+        for (const f of files) {
+          await import(chrome.runtime.getURL(f));
+        }
+        console.debug(`[GEP] exporter stack loaded (${files.length} files, ${Date.now() - t0}ms)`);
+      })().catch((err) => {
+        exportersReady = null; // allow retry on the next export attempt
+        throw err;
+      });
+    }
+    return exportersReady;
+  }
+
   let enabledFormats = null;
   let settingsReady = null;
 
@@ -240,6 +269,14 @@
   }
 
   async function onExport(rawFormat) {
+    try {
+      await loadExporters();
+    } catch (err) {
+      console.error("[GEP] failed to load exporter modules", err);
+      toast("Failed to load export modules.", { isError: true, retryFn: () => onExport(rawFormat) });
+      return;
+    }
+
     // Selective export: "markdown@tables", "csv@tables", "markdown@nosrc", …
     let format = rawFormat;
     let scope = null;
@@ -456,6 +493,7 @@
   ];
 
   async function onDebugExport() {
+    await loadExporters();
     const ir = getIR();
     if (!ir) return;
 
@@ -574,25 +612,30 @@
     }
 
     if (msg.type === "GEP_QUALITY") {
-      try {
-        const ir = getIR();
-        if (!ir) {
-          sendResponse({ ok: false, error: "No content found." });
-          return true;
+      // The validator's math check needs GEP.texmath (lazy); without it the
+      // check degrades gracefully, but a diagnostic action deserves the full
+      // report, so load the stack first (failures are non-fatal).
+      loadExporters().catch(() => {}).then(() => {
+        try {
+          const ir = getIR();
+          if (!ir) {
+            sendResponse({ ok: false, error: "No content found." });
+            return;
+          }
+          const report = GEP.validator.check(ir);
+          const s = report.stats;
+          toast(
+            report.ok
+              ? `Quality OK - no issues found.`
+              : `Quality: ${s.errors} error(s), ${s.warnings} warning(s), ${s.infos} info.`,
+            { isError: !report.ok }
+          );
+          sendResponse({ ok: true, report });
+        } catch (err) {
+          toast("Quality check failed: " + String(err), { isError: true });
+          sendResponse({ ok: false, error: String(err) });
         }
-        const report = GEP.validator.check(ir);
-        const s = report.stats;
-        toast(
-          report.ok
-            ? `Quality OK - no issues found.`
-            : `Quality: ${s.errors} error(s), ${s.warnings} warning(s), ${s.infos} info.`,
-          { isError: !report.ok }
-        );
-        sendResponse({ ok: true, report });
-      } catch (err) {
-        toast("Quality check failed: " + String(err), { isError: true });
-        sendResponse({ ok: false, error: String(err) });
-      }
+      });
       return true;
     }
 

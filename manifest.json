@@ -44,11 +44,27 @@
       "run_at": "document_idle",
       "world": "ISOLATED",
       "js": [
+        "src/lib/settings.js",
+        "src/lib/export-opts.js",
+        "src/lib/extractor.js",
+        "src/lib/validator.js",
+        "src/lib/download.js",
+        "src/lib/ir-filter.js",
+        "src/lib/menu-injector.js",
+        "src/content.js"
+      ],
+      "css": ["src/content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
         "src/vendor/katex.js",
         "src/vendor/highlight.js",
         "src/lib/texmath.js",
         "src/lib/docmeta.js",
-        "src/lib/export-opts.js",
+        "src/lib/citation.js",
+        "src/lib/toc.js",
         "src/lib/source-hygiene.js",
         "src/exporters/zip.js",
         "src/exporters/markdown.js",
@@ -65,18 +81,9 @@
         "src/exporters/ris.js",
         "src/exporters/csljson.js",
         "src/exporters/rtf.js",
-        "src/exporters/vault.js",
-        "src/lib/extractor.js",
-        "src/lib/validator.js",
-        "src/lib/download.js",
-        "src/lib/settings.js",
-        "src/lib/citation.js",
-        "src/lib/toc.js",
-        "src/lib/ir-filter.js",
-        "src/lib/menu-injector.js",
-        "src/content.js"
+        "src/exporters/vault.js"
       ],
-      "css": ["src/content.css"]
+      "matches": ["https://gemini.google.com/*"]
     }
   ]
 }

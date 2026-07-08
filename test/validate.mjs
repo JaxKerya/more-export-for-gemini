@@ -1196,7 +1196,8 @@ check("has popup", typeof manifest.action.default_popup === "string");
 check("has options_ui", typeof manifest.options_ui.page === "string");
 check("content_scripts match gemini.google.com", manifest.content_scripts[0].matches[0].includes("gemini.google.com"));
 
-for (const f of [...manifest.content_scripts[0].js, ...manifest.content_scripts[0].css]) {
+const warResources = (manifest.web_accessible_resources || []).flatMap((w) => w.resources || []);
+for (const f of [...manifest.content_scripts[0].js, ...manifest.content_scripts[0].css, ...warResources]) {
   check(`file exists: ${f}`, fs.existsSync(path.join(root, f)));
 }
 check("background file exists", fs.existsSync(path.join(root, manifest.background.service_worker)));
@@ -1204,8 +1205,28 @@ check("popup file exists", fs.existsSync(path.join(root, manifest.action.default
 check("options file exists", fs.existsSync(path.join(root, manifest.options_ui.page)));
 
 check("no auto-export.js in manifest", !manifest.content_scripts[0].js.includes("src/lib/auto-export.js"));
-check("export-opts.js in manifest", manifest.content_scripts[0].js.includes("src/lib/export-opts.js"));
-check("source-hygiene.js in manifest", manifest.content_scripts[0].js.includes("src/lib/source-hygiene.js"));
+check("export-opts.js in static core", manifest.content_scripts[0].js.includes("src/lib/export-opts.js"));
+check("settings.js in static core", manifest.content_scripts[0].js.includes("src/lib/settings.js"));
+check("content.js loads last in static core", manifest.content_scripts[0].js.at(-1) === "src/content.js");
+
+// Lazy stack integrity: no file may be in both lists, and everything the
+// export pipeline needs must be in exactly one of them.
+check("web_accessible_resources matches gemini", (manifest.web_accessible_resources || [])[0].matches[0].includes("gemini.google.com"));
+const staticSet = new Set(manifest.content_scripts[0].js);
+check("no overlap between static core and lazy stack", warResources.every((f) => !staticSet.has(f)));
+for (const f of [
+  "src/vendor/katex.js", "src/vendor/highlight.js",
+  "src/lib/texmath.js", "src/lib/docmeta.js", "src/lib/citation.js",
+  "src/lib/toc.js", "src/lib/source-hygiene.js",
+  "src/exporters/zip.js", "src/exporters/markdown.js", "src/exporters/txt.js",
+  "src/exporters/docx.js", "src/exporters/pdf.js", "src/exporters/html.js",
+  "src/exporters/reader.js", "src/exporters/json.js", "src/exporters/latex.js",
+  "src/exporters/csv.js", "src/exporters/epub.js", "src/exporters/bibtex.js",
+  "src/exporters/ris.js", "src/exporters/csljson.js", "src/exporters/rtf.js",
+  "src/exporters/vault.js",
+]) {
+  check(`lazy stack includes ${f}`, warResources.includes(f));
+}
 
 // =====================================================================
 // PART 5 — DEBUG OUTPUT VALIDATION (all format × citation × flavor)

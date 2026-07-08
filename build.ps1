@@ -23,6 +23,11 @@ $include = @(
 )
 $include += $cs.js
 $include += $cs.css
+# Lazy-loaded exporter stack: fetched at runtime via import(), so it lives in
+# web_accessible_resources instead of content_scripts.
+foreach ($war in $manifest.web_accessible_resources) {
+    $include += $war.resources
+}
 $include += @(
     # Shared by the popup and options pages via <script>, but NOT a content
     # script — so it isn't covered by $cs.js and must be listed explicitly.
