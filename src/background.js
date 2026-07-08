@@ -94,7 +94,17 @@ async function rebuildMenus() {
   }
 }
 
-chrome.runtime.onInstalled.addListener(rebuildMenus);
+chrome.runtime.onInstalled.addListener((details) => {
+  rebuildMenus();
+  // First-run onboarding: open the Options page once with a welcome banner so
+  // new users learn where the export options live (the share-menu entries are
+  // otherwise easy to miss).
+  if (details && details.reason === "install") {
+    try {
+      chrome.tabs.create({ url: chrome.runtime.getURL("src/options/options.html") + "?welcome=1" });
+    } catch { /* tab creation unavailable (e.g. during tests) */ }
+  }
+});
 if (chrome.runtime.onStartup) chrome.runtime.onStartup.addListener(rebuildMenus);
 
 // Keep the menu in sync when the user toggles formats in the Options page.

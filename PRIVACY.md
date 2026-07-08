@@ -1,10 +1,10 @@
 # Privacy Policy — More Export for Gemini
 
-**Last updated:** June 4, 2026
+**Last updated:** July 8, 2026
 
 ## Overview
 
-"More Export for Gemini" is a browser extension that adds many extra export formats (Markdown, TXT, HTML, JSON, DOCX, ODT, PDF, EPUB, LaTeX and more) to the Google Gemini Deep Research share menu. It operates entirely in the browser with no external servers.
+"More Export for Gemini" is a browser extension that adds extra export formats to the Google Gemini Deep Research share menu: Markdown, Plain Text, HTML, HTML – Reader, JSON, LaTeX, CSV, BibTeX, RIS, CSL-JSON, RTF, Word (.docx), PDF, EPUB and a multi-file Vault ZIP bundle, plus clipboard copies (Markdown, Plain Text, rich HTML, JSON). All conversion runs entirely in your browser with no external servers.
 
 ## Data Collection
 
@@ -14,7 +14,7 @@ This extension does **not** collect, store, transmit, or share any personal data
 
 - **Page content on `gemini.google.com` only:** The extension reads the Deep Research report content visible on the page solely to convert it into the export format you select. This content never leaves your browser.
 - **No analytics, no tracking, no cookies.**
-- **No network requests:** All processing is performed locally. No data is sent to any server, API, or third party.
+- **No automatic network requests:** All export processing is performed locally. The extension never sends your report content, settings, or browsing data to any server, API, or third party.
 
 ## Permissions Explained
 
@@ -27,11 +27,15 @@ This extension does **not** collect, store, transmit, or share any personal data
 
 ## Data Retention
 
-No data is retained. Exported files are saved to your local device through the browser's download mechanism.
+No data is retained by the extension. Exported files are saved to your local device through the browser's download mechanism.
 
 ## Third-Party Services
 
-This extension does not integrate with or send data to any third-party services.
+The extension performs no background communication with third parties. There is exactly one, fully user-initiated exception:
+
+- **Feedback forms (Tally):** the optional "Report a bug" and "Suggest a feature" buttons in the popup and Settings page open an external form hosted on [tally.so](https://tally.so) **in a new tab, only when you click them**. To save you typing, the link pre-fills the extension version, your browser's user-agent string and (from the popup) the address of the active Gemini tab as URL parameters. Nothing is sent unless you open the form and submit it yourself; anything you enter there is governed by Tally's own privacy policy.
+
+No other third-party service is contacted, embedded, or integrated.
 
 ## Changes to This Policy
 

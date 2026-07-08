@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Documentation matched to reality (store-review risk):** `PRIVACY.md` and `PROJECT_SUMMARY.md` listed formats that no longer exist (ODT, reStructuredText, AsciiDoc, Typst, Org, Quarto, Marp, OPML, YAML, Jupyter, XML/TEI); both now describe the actual 15-format set. The privacy policy also now explicitly discloses the only third-party touchpoint — the user-initiated Tally feedback forms with their pre-filled URL parameters — instead of claiming "no network requests" unqualified.
+
 ### Changed
 - **Faster page load — exporters now load on demand.** The content script core injected into every Gemini page shrank from 31 files to 8 (settings, export options, extractor, validator, download, IR filter, menu injector, orchestrator). The heavy conversion stack — the KaTeX and highlight.js vendors plus all 16 exporters — moved to `web_accessible_resources` and is dynamically imported the first time you export (memoized; retried automatically if a load fails). Menu injection, PING and quality checks work exactly as before; the first export logs its one-time load duration to the console.
 
 ### Added
+- **First-run welcome:** installing the extension now opens the Settings page once with a dismissible 3-step orientation banner (open a Deep Research report → click "Share & export" or right-click → pick a format), so the new share-menu entries aren't left to be discovered by accident.
+- **`README.md`:** developer-facing readme covering unpacked installation, the npm test/lint/typecheck commands and the store package build.
 - **One-click diagnostics on extraction failure:** when a page yields no exportable content ("No Deep Research content found" / "Failed to read page content"), the error toast now offers a **Get diagnostics** button that downloads `gep-diagnostics.txt` on the spot — ready to attach to a bug report. The toast component gained generic action-button support alongside the existing Retry pattern.
 - **Menu-injection counters in diagnostics:** the diagnostics report now includes a "Menu injection (this session)" section (menus seen / export menus matched / injected), so a silent menu breakage after a Gemini UI change becomes visible in user-submitted reports.
 - **Hardened export-menu detection:** `isExportMenu` now falls back to substring matches on `data-test-id` (`*copy*`, `*export*`, `*share*`) in addition to the exact test ids, so a renamed Gemini button no longer silently disables injection.

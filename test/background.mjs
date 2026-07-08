@@ -45,6 +45,7 @@ function makeWorker(storedData) {
   const state = {
     stored: storedData || {},
     created: [],          // chrome.contextMenus.create calls (props)
+    createdTabs: [],      // chrome.tabs.create calls (props)
     removeAllCalls: 0,
     sent: [],             // chrome.tabs.sendMessage calls {tabId, msg}
     listeners: { installed: [], startup: [], storage: [], clicked: [], command: [] },
@@ -74,6 +75,7 @@ function makeWorker(storedData) {
     runtime: {
       onInstalled: { addListener: (fn) => state.listeners.installed.push(fn) },
       onStartup: { addListener: (fn) => state.listeners.startup.push(fn) },
+      getURL: (rel) => "chrome-extension://test-id/" + rel,
     },
     tabs: {
       query: async (q) => {
@@ -82,6 +84,7 @@ function makeWorker(storedData) {
         return tabs;
       },
       sendMessage: async (tabId, msg) => { state.sent.push({ tabId, msg }); },
+      create: (props) => { state.createdTabs.push(props); },
     },
     commands: {
       onCommand: { addListener: (fn) => state.listeners.command.push(fn) },
@@ -178,6 +181,23 @@ section("Menu respects stored formats");
   check("no trailing separator", children[children.length - 1].type !== "separator");
   const adjacent = children.some((p, i) => p.type === "separator" && (children[i + 1] || {}).type === "separator");
   check("no adjacent separators", !adjacent);
+}
+
+// =====================================================================
+section("First-run onboarding");
+
+{
+  const { state } = makeWorker({});
+  for (const fn of state.listeners.installed) fn({ reason: "install" });
+  await tick();
+  check("install opens options page once", state.createdTabs.length === 1);
+  check("welcome flag present in url", (state.createdTabs[0] || {}).url ===
+    "chrome-extension://test-id/src/options/options.html?welcome=1");
+
+  state.createdTabs.length = 0;
+  for (const fn of state.listeners.installed) fn({ reason: "update" });
+  await tick();
+  check("update does not open options page", state.createdTabs.length === 0);
 }
 
 // =====================================================================

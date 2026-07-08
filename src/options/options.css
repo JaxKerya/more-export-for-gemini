@@ -1230,6 +1230,40 @@ kbd {
   .nav-count { margin-left: -2px; }
 }
 
+/* ── First-run welcome hero (shown once via ?welcome=1) ── */
+.welcome-hero {
+  margin: 0 0 20px;
+  padding: 18px var(--card-pad) 16px;
+  border: 1px solid var(--accent-weak-2);
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, var(--accent-weak) 0%, var(--surface) 65%);
+}
+.welcome-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.welcome-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.welcome-steps {
+  margin: 0 0 14px;
+  padding-inline-start: 22px;
+  display: grid;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.welcome-steps strong { color: var(--text); font-weight: 600; }
+.welcome-steps a { color: var(--accent); }
+.welcome-steps::marker { color: var(--accent); }
+.welcome-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *,

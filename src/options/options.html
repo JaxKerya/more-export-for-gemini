@@ -82,6 +82,24 @@
 
       <!-- Overview panel -->
       <section class="panel" data-panel="overview" aria-label="Overview">
+
+        <!-- First-run welcome (shown once, right after install) -->
+        <div class="welcome-hero" id="welcomeHero" hidden>
+          <div class="welcome-head">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"/></svg>
+            <span class="welcome-title">You're all set - here's how to export your first report</span>
+          </div>
+          <ol class="welcome-steps">
+            <li><strong>Open a Deep Research report</strong> on <a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a>.</li>
+            <li><strong>Click "Share &amp; export"</strong> on the report (or right-click anywhere on the page) - you'll see the new format entries there.</li>
+            <li><strong>Pick your format</strong> - Markdown, PDF, Word and Reader HTML are ready out of the box; enable more below.</li>
+          </ol>
+          <div class="welcome-actions">
+            <button class="cta-btn primary" type="button" id="welcomeDismiss">Got it</button>
+            <button class="cta-btn secondary" type="button" data-go="formats" id="welcomeFormats">Choose formats</button>
+          </div>
+        </div>
+
         <h2 class="panel-title">Welcome</h2>
         <p class="overview-lead">
           More Export for Gemini turns a Gemini Deep Research report into clean, ready-to-use

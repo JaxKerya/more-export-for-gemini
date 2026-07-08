@@ -465,10 +465,29 @@
     });
   });
 
-  // Initial panel: URL hash > stored > default.
+  // ── First-run welcome (#9): background opens options.html?welcome=1 once
+  // right after install; show a dismissible 3-step orientation banner. ──
+  const isWelcome = new URLSearchParams(location.search).get("welcome") === "1";
+  const welcomeHero = document.getElementById("welcomeHero");
+  if (isWelcome && welcomeHero) {
+    welcomeHero.hidden = false;
+    const dismissWelcome = () => {
+      welcomeHero.hidden = true;
+      // Strip ?welcome=1 so a reload doesn't resurrect the banner.
+      try { history.replaceState(null, "", location.pathname + location.hash); } catch {}
+    };
+    const dismissBtn = document.getElementById("welcomeDismiss");
+    if (dismissBtn) dismissBtn.addEventListener("click", dismissWelcome);
+    const formatsBtn = document.getElementById("welcomeFormats");
+    if (formatsBtn) formatsBtn.addEventListener("click", dismissWelcome);
+  }
+
+  // Initial panel: welcome flow > URL hash > stored > default.
   let initialPanel = "overview";
   const hashPanel = (location.hash || "").replace(/^#/, "");
-  if (VALID_PANELS.includes(hashPanel)) {
+  if (isWelcome) {
+    initialPanel = "overview";
+  } else if (VALID_PANELS.includes(hashPanel)) {
     initialPanel = hashPanel;
   } else {
     try { initialPanel = localStorage.getItem(PANEL_STORAGE_KEY) || "overview"; } catch {}
