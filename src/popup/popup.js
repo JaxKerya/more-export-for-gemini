@@ -91,6 +91,47 @@
     chipsEl.appendChild(chip);
   }
 
+  // ── Quick profile switcher (#12) ──
+  const profileRow = document.getElementById("profileRow");
+  const profileSelect = document.getElementById("profileSelect");
+  const profileApplyBtn = document.getElementById("profileApplyBtn");
+  if (profileRow && profileSelect && profileApplyBtn) {
+    const profiles = await GEP.settings.loadProfiles();
+    const names = Object.keys(profiles)
+      .sort((a, b) => (profiles[b].savedAt || 0) - (profiles[a].savedAt || 0));
+    if (names.length) {
+      profileRow.hidden = false;
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Switch profile…";
+      profileSelect.appendChild(placeholder);
+      for (const name of names) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        profileSelect.appendChild(opt);
+      }
+      profileApplyBtn.addEventListener("click", async () => {
+        const name = profileSelect.value;
+        if (!name || !profiles[name]) return;
+        profileApplyBtn.disabled = true;
+        const snap = GEP.settings.sanitizeSnapshot(profiles[name]);
+        try {
+          await chrome.storage.sync.set({
+            formats: snap.formats,
+            options: snap.options,
+            overrides: snap.overrides,
+          });
+          // Re-render the popup so the stats and chips reflect the new setup
+          // (the background worker rebuilds the context menu on its own).
+          location.reload();
+        } catch {
+          profileApplyBtn.disabled = false;
+        }
+      });
+    }
+  }
+
   // Status
   const dot = document.getElementById("dot");
   const statusText = document.getElementById("statusText");

@@ -149,6 +149,41 @@
     return clean;
   }
 
+  /**
+   * Validates a full settings snapshot ({ formats, options, overrides }) and
+   * returns a clean copy with defaults filled in. Shared by load(), the
+   * settings import in Options, and export profiles (#12).
+   */
+  function sanitizeSnapshot(raw) {
+    const src = raw && typeof raw === "object" ? raw : {};
+
+    const formats = { ...DEFAULTS };
+    const rawFormats = src.formats && typeof src.formats === "object" ? src.formats : {};
+    for (const key of VALID_KEYS) {
+      if (typeof rawFormats[key] === "boolean") formats[key] = rawFormats[key];
+    }
+    if (!Object.values(formats).some(Boolean)) formats.markdown = true;
+
+    const options = { ...OPTION_DEFAULTS };
+    const rawOptions = src.options && typeof src.options === "object" ? src.options : {};
+    for (const key of VALID_OPTION_KEYS) {
+      const val = rawOptions[key];
+      const def = OPTION_DEFAULTS[key];
+      if (typeof def === "string") {
+        if (typeof val !== "string") continue;
+        if (OPTION_ENUMS[key]) {
+          if (OPTION_ENUMS[key].includes(val)) options[key] = val;
+        } else {
+          options[key] = val;
+        }
+      } else if (typeof def === "boolean") {
+        if (typeof val === "boolean") options[key] = val;
+      }
+    }
+
+    return { formats, options, overrides: sanitizeOverrides(src.overrides) };
+  }
+
   async function load() {
     try {
       const stored = await chrome.storage.sync.get({
@@ -156,36 +191,50 @@
         options: OPTION_DEFAULTS,
         overrides: {},
       });
-
-      const formats = { ...DEFAULTS };
-      const rawFormats = stored.formats || {};
-      for (const key of VALID_KEYS) {
-        if (typeof rawFormats[key] === "boolean") formats[key] = rawFormats[key];
-      }
-
-      const options = { ...OPTION_DEFAULTS };
-      const rawOptions = stored.options || {};
-      for (const key of VALID_OPTION_KEYS) {
-        const val = rawOptions[key];
-        const def = OPTION_DEFAULTS[key];
-        if (typeof def === "string") {
-          if (typeof val !== "string") continue;
-          if (OPTION_ENUMS[key]) {
-            if (OPTION_ENUMS[key].includes(val)) options[key] = val;
-          } else {
-            options[key] = val;
-          }
-        } else if (typeof def === "boolean") {
-          if (typeof val === "boolean") options[key] = val;
-        }
-      }
-
-      const overrides = sanitizeOverrides(stored.overrides);
-
-      return { ...formats, ...options, overrides };
+      const clean = sanitizeSnapshot(stored);
+      return { ...clean.formats, ...clean.options, overrides: clean.overrides };
     } catch {
       return { ...DEFAULTS, ...OPTION_DEFAULTS, overrides: {} };
     }
+  }
+
+  // ── Export profiles (#12): named settings snapshots in chrome.storage.sync ──
+  // Sync quota is ~8 KB per item; a snapshot is ~1.5 KB, so cap the count.
+  const MAX_PROFILES = 6;
+  const MAX_PROFILE_NAME = 40;
+
+  /** Drops invalid names/snapshots and enforces the profile cap (newest kept). */
+  function sanitizeProfiles(raw) {
+    const clean = {};
+    if (!raw || typeof raw !== "object") return clean;
+    const names = Object.keys(raw)
+      .filter((n) => typeof n === "string" && n.trim() && n.length <= MAX_PROFILE_NAME &&
+                     raw[n] && typeof raw[n] === "object")
+      .sort((a, b) => (raw[b].savedAt || 0) - (raw[a].savedAt || 0))
+      .slice(0, MAX_PROFILES);
+    for (const name of names) {
+      const snap = sanitizeSnapshot(raw[name]);
+      clean[name] = {
+        formats: snap.formats,
+        options: snap.options,
+        overrides: snap.overrides,
+        savedAt: typeof raw[name].savedAt === "number" ? raw[name].savedAt : 0,
+      };
+    }
+    return clean;
+  }
+
+  async function loadProfiles() {
+    try {
+      const stored = await chrome.storage.sync.get({ profiles: {} });
+      return sanitizeProfiles(stored.profiles);
+    } catch {
+      return {};
+    }
+  }
+
+  async function saveProfiles(profiles) {
+    await chrome.storage.sync.set({ profiles: sanitizeProfiles(profiles) });
   }
 
   async function save(formats) {
@@ -218,6 +267,8 @@
     DEFAULTS, OPTION_DEFAULTS, OPTION_ENUMS,
     OVERRIDE_FIELDS, OVERRIDABLE_FORMATS,
     VALID_KEYS, VALID_OPTION_KEYS,
-    sanitizeOverrides, load, save,
+    MAX_PROFILES, MAX_PROFILE_NAME,
+    sanitizeOverrides, sanitizeSnapshot, sanitizeProfiles,
+    load, save, loadProfiles, saveProfiles,
   };
 })();

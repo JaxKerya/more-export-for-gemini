@@ -207,6 +207,31 @@
       <section class="panel panel-hidden" data-panel="options" aria-label="Export Options">
         <h2 class="panel-title">Export Options</h2>
 
+    <!-- Profiles -->
+    <section class="card" data-section="profiles">
+      <button class="section-header" type="button" tabindex="-1">
+        <div class="section-title-row">
+          <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+          <span>Profiles</span>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="meta-intro">
+          <span class="toggle-hint">Save the current formats, options and overrides as a named profile - e.g. <em>Academic paper</em> (A4, double spacing, APA) vs <em>Quick notes</em> (Obsidian MD, no TOC) - and switch in one click, here or from the popup.</span>
+        </div>
+        <div class="profile-save-row">
+          <input type="text" id="profileName" class="template-input" placeholder="Profile name (e.g. Academic paper)" maxlength="40" autocomplete="off">
+          <button class="backup-btn" id="profileSaveBtn" type="button">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Save current
+          </button>
+        </div>
+        <ul class="profile-list" id="profileList"></ul>
+        <div class="debug-status" id="profileStatus" aria-live="polite"></div>
+      </div>
+    </section>
+
     <!-- Export Options -->
     <section class="card" data-section="export-options">
       <button class="section-header" type="button" tabindex="-1">
@@ -1044,6 +1069,15 @@
           </button>
         </div>
         <div class="debug-status" id="reexportStatus" aria-live="polite"></div>
+
+        <div class="recent-head">
+          <div class="select-label">
+            <span class="select-name">Recent reports</span>
+            <span class="toggle-hint">Backed up automatically on every export (last 10, stored only on this device). Load one to re-export it without the Gemini page.</span>
+          </div>
+          <button class="backup-btn danger" id="recentClearBtn" type="button" hidden>Clear all</button>
+        </div>
+        <ul class="recent-list" id="recentList"></ul>
       </div>
     </section>
 
@@ -1115,6 +1149,7 @@
   <script src="../lib/docmeta.js"></script>
   <script src="../lib/export-opts.js"></script>
   <script src="../lib/source-hygiene.js"></script>
+  <script src="../lib/history.js"></script>
   <script src="../lib/citation.js"></script>
   <script src="../lib/toc.js"></script>
   <script src="../lib/download.js"></script>

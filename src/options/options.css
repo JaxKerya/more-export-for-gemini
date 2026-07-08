@@ -1230,6 +1230,89 @@ kbd {
   .nav-count { margin-left: -2px; }
 }
 
+/* ── Export profiles (#12) ── */
+.profile-save-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px var(--card-pad) 12px;
+}
+.profile-save-row .template-input { flex: 1; min-width: 0; }
+.profile-save-row .backup-btn { flex-shrink: 0; white-space: nowrap; }
+
+.profile-list,
+.recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--card-pad) 12px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+}
+.profile-list.visible { display: flex; }
+.recent-list { display: flex; }
+
+.profile-item,
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+.profile-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.profile-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-item-meta { font-size: 11px; color: var(--text-faint); }
+
+.profile-item .backup-btn,
+.recent-item .backup-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.backup-btn.danger {
+  border-color: rgba(242, 139, 130, 0.3);
+  background: var(--danger-weak);
+  color: var(--danger);
+}
+.backup-btn.danger:hover {
+  background: rgba(242, 139, 130, 0.2);
+  border-color: rgba(242, 139, 130, 0.5);
+}
+
+/* ── Recent reports (#13) ── */
+.recent-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px var(--card-pad) 8px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+.recent-head .backup-btn { padding: 5px 12px; font-size: 12px; }
+.recent-empty {
+  font-size: 12px;
+  color: var(--text-faint);
+  padding: 4px 2px 2px;
+}
+
 /* ── First-run welcome hero (shown once via ?welcome=1) ── */
 .welcome-hero {
   margin: 0 0 20px;

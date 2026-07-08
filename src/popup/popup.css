@@ -145,6 +145,61 @@ header {
   flex-shrink: 0;
 }
 
+/* ── Quick profile switcher ── */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #8ab4f8;
+}
+
+.profile-row[hidden] { display: none; }
+
+.profile-row svg { flex-shrink: 0; opacity: 0.85; }
+
+.profile-row select {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1e1f22;
+  color: #e3e3e3;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.profile-row select:focus {
+  outline: none;
+  border-color: #8ab4f8;
+}
+
+.profile-row button {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(138, 180, 248, 0.3);
+  background: rgba(138, 180, 248, 0.12);
+  color: #8ab4f8;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.profile-row button:hover {
+  background: rgba(138, 180, 248, 0.2);
+  border-color: rgba(138, 180, 248, 0.5);
+}
+
+.profile-row button:disabled { opacity: 0.4; cursor: default; }
+
 /* ── Enabled formats chips ── */
 .enabled-formats {
   display: flex;

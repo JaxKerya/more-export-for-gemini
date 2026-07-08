@@ -44,11 +44,22 @@ const { window, document } = parseHTML(fixtureHtml);
 const messageListeners = [];
 const storageListeners = [];
 
+const localStore = {};
 const chromeMock = {
   storage: {
     sync: {
       get: async (defaults) => defaults,
       set: async () => {},
+    },
+    local: {
+      get: async (defaults) => {
+        const out = {};
+        for (const k of Object.keys(defaults || {})) {
+          out[k] = localStore[k] !== undefined ? localStore[k] : defaults[k];
+        }
+        return out;
+      },
+      set: async (obj) => { Object.assign(localStore, obj); },
     },
     onChanged: { addListener: (fn) => storageListeners.push(fn) },
   },
@@ -81,7 +92,7 @@ vm.createContext(sandbox);
 const STACK = [
   "src/vendor/katex.js", "src/vendor/highlight.js",
   "src/lib/texmath.js", "src/lib/docmeta.js", "src/lib/export-opts.js",
-  "src/lib/source-hygiene.js",
+  "src/lib/source-hygiene.js", "src/lib/history.js",
   "src/exporters/zip.js", "src/exporters/markdown.js", "src/exporters/txt.js",
   "src/exporters/docx.js", "src/exporters/pdf.js", "src/exporters/html.js",
   "src/exporters/reader.js", "src/exporters/json.js", "src/exporters/latex.js",
@@ -182,6 +193,22 @@ let fullMarkdown = "";
   const res = await send({ type: "GEP_EXPORT", format: "definitely-not-a-format" });
   await tick();
   check("unknown format resolves without download", res && res.ok === true && downloads.length === 0);
+}
+
+// =====================================================================
+section("Export history auto-backup");
+
+{
+  // The markdown / docx exports above should have backed up the fixture IR
+  // (deduped into a single entry, since it's the same report each time).
+  await tick();
+  const items = await GEP.history.list();
+  check("export saved a history backup", items.length === 1);
+  const e = items[0] || {};
+  check("backup carries the report title", (e.title || "").includes("The Ontology of Sound"));
+  check("backup records triggering formats", Array.isArray(e.formats) && e.formats.includes("markdown") && e.formats.includes("docx"));
+  const full = await GEP.history.get(e.id);
+  check("backup IR is re-exportable", !!full && Array.isArray(full.ir.blocks) && full.ir.blocks.length > 0);
 }
 
 // =====================================================================

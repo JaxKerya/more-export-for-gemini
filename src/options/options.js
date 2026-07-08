@@ -30,6 +30,7 @@
     formats: FORMAT_DEFAULTS,
     options: OPTION_DEFAULTS,
     overrides: {},
+    profiles: {},
   });
   const formats = { ...FORMAT_DEFAULTS, ...stored.formats };
   const options = { ...OPTION_DEFAULTS, ...stored.options };
@@ -686,6 +687,126 @@
     });
   }
 
+  // ── Export profiles (#12): named settings snapshots ──
+  const profileNameInput = document.getElementById("profileName");
+  const profileSaveBtn = document.getElementById("profileSaveBtn");
+  const profileListEl = document.getElementById("profileList");
+  const profileStatus = document.getElementById("profileStatus");
+  let profiles = GEP.settings.sanitizeProfiles(stored.profiles);
+
+  function setProfileStatus(msg, type) {
+    if (!profileStatus) return;
+    profileStatus.textContent = msg;
+    profileStatus.className = "debug-status visible " + (type || "");
+  }
+
+  function currentSnapshot() {
+    const cleanFormats = {};
+    for (const key of Object.keys(FORMAT_DEFAULTS)) {
+      cleanFormats[key] = typeof formats[key] === "boolean" ? formats[key] : FORMAT_DEFAULTS[key];
+    }
+    return {
+      formats: cleanFormats,
+      options: { ...options },
+      overrides: sanitizeOverrides(overrides),
+      savedAt: Date.now(),
+    };
+  }
+
+  async function persistProfiles() {
+    await chrome.storage.sync.set({ profiles: GEP.settings.sanitizeProfiles(profiles) });
+  }
+
+  async function applyProfile(name) {
+    const snap = GEP.settings.sanitizeSnapshot(profiles[name]);
+    Object.assign(formats, snap.formats);
+    Object.assign(options, snap.options);
+    overrides = snap.overrides;
+    syncControlsFromState();
+    await saveAll();
+    refreshLastEnabled();
+    setProfileStatus(`Profile "${name}" applied.`, "success");
+  }
+
+  function renderProfiles() {
+    if (!profileListEl) return;
+    profileListEl.replaceChildren();
+    const names = Object.keys(profiles)
+      .sort((a, b) => (profiles[b].savedAt || 0) - (profiles[a].savedAt || 0));
+    profileListEl.classList.toggle("visible", names.length > 0);
+
+    for (const name of names) {
+      const p = profiles[name];
+      const li = document.createElement("li");
+      li.className = "profile-item";
+
+      const info = document.createElement("div");
+      info.className = "profile-info";
+      const nameEl = document.createElement("span");
+      nameEl.className = "profile-item-name";
+      nameEl.textContent = name;
+      const metaEl = document.createElement("span");
+      metaEl.className = "profile-item-meta";
+      const enabled = Object.values(p.formats || {}).filter(Boolean).length;
+      const when = p.savedAt ? new Date(p.savedAt).toLocaleDateString() : "";
+      metaEl.textContent = `${enabled} formats · ${p.options ? p.options.citation_style : ""}${when ? " · " + when : ""}`;
+      info.append(nameEl, metaEl);
+
+      const applyBtn = document.createElement("button");
+      applyBtn.className = "backup-btn";
+      applyBtn.type = "button";
+      applyBtn.textContent = "Apply";
+      applyBtn.addEventListener("click", () => { applyProfile(name); });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "backup-btn danger";
+      delBtn.type = "button";
+      delBtn.textContent = "Delete";
+      delBtn.setAttribute("aria-label", `Delete profile ${name}`);
+      delBtn.addEventListener("click", async () => {
+        delete profiles[name];
+        await persistProfiles();
+        renderProfiles();
+        setProfileStatus(`Profile "${name}" deleted.`, "success");
+      });
+
+      li.append(info, applyBtn, delBtn);
+      profileListEl.appendChild(li);
+    }
+  }
+
+  if (profileSaveBtn && profileNameInput) {
+    profileSaveBtn.addEventListener("click", async () => {
+      const name = profileNameInput.value.trim().slice(0, GEP.settings.MAX_PROFILE_NAME);
+      if (!name) {
+        setProfileStatus("Give the profile a name first.", "error");
+        profileNameInput.focus();
+        return;
+      }
+      const isNew = !(name in profiles);
+      if (isNew && Object.keys(profiles).length >= GEP.settings.MAX_PROFILES) {
+        setProfileStatus(`Profile limit reached (${GEP.settings.MAX_PROFILES}). Delete one first.`, "error");
+        return;
+      }
+      profiles[name] = currentSnapshot();
+      try {
+        await persistProfiles();
+      } catch (e) {
+        delete profiles[name];
+        setProfileStatus("Could not save profile: " + (e && e.message ? e.message : String(e)), "error");
+        return;
+      }
+      profileNameInput.value = "";
+      renderProfiles();
+      setProfileStatus(`Profile "${name}" ${isNew ? "saved" : "updated"}.`, "success");
+    });
+    profileNameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") profileSaveBtn.click();
+    });
+  }
+
+  renderProfiles();
+
   // ── Re-export from JSON (offline) ──
   // Reads a JSON report exported by this extension and produces any other
   // format entirely offline, using the live export options + source hygiene.
@@ -814,6 +935,108 @@
       }
     });
   }
+
+  // ── Recent reports (#13): auto-backed-up IRs from chrome.storage.local ──
+  const recentListEl = document.getElementById("recentList");
+  const recentClearBtn = document.getElementById("recentClearBtn");
+
+  function formatWhen(ts) {
+    if (!ts) return "";
+    const d = new Date(ts);
+    return d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function loadHistoryEntry(entry) {
+    const ir = entry && entry.ir;
+    if (!ir || !Array.isArray(ir.blocks)) {
+      setReexportStatus("This backup could not be read.", "error");
+      return;
+    }
+    reexportIR = {
+      title: typeof ir.title === "string" ? ir.title : "",
+      blocks: ir.blocks,
+      footnotes: Array.isArray(ir.footnotes) ? ir.footnotes : [],
+    };
+    if (ir.lang) reexportIR.lang = ir.lang;
+    if (ir.dir) reexportIR.dir = ir.dir;
+    if (ir.url) reexportIR.url = ir.url;
+    if (reexportBtn) reexportBtn.disabled = false;
+    if (reexportFileName) {
+      reexportFileName.textContent =
+        `${entry.title || "Untitled report"} - ${reexportIR.blocks.length} block(s), ${reexportIR.footnotes.length} source(s) (from history)`;
+    }
+    setReexportStatus("Report loaded from history. Pick a format and export.", "success");
+  }
+
+  async function renderRecentReports() {
+    if (!recentListEl || !window.GEP || !GEP.history) return;
+    let items = [];
+    try { items = await GEP.history.list(); } catch { items = []; }
+    recentListEl.replaceChildren();
+    if (recentClearBtn) recentClearBtn.hidden = items.length === 0;
+
+    if (!items.length) {
+      const li = document.createElement("li");
+      li.className = "recent-empty";
+      li.textContent = "No backups yet - they appear here after your first export.";
+      recentListEl.appendChild(li);
+      return;
+    }
+
+    for (const item of items) {
+      const li = document.createElement("li");
+      li.className = "recent-item";
+
+      const info = document.createElement("div");
+      info.className = "profile-info";
+      const nameEl = document.createElement("span");
+      nameEl.className = "profile-item-name";
+      nameEl.textContent = item.title || "Untitled report";
+      const metaEl = document.createElement("span");
+      metaEl.className = "profile-item-meta";
+      const kb = Math.max(1, Math.round((item.bytes || 0) / 1024));
+      metaEl.textContent = `${formatWhen(item.savedAt)} · ${item.blocks || 0} blocks · ${item.sources || 0} sources · ${kb} KB`;
+      info.append(nameEl, metaEl);
+
+      const loadBtn = document.createElement("button");
+      loadBtn.className = "backup-btn";
+      loadBtn.type = "button";
+      loadBtn.textContent = "Load";
+      loadBtn.addEventListener("click", async () => {
+        const entry = await GEP.history.get(item.id);
+        if (!entry) {
+          setReexportStatus("This backup is no longer available.", "error");
+          renderRecentReports();
+          return;
+        }
+        loadHistoryEntry(entry);
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "backup-btn danger";
+      delBtn.type = "button";
+      delBtn.textContent = "Delete";
+      delBtn.setAttribute("aria-label", `Delete backup ${item.title || ""}`);
+      delBtn.addEventListener("click", async () => {
+        await GEP.history.remove(item.id);
+        renderRecentReports();
+      });
+
+      li.append(info, loadBtn, delBtn);
+      recentListEl.appendChild(li);
+    }
+  }
+
+  if (recentClearBtn) {
+    recentClearBtn.addEventListener("click", async () => {
+      if (!window.GEP || !GEP.history) return;
+      await GEP.history.clear();
+      renderRecentReports();
+      setReexportStatus("All backups cleared.", "success");
+    });
+  }
+
+  renderRecentReports();
 
   // ── Debug mode (tap logo 7 times) ──
   const debugCard = document.querySelector('.card[data-section="debug"]');

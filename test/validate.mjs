@@ -1217,7 +1217,7 @@ check("no overlap between static core and lazy stack", warResources.every((f) =>
 for (const f of [
   "src/vendor/katex.js", "src/vendor/highlight.js",
   "src/lib/texmath.js", "src/lib/docmeta.js", "src/lib/citation.js",
-  "src/lib/toc.js", "src/lib/source-hygiene.js",
+  "src/lib/toc.js", "src/lib/source-hygiene.js", "src/lib/history.js",
   "src/exporters/zip.js", "src/exporters/markdown.js", "src/exporters/txt.js",
   "src/exporters/docx.js", "src/exporters/pdf.js", "src/exporters/html.js",
   "src/exporters/reader.js", "src/exporters/json.js", "src/exporters/latex.js",

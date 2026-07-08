@@ -286,6 +286,14 @@
 
     let ir = getIR();
     if (!ir) return;
+    // Auto-backup (#13): snapshot the full IR so the report can be re-exported
+    // from Options later, even after the Gemini conversation is deleted.
+    // Fire-and-forget — a backup failure must never block the export itself.
+    if (GEP.history) {
+      GEP.history.add(ir, { format: rawFormat }).catch((err) => {
+        console.debug("[GEP] history backup skipped", err);
+      });
+    }
     if (scope && GEP.irFilter) ir = GEP.irFilter.apply(ir, scope);
 
     const exportOpts = getExportOpts(format);
