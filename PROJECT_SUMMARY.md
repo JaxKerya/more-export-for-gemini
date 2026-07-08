@@ -72,13 +72,13 @@ Kullanıcı bir formata tıkladığında, sayfa içerisindeki rapor elementleri 
   * `pdf.js`: Paylaşılan HTML gövde kurucusunu (`bodyHtml`) ve yazdırma stil sayfasını üretip tarayıcının yazdırma arayüzünü açan modül (HTML/Reader/EPUB de aynı gövde kurucusunu paylaşır).
   * `reader.js`: Tema, anahat, okuma ilerlemesi ve sözdizimi renklendirmesi içeren kendi kendine yeten okuma sayfası (Reader HTML) üreten dönüştürücü.
   * Diğer formatlara özel metin tabanlı dönüştürücüler (`markdown.js`, `txt.js`, `html.js`, `json.js`, `latex.js`, `csv.js`, `bibtex.js`, `ris.js`, `csljson.js`, `rtf.js`, `vault.js`).
-* **src/options/**: Eklenti ayarlar sayfasının arayüz ve mantıksal kodları (sekmeli ayarlar, çevrimdışı yeniden aktarım, ilk kurulum karşılaması).
+* **src/options/**: Eklenti ayarlar sayfasının arayüz ve mantıksal kodları. `options.js` bir ES modül girişidir; her ayar kartı (`modules/nav.js`, `profiles.js`, `backup.js`, `reexport.js`, `tools.js`, `feedback.js`, `whats-new.js`) ayrı bir modülde yaşar ve paylaşılan durum bir `ctx` nesnesiyle aktarılır.
 * **src/popup/**: Tarayıcı araç çubuğunda uzantı simgesine tıklandığında açılan hızlı durum ve bilgi penceresi.
 * **test/**: Node.js sanal makine (`vm`) ortamında çalışan otomatik test betikleri — `edge-cases.mjs` (birim/entegrasyon), `validate.mjs` (yüksek seviye doğrulama + manifest bütünlüğü), `extractor.mjs` (linkedom ile gerçek çıkarıcı), `menu-injector.mjs` (menü enjeksiyonu), `background.mjs` (sahte chrome ile servis çalışanı), `content.mjs` (mesaj işleyici smoke testleri) — ve sentetik DOM örnekleri (`test/fixtures/`).
 * **validate/**: Testler sırasında üretilen ve doğruluğu denetlenen örnek çıktı dosyalarının (.md, .txt, .html, .docx, .epub vb.) saklandığı klasör.
 * **referance/**: Ekran görüntüleri, referans HTML kodları ve örnek çıktıların yer aldığı klasör.
 * **store/**: Chrome Web Mağazası yüklemesi için derlenen ZIP arşivlerinin biriktirildiği klasör.
-* **build.ps1**: Uzantı dosyalarını temiz bir ZIP paketi halinde `store` klasörüne derleyen PowerShell betiği.
+* **scripts/build.mjs**: Uzantı dosyalarını temiz bir ZIP paketi halinde `store` klasörüne derleyen platform bağımsız Node betiği (`npm run build`); sürüm etiketi push edildiğinde CI aynı betikle GitHub Release artifact'ı üretir.
 * **PRIVACY.md**: Veri gizliliği politikası ve eklentinin kullandığı izinlerin gerekçelerini içeren belge.
 
 ## Teknolojiler
@@ -86,8 +86,7 @@ Kullanıcı bir formata tıkladığında, sayfa içerisindeki rapor elementleri 
 * JavaScript (Vanilla JS - Chrome Extension API'leri)
 * HTML5 / CSS3
 * Manifest V3 standartları
-* Node.js (Otomatik test ve doğrulama süreçleri için)
-* PowerShell (Derleme otomasyonu için)
+* Node.js (Otomatik test, doğrulama ve derleme süreçleri için)
 
 ## Önemli Kavramlar
 

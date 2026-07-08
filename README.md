@@ -35,11 +35,25 @@ CI (GitHub Actions) runs lint, typecheck and the full test suite on every push a
 
 ## Build a store package
 
-```powershell
-powershell -ExecutionPolicy Bypass -File build.ps1
+```bash
+npm run build
 ```
 
-Produces `store/more-export-for-gemini-v<version>.zip`. The file list is derived from `manifest.json` (content scripts + `web_accessible_resources` + popup/options pages), so it cannot drift from what the extension actually loads.
+Produces `store/more-export-for-gemini-v<version>.zip` (works on any OS — plain Node, no dependencies). The file list is derived from `manifest.json` (content scripts + `web_accessible_resources` + popup/options pages), so it cannot drift from what the extension actually loads.
+
+## Releases
+
+Pushing a version tag builds and publishes a GitHub Release automatically:
+
+```bash
+git tag v2.2.0 && git push origin v2.2.0
+```
+
+The `Release` workflow runs lint + typecheck + the full test suite, builds the store zip and attaches it to the release. Before tagging, bump `version` (and `version_name`) in `manifest.json` and `version` in `package.json`, and add a `CHANGELOG.md` entry.
+
+### Versioning & the Beta label
+
+`manifest.json` currently ships `version_name: "2.1.0 Beta"` on purpose: the extension depends on Gemini's (undocumented) DOM, so the first store release is labelled Beta while real-world usage is observed. Exit criteria: after the first Chrome Web Store release, monitor bug reports for **2–3 weeks**; if no critical extraction/export bugs surface, drop the ` Beta` suffix in **2.2.0** (remove `version_name` entirely — Chrome then displays `version`). The UI reads the version exclusively via `chrome.runtime.getManifest()`, so no source changes are needed beyond the manifest.
 
 ## Architecture in one paragraph
 
@@ -54,8 +68,8 @@ src/background.js     Service worker: context menu, shortcuts, first-run page
 src/lib/              Extractor, settings, citations, TOC, math, validators…
 src/exporters/        16 IR → format converters (zero dependencies)
 src/vendor/           Generated KaTeX / highlight.js single-file bundles
-src/popup/ options/   Toolbar popup and the tabbed Settings page
+src/popup/            Toolbar popup
+src/options/          Settings page (ES module entry + per-card modules/)
 test/                 Node-based test suites (vm + linkedom, no browser needed)
-scripts/              Vendor build + external validation tooling
-build.ps1             Chrome Web Store package builder
+scripts/              build.mjs (store package), vendor build, external validation
 ```

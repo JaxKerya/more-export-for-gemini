@@ -1169,6 +1169,8 @@
   <script src="../exporters/csljson.js"></script>
   <script src="../exporters/rtf.js"></script>
   <script src="../exporters/vault.js"></script>
-  <script src="options.js"></script>
+  <!-- ES module entry (#17): classic GEP scripts above run first while the
+       document parses; the module (deferred by spec) starts after them. -->
+  <script type="module" src="options.js"></script>
 </body>
 </html>

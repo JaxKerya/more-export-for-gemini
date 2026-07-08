@@ -717,5 +717,10 @@
     return lines.join("\n");
   }
 
-  console.debug("[GEP] More Export for Gemini v2.1.0 Beta is active.");
+  try {
+    const m = chrome.runtime.getManifest();
+    console.debug(`[GEP] More Export for Gemini v${m.version_name || m.version} is active.`);
+  } catch {
+    console.debug("[GEP] More Export for Gemini is active.");
+  }
 })();

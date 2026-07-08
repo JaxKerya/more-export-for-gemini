@@ -13,6 +13,7 @@
     "test:background": "node test/background.mjs",
     "test:content": "node test/content.mjs",
     "test:history": "node test/history.mjs",
+    "build": "node scripts/build.mjs",
     "lint": "eslint src/lib src/exporters src/popup src/options src/content.js src/background.js test scripts",
     "typecheck": "tsc --noEmit",
     "validate:external": "node scripts/external-validate.mjs",

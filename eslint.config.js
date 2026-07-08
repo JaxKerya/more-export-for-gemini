@@ -41,6 +41,14 @@ export default [
     },
   },
   {
+    // Extension pages support ES modules (unlike content scripts, which stay
+    // IIFE + window.GEP with manifest-ordered loading).
+    files: ["src/options/**/*.js"],
+    languageOptions: {
+      sourceType: "module",
+    },
+  },
+  {
     files: ["test/**/*.mjs", "scripts/**/*.mjs"],
     languageOptions: {
       ecmaVersion: 2022,
