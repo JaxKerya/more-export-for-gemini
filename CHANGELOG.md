@@ -5,6 +5,17 @@ All notable changes to **More Export for Gemini** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Faster page load — exporters now load on demand.** The content script core injected into every Gemini page shrank from 31 files to 8 (settings, export options, extractor, validator, download, IR filter, menu injector, orchestrator). The heavy conversion stack — the KaTeX and highlight.js vendors plus all 16 exporters — moved to `web_accessible_resources` and is dynamically imported the first time you export (memoized; retried automatically if a load fails). Menu injection, PING and quality checks work exactly as before; the first export logs its one-time load duration to the console.
+
+### Added
+- **One-click diagnostics on extraction failure:** when a page yields no exportable content ("No Deep Research content found" / "Failed to read page content"), the error toast now offers a **Get diagnostics** button that downloads `gep-diagnostics.txt` on the spot — ready to attach to a bug report. The toast component gained generic action-button support alongside the existing Retry pattern.
+- **Menu-injection counters in diagnostics:** the diagnostics report now includes a "Menu injection (this session)" section (menus seen / export menus matched / injected), so a silent menu breakage after a Gemini UI change becomes visible in user-submitted reports.
+- **Hardened export-menu detection:** `isExportMenu` now falls back to substring matches on `data-test-id` (`*copy*`, `*export*`, `*share*`) in addition to the exact test ids, so a renamed Gemini button no longer silently disables injection.
+- **Test coverage for previously untested layers** (75 new checks): `test/menu-injector.mjs` (detection incl. fallback selectors, format filtering, 12-item cap + notice, re-injection guard, no-reference fallback items, session counters), `test/background.mjs` (context menu built from defaults and stored formats, scoped `@tables` items gated by their base format, separator logic, storage-change rebuilds, context-menu clicks, all keyboard commands) and `test/content.mjs` (full-stack message-handler smoke tests: PING, EXPORT with download capture, scoped export, invalid/unknown formats, QUALITY, DIAGNOSE).
+
 ## [2.1.0] - Beta
 
 This release ships as a **Beta** (`version_name: "2.1.0 Beta"` in the manifest; the numeric `version` stays `2.1.0`). Users are told up front: a **BETA badge** sits next to the name in both the popup and the Settings page, and a short notice warns that some exports may not be fully stable yet and asks for issue reports.
