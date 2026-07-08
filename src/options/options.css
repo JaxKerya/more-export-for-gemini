@@ -1237,8 +1237,10 @@ kbd {
   gap: 8px;
   padding: 10px var(--card-pad) 12px;
 }
-.profile-save-row .template-input { flex: 1; min-width: 0; }
-.profile-save-row .backup-btn { flex-shrink: 0; white-space: nowrap; }
+/* .template-input carries a margin-top for the stacked template-row layout;
+   in this flex row it would push the input below the button. */
+.profile-save-row .template-input { flex: 1; min-width: 0; margin-top: 0; }
+.profile-save-row .backup-btn { flex-shrink: 0; white-space: nowrap; margin-left: 0; }
 
 .profile-list,
 .recent-list {
@@ -1284,6 +1286,7 @@ kbd {
   padding: 5px 12px;
   font-size: 12px;
   flex-shrink: 0;
+  margin-left: 0;
 }
 
 .backup-btn.danger {
