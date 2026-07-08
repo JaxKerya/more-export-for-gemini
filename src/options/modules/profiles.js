@@ -125,5 +125,15 @@ export async function initProfiles(ctx) {
     });
   }
 
+  // Keep the list fresh when profiles change in another context (a second
+  // Options window; our own writes just re-render idempotently).
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "sync" || !changes.profiles) return;
+    const next = GEP.settings.sanitizeProfiles(changes.profiles.newValue);
+    for (const key of Object.keys(profiles)) delete profiles[key];
+    Object.assign(profiles, next);
+    renderProfiles();
+  });
+
   renderProfiles();
 }

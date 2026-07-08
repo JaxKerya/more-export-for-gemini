@@ -16,6 +16,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Refuse to release a tag that doesn't match the packaged version —
+      # otherwise a stale manifest would ship under the wrong release number.
+      - name: Verify tag matches manifest version
+        run: |
+          MANIFEST_VERSION=$(node -p "require('./manifest.json').version")
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$MANIFEST_VERSION" != "$TAG_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match manifest.json version $MANIFEST_VERSION." >&2
+            echo "Run 'npm run bump -- $TAG_VERSION' and re-tag." >&2
+            exit 1
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"

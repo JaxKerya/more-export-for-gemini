@@ -458,6 +458,32 @@ document.getElementById("resetConfirm").addEventListener("click", async () => {
   resetModal.classList.remove("visible");
 });
 
+// ── Cross-context sync ──
+// Reflect changes written by another context (the popup's quick profile
+// switcher, or a second Options window) onto this open page. Fires for our
+// own writes too, but re-applying just-saved values is a visual no-op.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== "sync") return;
+  let touched = false;
+  if (changes.formats && changes.formats.newValue) {
+    Object.assign(formats, { ...FORMAT_DEFAULTS, ...changes.formats.newValue });
+    touched = true;
+  }
+  if (changes.options && changes.options.newValue) {
+    Object.assign(options, { ...OPTION_DEFAULTS, ...changes.options.newValue });
+    touched = true;
+  }
+  if (changes.overrides) {
+    ctx.overrides = sanitizeOverrides(changes.overrides.newValue);
+    touched = true;
+  }
+  if (touched) {
+    syncControlsFromState();
+    refreshLastEnabled();
+    refreshBadges();
+  }
+});
+
 // ── Card modules ──
 initNav();
 initBackup(ctx);

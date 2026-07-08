@@ -207,6 +207,25 @@ section("Profiles: snapshot sanitization");
   const junk = S.sanitizeSnapshot("garbage");
   check("junk snapshot yields defaults", junk.formats.markdown === S.DEFAULTS.markdown &&
     junk.options.citation_style === S.OPTION_DEFAULTS.citation_style);
+
+  // Free-text limits: unbounded strings are truncated at OPTION_TEXT_LIMITS
+  // so oversized values can't blow the storage.sync per-item quota via
+  // profiles / import.
+  const long = S.sanitizeSnapshot({
+    options: {
+      meta_author: "a".repeat(500),
+      meta_abstract: "b".repeat(5000),
+      filename_template: "{title}".repeat(50),
+    },
+  });
+  check("meta_author truncated to limit",
+    long.options.meta_author.length === S.OPTION_TEXT_LIMITS.meta_author);
+  check("meta_abstract truncated to limit",
+    long.options.meta_abstract.length === S.OPTION_TEXT_LIMITS.meta_abstract);
+  check("filename_template truncated to limit",
+    long.options.filename_template.length === S.OPTION_TEXT_LIMITS.filename_template);
+  check("short free text untouched",
+    S.sanitizeSnapshot({ options: { meta_author: "Jane" } }).options.meta_author === "Jane");
 }
 
 // =====================================================================

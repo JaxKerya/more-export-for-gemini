@@ -292,7 +292,7 @@
             <span class="select-name">Filename Template</span>
             <span class="toggle-hint">Customize exported file names using tokens</span>
           </div>
-          <input type="text" id="filenameTemplate" data-option="filename_template" class="template-input" placeholder="{title} - {date}">
+          <input type="text" id="filenameTemplate" data-option="filename_template" class="template-input" placeholder="{title} - {date}" maxlength="120">
           <div class="template-preview" id="templatePreview"></div>
           <div class="template-tokens">
             <code>{title}</code> <code>{date}</code> <code>{YYYY}</code> <code>{MM}</code> <code>{DD}</code>
@@ -581,28 +581,28 @@
             <span class="select-name">Author</span>
             <span class="toggle-hint">Name(s) shown as the document byline</span>
           </div>
-          <input type="text" id="metaAuthor" data-option-text="meta_author" class="template-input" placeholder="e.g. Jane Doe" autocomplete="off">
+          <input type="text" id="metaAuthor" data-option-text="meta_author" class="template-input" placeholder="e.g. Jane Doe" maxlength="200" autocomplete="off">
         </div>
         <div class="template-row">
           <div class="select-label">
             <span class="select-name">Affiliation</span>
             <span class="toggle-hint">Institution, organization or department</span>
           </div>
-          <input type="text" id="metaAffiliation" data-option-text="meta_affiliation" class="template-input" placeholder="e.g. University of Example" autocomplete="off">
+          <input type="text" id="metaAffiliation" data-option-text="meta_affiliation" class="template-input" placeholder="e.g. University of Example" maxlength="200" autocomplete="off">
         </div>
         <div class="template-row">
           <div class="select-label">
             <span class="select-name">Keywords</span>
             <span class="toggle-hint">Comma-separated; added to metadata and a Keywords line</span>
           </div>
-          <input type="text" id="metaKeywords" data-option-text="meta_keywords" class="template-input" placeholder="e.g. machine learning, climate, policy" autocomplete="off">
+          <input type="text" id="metaKeywords" data-option-text="meta_keywords" class="template-input" placeholder="e.g. machine learning, climate, policy" maxlength="300" autocomplete="off">
         </div>
         <div class="template-row">
           <div class="select-label">
             <span class="select-name">Abstract</span>
             <span class="toggle-hint">Short summary placed before the body</span>
           </div>
-          <textarea id="metaAbstract" data-option-text="meta_abstract" class="template-input meta-textarea" rows="4" placeholder="A brief summary of the report…"></textarea>
+          <textarea id="metaAbstract" data-option-text="meta_abstract" class="template-input meta-textarea" rows="4" maxlength="2000" placeholder="A brief summary of the report…"></textarea>
         </div>
       </div>
     </section>

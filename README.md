@@ -28,6 +28,7 @@ npm install
 | `npm run test:menu`        | Menu-injection tests (detection, filtering, caps).                  |
 | `npm run test:background`  | Service-worker tests with a mocked `chrome` API.                    |
 | `npm run test:content`     | Content-script message-handler smoke tests (PING/EXPORT/QUALITY).   |
+| `npm run test:options`     | Options page against the real HTML (toggles, profiles, history, sync). |
 | `npm run lint`             | ESLint over `src/`, `test/`, `scripts/`.                            |
 | `npm run typecheck`        | TypeScript `checkJs` static analysis (no emit).                     |
 
@@ -43,13 +44,15 @@ Produces `store/more-export-for-gemini-v<version>.zip` (works on any OS — plai
 
 ## Releases
 
-Pushing a version tag builds and publishes a GitHub Release automatically:
+The full release flow (bump, notes, manual smoke test, tagging) is documented in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md). The short version:
 
 ```bash
-git tag v2.2.0 && git push origin v2.2.0
+npm run bump -- 2.2.0     # updates manifest.json, package.json, package-lock.json
+# update CHANGELOG.md + the What's New notes, run the smoke test, commit, then:
+git tag v2.2.0 && git push origin master v2.2.0
 ```
 
-The `Release` workflow runs lint + typecheck + the full test suite, builds the store zip and attaches it to the release. Before tagging, bump `version` (and `version_name`) in `manifest.json` and `version` in `package.json`, and add a `CHANGELOG.md` entry.
+The `Release` workflow refuses tags that don't match `manifest.json`, runs lint + typecheck + the full test suite, builds the store zip and attaches it to the GitHub Release.
 
 ### Versioning & the Beta label
 

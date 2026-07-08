@@ -105,6 +105,21 @@
     reader_accent: ["blue", "teal", "green", "purple", "amber", "rose"],
   };
 
+  /**
+   * Upper bounds for free-text options. chrome.storage.sync has an ~8 KB
+   * per-item quota and snapshots are copied into export profiles, so
+   * unbounded user text must be capped somewhere central. Mirrored by the
+   * maxlength attributes in options.html; enforced in sanitizeSnapshot so
+   * load / settings import / profile apply are all covered.
+   */
+  const OPTION_TEXT_LIMITS = {
+    filename_template: 120,
+    meta_author: 200,
+    meta_affiliation: 200,
+    meta_keywords: 300,
+    meta_abstract: 2000,
+  };
+
   const VALID_KEYS = new Set(Object.keys(DEFAULTS));
   const VALID_OPTION_KEYS = new Set(Object.keys(OPTION_DEFAULTS));
 
@@ -174,7 +189,8 @@
         if (OPTION_ENUMS[key]) {
           if (OPTION_ENUMS[key].includes(val)) options[key] = val;
         } else {
-          options[key] = val;
+          const limit = OPTION_TEXT_LIMITS[key];
+          options[key] = limit ? val.slice(0, limit) : val;
         }
       } else if (typeof def === "boolean") {
         if (typeof val === "boolean") options[key] = val;
@@ -264,7 +280,7 @@
   }
 
   GEP.settings = {
-    DEFAULTS, OPTION_DEFAULTS, OPTION_ENUMS,
+    DEFAULTS, OPTION_DEFAULTS, OPTION_ENUMS, OPTION_TEXT_LIMITS,
     OVERRIDE_FIELDS, OVERRIDABLE_FORMATS,
     VALID_KEYS, VALID_OPTION_KEYS,
     MAX_PROFILES, MAX_PROFILE_NAME,
