@@ -29,7 +29,9 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
-# ── Editor / IDE ─────────────────────────────────────────────
+# ── Editor / IDE / AI-agent config (local only) ─────────────
+.cursor/
+.claude/
 .vscode/
 .idea/
 *.swp
