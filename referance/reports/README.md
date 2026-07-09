@@ -1,6 +1,7 @@
 # Report corpus — gerçek DOM test fixtureları
 
-Bu klasördeki her `.md` dosyası, `test/extractor.mjs` tarafından otomatik
+Bu klasördeki `report[N].md` adlı her dosya (ör. `report[1].md`,
+`report[12].md` — sayı sınırı yok), `test/extractor.mjs` tarafından otomatik
 bulunur ve gerçek DOM üzerinde extraction testinden geçirilir (Scenario 3b).
 Dosya eklemek yeterlidir; test koduna dokunmak gerekmez.
 
@@ -10,7 +11,8 @@ Dosya eklemek yeterlidir; test koduna dokunmak gerekmez.
 2. DevTools → Elements'ta `#extended-response-markdown-content` öğesini bul
    (rapor içeriğinin kökü).
 3. Sağ tık → **Copy → Copy outerHTML**.
-4. Bu klasöre `report[N].md` adıyla yapıştır (ör. `report[1].md`).
+4. Bu klasöre `report[N].md` adıyla yapıştır; N mevcut en büyük sayının bir
+   fazlası olsun (ör. `report[6].md`). Başka adlı dosyalar taranmaz.
 
 Kaynak panelinin DOM'u genellikle bu kopyanın içinde zaten bulunur; ayrıca
 kopyalamak gerekmez.

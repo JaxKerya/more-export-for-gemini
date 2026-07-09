@@ -258,9 +258,10 @@ if (fs.existsSync(realContentPath)) {
 const reportsDir = path.join(root, "referance", "reports");
 
 if (fs.existsSync(reportsDir)) {
+  // Any number of captures named report[N].md, e.g. report[1].md, report[12].md.
   const reportFiles = fs.readdirSync(reportsDir)
-    .filter((f) => f.toLowerCase().endsWith(".md") && f.toLowerCase() !== "readme.md")
-    .sort();
+    .filter((f) => /^report\[\d+\]\.md$/i.test(f))
+    .sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]));
   if (reportFiles.length) {
     section(`Report corpus (referance/reports/, ${reportFiles.length} capture${reportFiles.length > 1 ? "s" : ""})`);
     for (const file of reportFiles) {
