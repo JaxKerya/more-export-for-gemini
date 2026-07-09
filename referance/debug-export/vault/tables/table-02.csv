@@ -1,6 +1,0 @@
-Algoritma Modeli,Bellek Karmaşıklığı (IO),Hızlandırıcı Entegrasyonu,Endüstriyel Etki ve Çıkarım Performansı
-Geleneksel MHA,Karesel: ,Yok / Sınırlı,Devasa boyutlu KV önbelleği nedeniyle yavaştır.
-FlashAttention-1,Doğrusal: ,SRAM Döşeme (Tiling),GPU okuma/yazma döngülerini minimuma indirerek hız sağlar.
-FlashAttention-2,Doğrusal: ,İş Bölümü Dağıtımı,NVIDIA A100'lerde donanım limitinin %73'üne (225 TFLOP/s) ulaşır.
-FlashAttention-3,Doğrusal: ,TMA ve Asenkronizasyon,Hopper (H100) mimarisinde FP8 desteği ile 1.2 PFLOP/s gücüne ulaşır.
-GQA (Ainslie vd.),Değişken / Ara Form,MHA ve MQA Melezi,Çıkarım sırasında bellek tüketimini azaltırken kaliteden ödün vermez.

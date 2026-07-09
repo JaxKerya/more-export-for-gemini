@@ -10,6 +10,14 @@ store/*.zip
 validate/
 Manuel-Validate/
 
+# referance/ holds local captures & sample exports; only the three real-DOM
+# fixtures that test/extractor.mjs and scripts/export-from-dom.mjs read
+# stay tracked.
+referance/*
+!referance/outer-html.md
+!referance/sources outer-html.md
+!referance/testprompt-outerhtml.md
+
 # ── Tooling caches ───────────────────────────────────────────
 .eslintcache
 *.tsbuildinfo
@@ -32,6 +40,7 @@ $RECYCLE.BIN/
 # ── Editor / IDE / AI-agent config (local only) ─────────────
 .cursor/
 .claude/
+agent-skills/
 .vscode/
 .idea/
 *.swp
