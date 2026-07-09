@@ -42,6 +42,57 @@
     "paragraph", "subparagraph", "subparagraph",
   ];
 
+  /**
+   * Detect the dominant CJK script in the report so the preamble can load a
+   * matching font package. Kana implies Japanese and Hangul implies Korean;
+   * Han-only text falls back to ir.lang, defaulting to Chinese.
+   * @returns {"ja"|"ko"|"zh"|null}
+   */
+  function detectCjkScript(ir) {
+    const text = JSON.stringify(ir) || "";
+    if (/[\u3040-\u30FF\u31F0-\u31FF]/.test(text)) return "ja";
+    if (/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(text)) return "ko";
+    if (/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/.test(text)) {
+      const lang = String(ir.lang || "").toLowerCase();
+      if (lang.startsWith("ja")) return "ja";
+      if (lang.startsWith("ko")) return "ko";
+      return "zh";
+    }
+    return null;
+  }
+
+  /**
+   * Preamble lines (inside the non-pdfTeX branch, after fontspec) that load a
+   * CJK-capable font automatically. All referenced fonts ship with TeX Live /
+   * Overleaf: Harano Aji via luatexja-preset, Fandol via xeCJK's defaults,
+   * UnBatang via luatexko. Noto is used on XeLaTeX only when installed.
+   */
+  const CJK_FONT_SETUP = {
+    ja: [
+      "  \\ifLuaTeX",
+      "    \\usepackage[haranoaji]{luatexja-preset}% Japanese fonts bundled with TeX Live",
+      "  \\else",
+      "    \\usepackage{xeCJK}",
+      "    \\IfFontExistsTF{Noto Serif CJK JP}{\\setCJKmainfont{Noto Serif CJK JP}}{}",
+      "  \\fi",
+    ],
+    ko: [
+      "  \\ifLuaTeX",
+      "    \\usepackage{luatexko}% Korean fonts bundled with TeX Live",
+      "  \\else",
+      "    \\usepackage{xeCJK}",
+      "    \\IfFontExistsTF{Noto Serif CJK KR}{\\setCJKmainfont{Noto Serif CJK KR}}{}",
+      "  \\fi",
+    ],
+    zh: [
+      "  \\ifLuaTeX",
+      "    \\usepackage[fandol]{luatexja-preset}% Chinese fonts bundled with TeX Live",
+      "  \\else",
+      "    \\usepackage{xeCJK}% defaults to the bundled Fandol fonts",
+      "  \\fi",
+    ],
+  };
+
   function listToTex(block, includeFootnotes) {
     const rootEnv = block.ordered ? "enumerate" : "itemize";
     const envStack = [rootEnv];
@@ -124,6 +175,8 @@
     const fontSize = [10, 12].includes(Number(layout.fontSize)) ? Number(layout.fontSize) : 11;
     const paper = layout.paper === "letter" ? "letterpaper" : "a4paper";
 
+    const cjk = detectCjkScript(ir);
+
     const out = [
       `\\documentclass[${fontSize}pt,${paper}]{article}`,
       // Compile with ANY engine: pdfLaTeX uses inputenc/fontenc, while
@@ -131,6 +184,11 @@
       // CJK, emoji) degrades to a "missing glyph" warning instead of a fatal
       // error. LuaLaTeX/XeLaTeX is recommended for multilingual reports.
       "\\usepackage{iftex}",
+      ...(cjk ? [
+        `% This report contains CJK (${cjk}) text. pdfLaTeX cannot render CJK`,
+        "% glyphs -- compile with LuaLaTeX (recommended) or XeLaTeX instead.",
+        "% The font setup below is applied automatically on those engines.",
+      ] : []),
       "\\ifPDFTeX",
       "  \\usepackage[utf8]{inputenc}",
       "  \\usepackage[T1]{fontenc}",
@@ -183,6 +241,7 @@
       "  \\newunicodechar{\u20AC}{\\texteuro{}}",
       "\\else",
       "  \\usepackage{fontspec}",
+      ...(cjk ? CJK_FONT_SETUP[cjk] : []),
       "\\fi",
       "\\usepackage{amsmath}",
       "\\usepackage{amssymb}",

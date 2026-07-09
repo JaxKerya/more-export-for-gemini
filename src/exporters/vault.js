@@ -33,7 +33,8 @@
     const rows = [];
     if (block.header && block.header.length) rows.push(block.header);
     (block.rows || []).forEach((r) => rows.push(r));
-    return rows
+    // UTF-8 BOM so Excel decodes non-ASCII text correctly (see csv.js).
+    return "\uFEFF" + rows
       .map((row) => (row || []).map((cell) => csvField(runsToPlain(cell))).join(","))
       .join("\r\n");
   }

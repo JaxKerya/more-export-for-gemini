@@ -882,6 +882,32 @@ check("i18n csv: table scripts preserved", (() => {
   const out = GEP.csv.convert(i18nIR);
   return ["語言", "Язык", "中文", "русский"].every((p) => out.includes(p));
 })());
+// Excel on Windows needs a UTF-8 BOM to decode non-ASCII CSV correctly.
+check("csv: starts with UTF-8 BOM", GEP.csv.convert(i18nIR).charCodeAt(0) === 0xFEFF);
+check("csv: no-tables output also has BOM", GEP.csv.convert({ title: "x", blocks: [], footnotes: [] }).charCodeAt(0) === 0xFEFF);
+check("vault csv: starts with UTF-8 BOM", GEP.vault.tableToCsv({ header: [[{ text: "語" }]], rows: [] }).charCodeAt(0) === 0xFEFF);
+
+// CJK reports get an automatic engine-conditional font setup in the preamble.
+check("latex cjk: japanese report loads luatexja-preset", (() => {
+  const out = GEP.latex.convert({ title: "レポート", blocks: [{ type: "paragraph", runs: [{ text: "日本語のテキスト" }] }], footnotes: [] }, optsOn);
+  return out.includes("luatexja-preset") && out.includes("xeCJK") && out.includes("Noto Serif CJK JP");
+})());
+check("latex cjk: korean report loads luatexko", (() => {
+  const out = GEP.latex.convert({ title: "보고서", blocks: [{ type: "paragraph", runs: [{ text: "한국어 텍스트" }] }], footnotes: [] }, optsOn);
+  return out.includes("luatexko") && out.includes("Noto Serif CJK KR");
+})());
+check("latex cjk: han-only report defaults to chinese fandol", (() => {
+  const out = GEP.latex.convert({ title: "报告", blocks: [{ type: "paragraph", runs: [{ text: "中文文本" }] }], footnotes: [] }, optsOn);
+  return out.includes("[fandol]{luatexja-preset}");
+})());
+check("latex cjk: han-only report with ir.lang=ja treated as japanese", (() => {
+  const out = GEP.latex.convert({ title: "漢字", lang: "ja", blocks: [{ type: "paragraph", runs: [{ text: "漢字体" }] }], footnotes: [] }, optsOn);
+  return out.includes("[haranoaji]{luatexja-preset}");
+})());
+check("latex cjk: latin-only report has no CJK packages", (() => {
+  const out = GEP.latex.convert({ title: "Report", blocks: [{ type: "paragraph", runs: [{ text: "Plain English text." }] }], footnotes: [] }, optsOn);
+  return !out.includes("xeCJK") && !out.includes("luatexja") && !out.includes("luatexko");
+})());
 check("i18n bibtex: source title preserved", GEP.bibtex.convert(i18nIR).includes("多语言来源"));
 check("i18n ris: source title preserved", GEP.ris.convert(i18nIR).includes("多语言来源"));
 check("i18n docx: produces Blob", GEP.docx.convert(i18nIR, optsOn) instanceof Blob);

@@ -2,6 +2,8 @@
  * CSV exporter: extracts only tables from the IR and exports as CSV.
  *
  * Multiple tables are separated by a blank line with a "--- Table N ---" marker.
+ * Output starts with a UTF-8 BOM: without it, Excel on Windows decodes the
+ * file as ANSI and garbles any non-ASCII text (Turkish, CJK, accents).
  */
 (function () {
   const GEP = (window.GEP = window.GEP || {});
@@ -15,9 +17,11 @@
     return text;
   }
 
+  const BOM = "\uFEFF";
+
   function convert(ir) {
     const tables = ir.blocks.filter((b) => b.type === "table");
-    if (!tables.length) return "(No tables found in this report)\n";
+    if (!tables.length) return BOM + "(No tables found in this report)\n";
 
     let maxCols = 0;
     tables.forEach((table) => {
@@ -42,7 +46,7 @@
       table.rows.forEach((r) => allRows.push(padRow(r.map(runsToText))));
     });
 
-    return allRows.join("\n") + "\n";
+    return BOM + allRows.join("\n") + "\n";
   }
 
   GEP.csv = { convert };
