@@ -31,6 +31,7 @@ Node.js 20+ gerekir. Eklentiyi denemek için: `chrome://extensions` → Gelişti
 | `npm run test:content` | Content script mesaj işleyicileri (PING / EXPORT / QUALITY / DIAGNOSE). |
 | `npm run test:history` | Export geçmişi (LRU, boyut sınırları) + profil doğrulama. |
 | `npm run test:options` | Options sayfası, gerçek HTML üzerinde (toggle'lar, profiller, geçmiş, senkron). |
+| `npm run test:i18n` | Çeviri katalogları: diller arası anahtar pariteleri, `$1` yer tutucu sayıları, HTML/JS/manifest referanslarının çözülmesi. |
 
 ## Sürüm çıkarma (özet)
 
@@ -63,6 +64,19 @@ Release oluştuğunda zip'i **Releases** sayfasından indirip Chrome Web Store p
 | `scripts/external-validate.mjs` | Debug export çıktısını harici araçlarla doğrular (`npm run validate:external`). |
 | `scripts/validate-rtl.mjs` | Sağdan-sola (RTL) çıktı doğrulaması (`npm run validate:rtl`). |
 | `scripts/build-katex.mjs`, `build-hljs-vendor.mjs` | `src/vendor/` altındaki tek dosyalık KaTeX / highlight.js paketlerini yeniden üretir (yalnızca vendor güncellerken gerekir). |
+
+## Çoklu dil (i18n)
+
+Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir (`chrome.i18n`); dil tarayıcıdan seçilir, eklenti içi dil seçici yoktur. Format adları (Markdown, PDF, BibTeX…), What's New panosu ve CHANGELOG bilinçli olarak İngilizce kalır.
+
+- **Yeni string eklerken:**
+  1. `_locales/en/messages.json`'a anahtarı ekleyin (yalnızca `[a-zA-Z0-9_]`; yer tutucular `$1`, `$2`…).
+  2. Aynı anahtarı diğer tüm dillere de ekleyin — parite testi eksik anahtarı kırmızıya boyar.
+  3. HTML'de: öğeye `data-i18n="anahtar"` (metin), `data-i18n-html` (işaretlemeli), `data-i18n-placeholder` / `data-i18n-title` / `data-i18n-aria` (öznitelik) verin; İngilizce metni yedek olarak satır içinde bırakın.
+  4. JS'te: `GEP.i18n.t("anahtar")` veya yer tutucuyla `t("anahtar", deger)` / `t("anahtar", [d1, d2])`.
+  5. `npm run test:i18n` — kullanılmayan/eksik anahtar ve yer tutucu uyumsuzluğu burada yakalanır.
+- **Yeni dil eklerken:** `_locales/<kod>/messages.json` dosyasını `en`'den kopyalayıp çevirin (Chrome dil kodları: `tr`, `es`, `pt_BR`, `de`, `fr`, `ja`, `ko`…). Başka hiçbir dosyaya dokunmak gerekmez — build betiği `_locales/` altındaki her dili otomatik paketler, parite testi anahtar kümesini doğrular. Mağaza açıklamasını Web Store panosunda aynı dilde elle girmeyi unutmayın.
+- **Denemek için:** tarayıcı dilini değiştirin (`chrome://settings/languages`) ve eklentiyi yeniden yükleyin; `chrome.i18n` kataloğu tarayıcı diline göre seçer.
 
 ## Sık senaryolar
 
