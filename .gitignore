@@ -5,11 +5,9 @@ node_modules/
 store/*.zip
 
 # ── Test & validation scratch (regenerated on demand) ───────
-# Golden files in validate/debug and validate/render stay tracked;
-# only ad-hoc export/re-validation output is ignored.
-validate/output/
-validate/tp/
-validate/tpbin/
+# Everything under validate/ is generated output (debug matrix exports,
+# rendered PDFs/HTML, ad-hoc re-validation files) — never commit it.
+validate/
 Manuel-Validate/
 
 # ── Tooling caches ───────────────────────────────────────────
