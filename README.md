@@ -2,7 +2,7 @@
 
 A Chrome (Manifest V3) extension that adds 15+ export formats to the Google Gemini **Deep Research** share menu — Markdown, PDF, Word (.docx), Reader HTML, EPUB, LaTeX, RTF, HTML, plain text, JSON, CSV, BibTeX, RIS, CSL-JSON and a multi-file Vault ZIP — with citations (9 styles), page/typography controls, document metadata, source hygiene and offline re-export. Everything runs locally in the browser; no data ever leaves it (see [PRIVACY.md](PRIVACY.md)).
 
-A Turkish architectural overview lives in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md); user-facing release notes in [CHANGELOG.md](CHANGELOG.md).
+A Turkish architectural overview lives in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md), a Turkish developer guide (commands, scripts, CI/release automation) in [REHBER.md](REHBER.md); user-facing release notes in [CHANGELOG.md](CHANGELOG.md).
 
 ## Install (unpacked, for development)
 
