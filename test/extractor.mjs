@@ -207,6 +207,38 @@ if (diag) {
 // SCENARIO 3 — Real captured DOM (optional, tolerant)
 // =====================================================================
 
+/**
+ * Tolerant sanity checks against a real captured Gemini DOM. The captures are
+ * raw outerHTML pastes, so only structural invariants are asserted (no exact
+ * block counts): extraction succeeds, yields a title and a non-trivial block
+ * list, leaks no "[object Object]" and resolves footnote URLs when present.
+ */
+function checkRealDom(label, content) {
+  const realHtml = `<!DOCTYPE html><html><body>${content}</body></html>`;
+
+  let realIr = null;
+  try {
+    realIr = makeExtractor(realHtml).extract();
+  } catch (err) {
+    check(`${label}: extract did not throw`, false);
+    console.error("    " + String(err));
+    return;
+  }
+
+  check(`${label}: extract returns IR`, realIr !== null && typeof realIr === "object");
+  if (!realIr) return;
+  check(`${label}: has a title`, typeof realIr.title === "string" && realIr.title.length > 0);
+  check(`${label}: produced blocks`, Array.isArray(realIr.blocks) && realIr.blocks.length > 5);
+  check(`${label}: no [object Object] in text`,
+    realIr.blocks.every((b) =>
+      !(b.runs || []).some((r) => String(r.text || "").includes("[object Object]"))
+    ));
+  if (realIr.footnotes.length) {
+    check(`${label}: at least one footnote resolved a URL`,
+      realIr.footnotes.some((f) => typeof f.url === "string" && f.url.startsWith("http")));
+  }
+}
+
 const realContentPath = path.join(root, "referance", "outer-html.md");
 const realSourcesPath = path.join(root, "referance", "sources outer-html.md");
 
@@ -216,27 +248,24 @@ if (fs.existsSync(realContentPath)) {
   const sources = fs.existsSync(realSourcesPath)
     ? fs.readFileSync(realSourcesPath, "utf8")
     : "";
-  const realHtml = `<!DOCTYPE html><html><body>${content}${sources}</body></html>`;
+  checkRealDom("real DOM", content + sources);
+}
 
-  let realIr = null;
-  try {
-    realIr = makeExtractor(realHtml).extract();
-  } catch (err) {
-    check("real DOM: extract did not throw", false);
-    console.error("    " + String(err));
-  }
+// =====================================================================
+// SCENARIO 3b — Report corpus: every capture in referance/reports/
+// =====================================================================
 
-  if (realIr) {
-    check("real DOM: extract returns IR", typeof realIr === "object");
-    check("real DOM: has a title", typeof realIr.title === "string" && realIr.title.length > 0);
-    check("real DOM: produced blocks", Array.isArray(realIr.blocks) && realIr.blocks.length > 5);
-    check("real DOM: no [object Object] in text",
-      realIr.blocks.every((b) =>
-        !(b.runs || []).some((r) => String(r.text || "").includes("[object Object]"))
-      ));
-    if (realIr.footnotes.length) {
-      check("real DOM: at least one footnote resolved a URL",
-        realIr.footnotes.some((f) => typeof f.url === "string" && f.url.startsWith("http")));
+const reportsDir = path.join(root, "referance", "reports");
+
+if (fs.existsSync(reportsDir)) {
+  const reportFiles = fs.readdirSync(reportsDir)
+    .filter((f) => f.toLowerCase().endsWith(".md") && f.toLowerCase() !== "readme.md")
+    .sort();
+  if (reportFiles.length) {
+    section(`Report corpus (referance/reports/, ${reportFiles.length} capture${reportFiles.length > 1 ? "s" : ""})`);
+    for (const file of reportFiles) {
+      const content = fs.readFileSync(path.join(reportsDir, file), "utf8");
+      checkRealDom(file, content);
     }
   }
 }

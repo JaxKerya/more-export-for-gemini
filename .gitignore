@@ -10,13 +10,14 @@ store/*.zip
 validate/
 Manuel-Validate/
 
-# referance/ holds local captures & sample exports; only the three real-DOM
+# referance/ holds local captures & sample exports; only the real-DOM
 # fixtures that test/extractor.mjs and scripts/export-from-dom.mjs read
-# stay tracked.
+# stay tracked (the three legacy captures + the reports/ corpus).
 referance/*
 !referance/outer-html.md
 !referance/sources outer-html.md
 !referance/testprompt-outerhtml.md
+!referance/reports/
 
 # ── Tooling caches ───────────────────────────────────────────
 .eslintcache
