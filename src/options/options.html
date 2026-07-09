@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Settings - More Export for Gemini</title>
+  <title data-i18n="optTitle">Settings - More Export for Gemini</title>
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <a class="skip-link" href="#content">Skip to settings</a>
+  <a class="skip-link" href="#content" data-i18n="optSkipLink">Skip to settings</a>
   <div class="app">
 
     <!-- Sidebar -->
@@ -20,50 +20,50 @@
 
       <div class="search-wrap">
         <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search formats..." autocomplete="off" aria-label="Search formats and options">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search formats..." autocomplete="off" aria-label="Search formats and options" data-i18n-placeholder="optSearchPlaceholder" data-i18n-aria="optSearchAria">
       </div>
 
-      <nav class="nav" aria-label="Settings sections">
-        <span class="nav-group-label">General</span>
+      <nav class="nav" aria-label="Settings sections" data-i18n-aria="optNavAria">
+        <span class="nav-group-label" data-i18n="optNavGeneral">General</span>
         <button class="nav-item" type="button" data-nav="overview">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-          <span class="nav-label">Overview</span>
+          <span class="nav-label" data-i18n="optNavOverview">Overview</span>
         </button>
-        <span class="nav-group-label">Export</span>
+        <span class="nav-group-label" data-i18n="optNavExport">Export</span>
         <button class="nav-item" type="button" data-nav="formats">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          <span class="nav-label">Formats</span>
+          <span class="nav-label" data-i18n="optNavFormats">Formats</span>
           <span class="nav-count" id="tabFormatsCount">0</span>
         </button>
         <button class="nav-item" type="button" data-nav="options">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-          <span class="nav-label">Export Options</span>
+          <span class="nav-label" data-i18n="optNavOptions">Export Options</span>
         </button>
         <button class="nav-item" type="button" data-nav="metadata">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-          <span class="nav-label">Metadata</span>
+          <span class="nav-label" data-i18n="optNavMetadata">Metadata</span>
         </button>
         <button class="nav-item" type="button" data-nav="overrides">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
-          <span class="nav-label">Overrides</span>
+          <span class="nav-label" data-i18n="optNavOverrides">Overrides</span>
         </button>
-        <span class="nav-group-label">More</span>
+        <span class="nav-group-label" data-i18n="optNavMore">More</span>
         <button class="nav-item" type="button" data-nav="tools">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
-          <span class="nav-label">Tools</span>
+          <span class="nav-label" data-i18n="optNavTools">Tools</span>
         </button>
         <button class="nav-item" type="button" data-nav="whatsnew">
           <svg class="nav-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"/></svg>
-          <span class="nav-label">What's New</span>
-          <span class="whatsnew-badge" id="whatsnewBadge" hidden>New</span>
+          <span class="nav-label" data-i18n="optNavWhatsNew">What's New</span>
+          <span class="whatsnew-badge" id="whatsnewBadge" hidden data-i18n="optBadgeNew">New</span>
         </button>
       </nav>
 
       <div class="sidebar-footer">
         <span class="enabled-count" id="enabledCountFooter">0 formats enabled</span>
-        <button class="reset-btn" id="resetBtn" type="button" title="Reset all settings to defaults">
+        <button class="reset-btn" id="resetBtn" type="button" title="Reset all settings to defaults" data-i18n-title="optResetTitle">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-          Reset
+          <span data-i18n="optReset">Reset</span>
         </button>
       </div>
     </aside>
@@ -73,158 +73,158 @@
 
       <div class="beta-strip">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-        <span><strong>Beta release.</strong> Some exports may not be fully stable yet - if something looks off, please let us know.</span>
-        <button class="beta-report-btn js-bug-report" type="button" title="Report a bug">
+        <span data-i18n-html="optBetaStrip"><strong>Beta release.</strong> Some exports may not be fully stable yet - if something looks off, please let us know.</span>
+        <button class="beta-report-btn js-bug-report" type="button" title="Report a bug" data-i18n-title="optReportBug">
           <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5s-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2.09c.05.33.09.66.09 1v1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8z"/></svg>
-          Report a bug
+          <span data-i18n="optReportBug">Report a bug</span>
         </button>
       </div>
 
       <!-- Overview panel -->
-      <section class="panel" data-panel="overview" aria-label="Overview">
+      <section class="panel" data-panel="overview" aria-label="Overview" data-i18n-aria="optNavOverview">
 
         <!-- First-run welcome (shown once, right after install) -->
         <div class="welcome-hero" id="welcomeHero" hidden>
           <div class="welcome-head">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"/></svg>
-            <span class="welcome-title">You're all set - here's how to export your first report</span>
+            <span class="welcome-title" data-i18n="optWelcomeTitle">You're all set - here's how to export your first report</span>
           </div>
           <ol class="welcome-steps">
-            <li><strong>Open a Deep Research report</strong> on <a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a>.</li>
-            <li><strong>Click "Share &amp; export"</strong> on the report (or right-click anywhere on the page) - you'll see the new format entries there.</li>
-            <li><strong>Pick your format</strong> - Markdown, PDF, Word and Reader HTML are ready out of the box; enable more below.</li>
+            <li data-i18n-html="optWelcomeStep1"><strong>Open a Deep Research report</strong> on <a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a>.</li>
+            <li data-i18n-html="optWelcomeStep2"><strong>Click "Share &amp; export"</strong> on the report (or right-click anywhere on the page) - you'll see the new format entries there.</li>
+            <li data-i18n-html="optWelcomeStep3"><strong>Pick your format</strong> - Markdown, PDF, Word and Reader HTML are ready out of the box; enable more below.</li>
           </ol>
           <div class="welcome-actions">
-            <button class="cta-btn primary" type="button" id="welcomeDismiss">Got it</button>
-            <button class="cta-btn secondary" type="button" data-go="formats" id="welcomeFormats">Choose formats</button>
+            <button class="cta-btn primary" type="button" id="welcomeDismiss" data-i18n="optWelcomeGotIt">Got it</button>
+            <button class="cta-btn secondary" type="button" data-go="formats" id="welcomeFormats" data-i18n="optWelcomeChooseFormats">Choose formats</button>
           </div>
         </div>
 
-        <h2 class="panel-title">Welcome</h2>
-        <p class="overview-lead">
+        <h2 class="panel-title" data-i18n="optPanelWelcome">Welcome</h2>
+        <p class="overview-lead" data-i18n="optOverviewLead">
           More Export for Gemini turns a Gemini Deep Research report into clean, ready-to-use
           files - Markdown, PDF, Word, LaTeX, EPUB and 10 more - with citations, metadata and
           a table of contents woven in. Everything runs locally in your browser.
         </p>
 
-        <p class="overview-section-label">How to export</p>
+        <p class="overview-section-label" data-i18n="optHowToExport">How to export</p>
         <div class="steps">
           <div class="step">
             <span class="step-num">1</span>
-            <span class="step-title">Right-click</span>
-            <span class="step-desc">On any Gemini report, right-click and pick a format from the <em>More Export</em> menu.</span>
+            <span class="step-title" data-i18n="optStep1Title">Right-click</span>
+            <span class="step-desc" data-i18n-html="optStep1Desc">On any Gemini report, right-click and pick a format from the <em>More Export</em> menu.</span>
           </div>
           <div class="step">
             <span class="step-num">2</span>
-            <span class="step-title">Use the popup</span>
-            <span class="step-desc">Click the toolbar icon to copy or download in one click.</span>
+            <span class="step-title" data-i18n="optStep2Title">Use the popup</span>
+            <span class="step-desc" data-i18n="optStep2Desc">Click the toolbar icon to copy or download in one click.</span>
           </div>
           <div class="step">
             <span class="step-num">3</span>
-            <span class="step-title">Keyboard</span>
-            <span class="step-desc">Press <kbd>Ctrl/Cmd</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> to export your primary format.</span>
+            <span class="step-title" data-i18n="optStep3Title">Keyboard</span>
+            <span class="step-desc" data-i18n-html="optStep3Desc">Press <kbd>Ctrl/Cmd</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> to export your primary format.</span>
           </div>
         </div>
 
-        <p class="overview-section-label">Your current setup</p>
+        <p class="overview-section-label" data-i18n="optCurrentSetup">Your current setup</p>
         <div class="summary">
           <div class="summary-item">
-            <span class="summary-label">Primary format</span>
+            <span class="summary-label" data-i18n="optSummaryPrimary">Primary format</span>
             <span class="summary-value" id="ovPrimary">-</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Formats enabled</span>
+            <span class="summary-label" data-i18n="optSummaryEnabled">Formats enabled</span>
             <span class="summary-value" id="ovEnabled">0</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Citation style</span>
+            <span class="summary-label" data-i18n="optSummaryCitation">Citation style</span>
             <span class="summary-value" id="ovCitation">-</span>
           </div>
         </div>
 
-        <p class="overview-section-label">Highlights</p>
+        <p class="overview-section-label" data-i18n="optHighlights">Highlights</p>
         <div class="features">
           <div class="feature">
             <svg class="feature-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            <span class="feature-title">15 export formats</span>
-            <span class="feature-desc">Markdown, PDF, Word, RTF, LaTeX, EPUB, HTML and more.</span>
+            <span class="feature-title" data-i18n="optFeat1Title">15 export formats</span>
+            <span class="feature-desc" data-i18n="optFeat1Desc">Markdown, PDF, Word, RTF, LaTeX, EPUB, HTML and more.</span>
           </div>
           <div class="feature">
             <svg class="feature-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
-            <span class="feature-title">Citations &amp; bibliography</span>
-            <span class="feature-desc">9 citation styles plus BibTeX, RIS and CSL-JSON exports.</span>
+            <span class="feature-title" data-i18n="optFeat2Title">Citations &amp; bibliography</span>
+            <span class="feature-desc" data-i18n="optFeat2Desc">9 citation styles plus BibTeX, RIS and CSL-JSON exports.</span>
           </div>
           <div class="feature">
             <svg class="feature-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-            <span class="feature-title">Document metadata</span>
-            <span class="feature-desc">Author, affiliation, keywords and abstract woven into exports.</span>
+            <span class="feature-title" data-i18n="optFeat3Title">Document metadata</span>
+            <span class="feature-desc" data-i18n="optFeat3Desc">Author, affiliation, keywords and abstract woven into exports.</span>
           </div>
           <div class="feature">
             <svg class="feature-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
-            <span class="feature-title">Per-format overrides</span>
-            <span class="feature-desc">Tune TOC, footnotes or citation style for a single format.</span>
+            <span class="feature-title" data-i18n="optFeat4Title">Per-format overrides</span>
+            <span class="feature-desc" data-i18n="optFeat4Desc">Tune TOC, footnotes or citation style for a single format.</span>
           </div>
           <div class="feature">
             <svg class="feature-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 15l-4-4 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7z"/></svg>
-            <span class="feature-title">Quality check</span>
-            <span class="feature-desc">Scan a report for issues locally before you export.</span>
+            <span class="feature-title" data-i18n="optFeat5Title">Quality check</span>
+            <span class="feature-desc" data-i18n="optFeat5Desc">Scan a report for issues locally before you export.</span>
           </div>
           <div class="feature">
             <svg class="feature-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-            <span class="feature-title">Backup &amp; restore</span>
-            <span class="feature-desc">Export your settings to JSON and import them anywhere.</span>
+            <span class="feature-title" data-i18n="optFeat6Title">Backup &amp; restore</span>
+            <span class="feature-desc" data-i18n="optFeat6Desc">Export your settings to JSON and import them anywhere.</span>
           </div>
         </div>
 
         <p class="overview-note">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-          <span>Everything runs locally in your browser - your reports are never uploaded.</span>
+          <span data-i18n="optPrivacyNote">Everything runs locally in your browser - your reports are never uploaded.</span>
         </p>
 
         <div class="cta-row">
           <button class="cta-btn primary" type="button" data-go="formats">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Choose formats
+            <span data-i18n="optWelcomeChooseFormats">Choose formats</span>
           </button>
           <button class="cta-btn secondary" type="button" data-go="options">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-            Export options
+            <span data-i18n="optCtaOptions">Export options</span>
           </button>
         </div>
 
         <footer class="app-footer">
-          <span class="footer-text">Made for researchers and knowledge workers</span>
+          <span class="footer-text" data-i18n="optFooterText">Made for researchers and knowledge workers</span>
         </footer>
       </section>
 
       <!-- What's New panel -->
-      <section class="panel panel-hidden" data-panel="whatsnew" id="whatsnewCard" aria-label="What's New">
-        <h2 class="panel-title">What's New</h2>
+      <section class="panel panel-hidden" data-panel="whatsnew" id="whatsnewCard" aria-label="What's New" data-i18n-aria="optNavWhatsNew">
+        <h2 class="panel-title" data-i18n="optNavWhatsNew">What's New</h2>
         <div class="release-notes" id="releaseNotes"></div>
       </section>
 
       <!-- Export Options panel -->
-      <section class="panel panel-hidden" data-panel="options" aria-label="Export Options">
-        <h2 class="panel-title">Export Options</h2>
+      <section class="panel panel-hidden" data-panel="options" aria-label="Export Options" data-i18n-aria="optNavOptions">
+        <h2 class="panel-title" data-i18n="optNavOptions">Export Options</h2>
 
     <!-- Profiles -->
     <section class="card" data-section="profiles">
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-          <span>Profiles</span>
+          <span data-i18n="optProfilesTitle">Profiles</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <div class="meta-intro">
-          <span class="toggle-hint">Save the current formats, options and overrides as a named profile - e.g. <em>Academic paper</em> (A4, double spacing, APA) vs <em>Quick notes</em> (Obsidian MD, no TOC) - and switch in one click, here or from the popup.</span>
+          <span class="toggle-hint" data-i18n-html="optProfilesHint">Save the current formats, options and overrides as a named profile - e.g. <em>Academic paper</em> (A4, double spacing, APA) vs <em>Quick notes</em> (Obsidian MD, no TOC) - and switch in one click, here or from the popup.</span>
         </div>
         <div class="profile-save-row">
-          <input type="text" id="profileName" class="template-input" placeholder="Profile name (e.g. Academic paper)" maxlength="40" autocomplete="off">
+          <input type="text" id="profileName" class="template-input" placeholder="Profile name (e.g. Academic paper)" maxlength="40" autocomplete="off" data-i18n-placeholder="optProfileNamePlaceholder">
           <button class="backup-btn" id="profileSaveBtn" type="button">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
-            Save current
+            <span data-i18n="optProfileSave">Save current</span>
           </button>
         </div>
         <ul class="profile-list" id="profileList"></ul>
@@ -237,31 +237,31 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-          <span>Export Options</span>
+          <span data-i18n="optNavOptions">Export Options</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <label class="toggle" data-option="include_footnotes">
           <div class="toggle-label">
-            <span class="toggle-name">Include Footnotes / Sources</span>
-            <span class="toggle-hint">Add source references from Deep Research reports</span>
+            <span class="toggle-name" data-i18n="optFootnotesName">Include Footnotes / Sources</span>
+            <span class="toggle-hint" data-i18n="optFootnotesHint">Add source references from Deep Research reports</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-option="include_toc">
           <div class="toggle-label">
-            <span class="toggle-name">Include Table of Contents</span>
-            <span class="toggle-hint">Generate a table of contents from headings</span>
+            <span class="toggle-name" data-i18n="optTocName">Include Table of Contents</span>
+            <span class="toggle-hint" data-i18n="optTocHint">Generate a table of contents from headings</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Markdown Flavor</span>
-            <span class="toggle-hint">Dialect for .md exports and clipboard</span>
+            <span class="select-name" data-i18n="optFlavorName">Markdown Flavor</span>
+            <span class="toggle-hint" data-i18n="optFlavorHint">Dialect for .md exports and clipboard</span>
           </div>
           <select id="markdownFlavor" data-option="markdown_flavor">
             <option value="gfm">GitHub (GFM)</option>
@@ -272,14 +272,14 @@
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Citation Style</span>
-            <span class="toggle-hint">How source references are formatted</span>
+            <span class="select-name" data-i18n="optCitationName">Citation Style</span>
+            <span class="toggle-hint" data-i18n="optCitationHint">How source references are formatted</span>
           </div>
           <select id="citationStyle" data-option="citation_style">
-            <option value="numbered">Numbered (default)</option>
-            <option value="apa">APA (7th edition)</option>
-            <option value="mla">MLA (9th edition)</option>
-            <option value="chicago">Chicago (Author-Date)</option>
+            <option value="numbered" data-i18n="optCiteNumberedDefault">Numbered (default)</option>
+            <option value="apa" data-i18n="optCiteApa">APA (7th edition)</option>
+            <option value="mla" data-i18n="optCiteMla">MLA (9th edition)</option>
+            <option value="chicago" data-i18n="optCiteChicago">Chicago (Author-Date)</option>
             <option value="ieee">IEEE</option>
             <option value="vancouver">Vancouver</option>
             <option value="harvard">Harvard</option>
@@ -289,8 +289,8 @@
         </div>
         <div class="template-row">
           <div class="select-label">
-            <span class="select-name">Filename Template</span>
-            <span class="toggle-hint">Customize exported file names using tokens</span>
+            <span class="select-name" data-i18n="optTemplateName">Filename Template</span>
+            <span class="toggle-hint" data-i18n="optTemplateHint">Customize exported file names using tokens</span>
           </div>
           <input type="text" id="filenameTemplate" data-option="filename_template" class="template-input" placeholder="{title} - {date}" maxlength="120">
           <div class="template-preview" id="templatePreview"></div>
@@ -302,39 +302,39 @@
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Primary Format</span>
-            <span class="toggle-hint">Used by the <strong>Export primary</strong> keyboard shortcut</span>
+            <span class="select-name" data-i18n="optPrimaryName">Primary Format</span>
+            <span class="toggle-hint" data-i18n-html="optPrimaryHint">Used by the <strong>Export primary</strong> keyboard shortcut</span>
           </div>
           <select id="primaryFormat" data-option="primary_format">
-            <option value="markdown">Markdown (.md)</option>
-            <option value="txt">Plain text (.txt)</option>
-            <option value="html">HTML (.html)</option>
-            <option value="reader">HTML – Reader (.html)</option>
-            <option value="json">JSON (.json)</option>
-            <option value="latex">LaTeX (.tex)</option>
-            <option value="docx">Word (.docx)</option>
-            <option value="rtf">Rich Text (.rtf)</option>
-            <option value="pdf">PDF (.pdf)</option>
-            <option value="epub">EPUB (.epub)</option>
+            <option value="markdown" data-i18n="fmtMarkdown">Markdown (.md)</option>
+            <option value="txt" data-i18n="fmtTxt">Plain text (.txt)</option>
+            <option value="html" data-i18n="fmtHtml">HTML (.html)</option>
+            <option value="reader" data-i18n="fmtReader">HTML – Reader (.html)</option>
+            <option value="json" data-i18n="fmtJson">JSON (.json)</option>
+            <option value="latex" data-i18n="fmtLatex">LaTeX (.tex)</option>
+            <option value="docx" data-i18n="fmtDocx">Word (.docx)</option>
+            <option value="rtf" data-i18n="fmtRtf">Rich Text (.rtf)</option>
+            <option value="pdf" data-i18n="fmtPdf">PDF (.pdf)</option>
+            <option value="epub" data-i18n="fmtEpub">EPUB (.epub)</option>
           </select>
         </div>
         <div class="shortcuts-info">
-          <span class="select-name">Keyboard Shortcuts</span>
+          <span class="select-name" data-i18n="optShortcutsName">Keyboard Shortcuts</span>
           <ul class="shortcut-list">
             <li>
               <span class="shortcut-keys"><kbd>Ctrl/Cmd</kbd><span class="kbd-plus">+</span><kbd>Shift</kbd><span class="kbd-plus">+</span><kbd>E</kbd></span>
-              <span class="shortcut-desc">Export primary format</span>
+              <span class="shortcut-desc" data-i18n="optShortcutPrimary">Export primary format</span>
             </li>
             <li>
               <span class="shortcut-keys"><kbd>Ctrl/Cmd</kbd><span class="kbd-plus">+</span><kbd>Shift</kbd><span class="kbd-plus">+</span><kbd>M</kbd></span>
-              <span class="shortcut-desc">Copy as Markdown</span>
+              <span class="shortcut-desc" data-i18n="fmtClipboardMd">Copy as Markdown</span>
             </li>
             <li>
               <span class="shortcut-keys"><kbd>Ctrl/Cmd</kbd><span class="kbd-plus">+</span><kbd>Shift</kbd><span class="kbd-plus">+</span><kbd>L</kbd></span>
-              <span class="shortcut-desc">Download all</span>
+              <span class="shortcut-desc" data-i18n="optShortcutDownloadAll">Download all</span>
             </li>
           </ul>
-          <span class="toggle-hint">Customize these at <code>chrome://extensions/shortcuts</code></span>
+          <span class="toggle-hint" data-i18n-html="optShortcutsHint">Customize these at <code>chrome://extensions/shortcuts</code></span>
         </div>
       </div>
     </section>
@@ -344,65 +344,65 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z"/></svg>
-          <span>Document Layout</span>
+          <span data-i18n="optLayoutTitle">Document Layout</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <div class="meta-intro">
-          <span class="toggle-hint">Page size, margins and typography for PDF, HTML, Word (.docx) and LaTeX. Defaults match the previous fixed layout. The Reader HTML format has its own settings above.</span>
+          <span class="toggle-hint" data-i18n="optLayoutHint">Page size, margins and typography for PDF, HTML, Word (.docx) and LaTeX. Defaults match the previous fixed layout. The Reader HTML format has its own settings above.</span>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Paper Size</span>
-            <span class="toggle-hint">Page size for PDF / DOCX / LaTeX</span>
+            <span class="select-name" data-i18n="optPaperName">Paper Size</span>
+            <span class="toggle-hint" data-i18n="optPaperHint">Page size for PDF / DOCX / LaTeX</span>
           </div>
           <select id="docPaper" data-option="doc_paper">
             <option value="a4">A4</option>
-            <option value="letter">US Letter</option>
+            <option value="letter" data-i18n="optPaperLetter">US Letter</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Margins</span>
-            <span class="toggle-hint">Page margins</span>
+            <span class="select-name" data-i18n="optMarginsName">Margins</span>
+            <span class="toggle-hint" data-i18n="optMarginsHint">Page margins</span>
           </div>
           <select id="docMargins" data-option="doc_margins">
-            <option value="narrow">Narrow</option>
-            <option value="normal">Normal (default)</option>
-            <option value="wide">Wide</option>
+            <option value="narrow" data-i18n="optMarginNarrow">Narrow</option>
+            <option value="normal" data-i18n="optMarginNormalDefault">Normal (default)</option>
+            <option value="wide" data-i18n="optMarginWide">Wide</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Base Font Size</span>
-            <span class="toggle-hint">Body text size in points</span>
+            <span class="select-name" data-i18n="optFontSizeName">Base Font Size</span>
+            <span class="toggle-hint" data-i18n="optFontSizeHint">Body text size in points</span>
           </div>
           <select id="docFontSize" data-option="doc_font_size">
-            <option value="10">10 pt</option>
-            <option value="11">11 pt (default)</option>
-            <option value="12">12 pt</option>
+            <option value="10" data-i18n="opt10pt">10 pt</option>
+            <option value="11" data-i18n="opt11ptDefault">11 pt (default)</option>
+            <option value="12" data-i18n="opt12pt">12 pt</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Line Spacing</span>
-            <span class="toggle-hint">Spacing between lines</span>
+            <span class="select-name" data-i18n="optLineSpacingName">Line Spacing</span>
+            <span class="toggle-hint" data-i18n="optLineSpacingHint">Spacing between lines</span>
           </div>
           <select id="docLineSpacing" data-option="doc_line_spacing">
-            <option value="normal">Normal (default)</option>
-            <option value="onehalf">1.5 lines</option>
-            <option value="double">Double</option>
+            <option value="normal" data-i18n="optSpacingNormalDefault">Normal (default)</option>
+            <option value="onehalf" data-i18n="optSpacingOneHalf">1.5 lines</option>
+            <option value="double" data-i18n="optSpacingDouble">Double</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Font Family</span>
-            <span class="toggle-hint">Sans-serif or serif body text</span>
+            <span class="select-name" data-i18n="optFontFamilyName">Font Family</span>
+            <span class="toggle-hint" data-i18n="optFontFamilyHint">Sans-serif or serif body text</span>
           </div>
           <select id="docFontFamily" data-option="doc_font_family">
-            <option value="sans">Sans-serif (default)</option>
-            <option value="serif">Serif</option>
+            <option value="sans" data-i18n="optSansDefault">Sans-serif (default)</option>
+            <option value="serif" data-i18n="optSerif">Serif</option>
           </select>
         </div>
       </div>
@@ -413,34 +413,34 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-          <span>Sources</span>
+          <span data-i18n="optSourcesTitle">Sources</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <label class="toggle" data-option="source_dedupe">
           <div class="toggle-label">
-            <span class="toggle-name">Merge duplicate sources</span>
-            <span class="toggle-hint">Combine identical source URLs and renumber references</span>
+            <span class="toggle-name" data-i18n="optDedupeName">Merge duplicate sources</span>
+            <span class="toggle-hint" data-i18n="optDedupeHint">Combine identical source URLs and renumber references</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Sort Sources</span>
-            <span class="toggle-hint">Order of the sources list (references are renumbered to match)</span>
+            <span class="select-name" data-i18n="optSortName">Sort Sources</span>
+            <span class="toggle-hint" data-i18n="optSortHint">Order of the sources list (references are renumbered to match)</span>
           </div>
           <select id="sourceSort" data-option="source_sort">
-            <option value="appearance">Order of appearance (default)</option>
-            <option value="alpha">Alphabetical (title)</option>
-            <option value="domain">By domain</option>
+            <option value="appearance" data-i18n="optSortAppearance">Order of appearance (default)</option>
+            <option value="alpha" data-i18n="optSortAlpha">Alphabetical (title)</option>
+            <option value="domain" data-i18n="optSortDomain">By domain</option>
           </select>
         </div>
         <label class="toggle" data-option="source_enrich_ids">
           <div class="toggle-label">
-            <span class="toggle-name">Detect DOI / ISBN</span>
-            <span class="toggle-hint">Extract DOI/ISBN from source URLs and titles into BibTeX / RIS / CSL-JSON</span>
+            <span class="toggle-name" data-i18n="optEnrichName">Detect DOI / ISBN</span>
+            <span class="toggle-hint" data-i18n="optEnrichHint">Extract DOI/ISBN from source URLs and titles into BibTeX / RIS / CSL-JSON</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -453,101 +453,101 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
-          <span>Reader HTML</span>
+          <span data-i18n="optReaderTitle">Reader HTML</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
-        <div class="meta-intro">
+        <div class="meta-intro" data-i18n-html="optReaderIntro">
           Defaults baked into the <strong>HTML – Reader</strong> export. Chosen here once, before export,
           so the file ships clean - no in-page buttons.
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Theme</span>
-            <span class="toggle-hint">Color scheme of the exported reader</span>
+            <span class="select-name" data-i18n="optReaderThemeName">Theme</span>
+            <span class="toggle-hint" data-i18n="optReaderThemeHint">Color scheme of the exported reader</span>
           </div>
           <select id="readerTheme" data-option="reader_theme">
-            <option value="auto">Auto (match device)</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+            <option value="auto" data-i18n="optThemeAuto">Auto (match device)</option>
+            <option value="light" data-i18n="optThemeLight">Light</option>
+            <option value="dark" data-i18n="optThemeDark">Dark</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Reading width</span>
-            <span class="toggle-hint">Comfortable keeps an optimal line length; Wide uses more of the screen</span>
+            <span class="select-name" data-i18n="optReaderWidthName">Reading width</span>
+            <span class="toggle-hint" data-i18n="optReaderWidthHint">Comfortable keeps an optimal line length; Wide uses more of the screen</span>
           </div>
           <select id="readerWidth" data-option="reader_width">
-            <option value="comfort">Comfortable</option>
-            <option value="wide">Wide</option>
+            <option value="comfort" data-i18n="optWidthComfort">Comfortable</option>
+            <option value="wide" data-i18n="optWidthWide">Wide</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Typeface</span>
-            <span class="toggle-hint">Sans is crisp on screen; Serif reads like print for long reports</span>
+            <span class="select-name" data-i18n="optReaderFontName">Typeface</span>
+            <span class="toggle-hint" data-i18n="optReaderFontHint">Sans is crisp on screen; Serif reads like print for long reports</span>
           </div>
           <select id="readerFont" data-option="reader_font">
-            <option value="sans">Sans-serif</option>
-            <option value="serif">Serif</option>
+            <option value="sans" data-i18n="optSans">Sans-serif</option>
+            <option value="serif" data-i18n="optSerif">Serif</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Font size</span>
-            <span class="toggle-hint">Scales the whole page while keeping line length balanced</span>
+            <span class="select-name" data-i18n="optReaderSizeName">Font size</span>
+            <span class="toggle-hint" data-i18n="optReaderSizeHint">Scales the whole page while keeping line length balanced</span>
           </div>
           <select id="readerSize" data-option="reader_size">
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
+            <option value="small" data-i18n="optSizeSmall">Small</option>
+            <option value="medium" data-i18n="optSizeMedium">Medium</option>
+            <option value="large" data-i18n="optSizeLarge">Large</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Line spacing</span>
-            <span class="toggle-hint">Vertical breathing room between lines</span>
+            <span class="select-name" data-i18n="optReaderSpacingName">Line spacing</span>
+            <span class="toggle-hint" data-i18n="optReaderSpacingHint">Vertical breathing room between lines</span>
           </div>
           <select id="readerSpacing" data-option="reader_spacing">
-            <option value="normal">Normal</option>
-            <option value="relaxed">Relaxed</option>
+            <option value="normal" data-i18n="optSpacingNormal">Normal</option>
+            <option value="relaxed" data-i18n="optSpacingRelaxed">Relaxed</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Accent color</span>
-            <span class="toggle-hint">Links, active outline and the progress bar</span>
+            <span class="select-name" data-i18n="optReaderAccentName">Accent color</span>
+            <span class="toggle-hint" data-i18n="optReaderAccentHint">Links, active outline and the progress bar</span>
           </div>
           <select id="readerAccent" data-option="reader_accent">
-            <option value="blue">Blue</option>
-            <option value="teal">Teal</option>
-            <option value="green">Green</option>
-            <option value="purple">Purple</option>
-            <option value="amber">Amber</option>
-            <option value="rose">Rose</option>
+            <option value="blue" data-i18n="optBlue">Blue</option>
+            <option value="teal" data-i18n="optTeal">Teal</option>
+            <option value="green" data-i18n="optGreen">Green</option>
+            <option value="purple" data-i18n="optPurple">Purple</option>
+            <option value="amber" data-i18n="optAmber">Amber</option>
+            <option value="rose" data-i18n="optRose">Rose</option>
           </select>
         </div>
         <label class="toggle" data-option="reader_outline" data-search="reader outline sidebar table of contents navigation toc">
           <div class="toggle-label">
-            <span class="toggle-name">Outline sidebar</span>
-            <span class="toggle-hint">Show a sticky section outline (collapses to a drawer on phones)</span>
+            <span class="toggle-name" data-i18n="optOutlineName">Outline sidebar</span>
+            <span class="toggle-hint" data-i18n="optOutlineHint">Show a sticky section outline (collapses to a drawer on phones)</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-option="reader_progress" data-search="reader progress bar reading scroll indicator">
           <div class="toggle-label">
-            <span class="toggle-name">Reading progress bar</span>
-            <span class="toggle-hint">Thin bar at the top showing how far you've scrolled</span>
+            <span class="toggle-name" data-i18n="optProgressName">Reading progress bar</span>
+            <span class="toggle-hint" data-i18n="optProgressHint">Thin bar at the top showing how far you've scrolled</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-option="reader_justify" data-search="reader justify justified text alignment hyphenation">
           <div class="toggle-label">
-            <span class="toggle-name">Justify text</span>
-            <span class="toggle-hint">Align paragraphs to both edges (with hyphenation)</span>
+            <span class="toggle-name" data-i18n="optJustifyName">Justify text</span>
+            <span class="toggle-hint" data-i18n="optJustifyHint">Align paragraphs to both edges (with hyphenation)</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -558,51 +558,51 @@
       </section>
 
       <!-- Metadata panel -->
-      <section class="panel panel-hidden" data-panel="metadata" aria-label="Document Metadata">
-        <h2 class="panel-title">Document Metadata</h2>
+      <section class="panel panel-hidden" data-panel="metadata" aria-label="Document Metadata" data-i18n-aria="optMetadataTitle">
+        <h2 class="panel-title" data-i18n="optMetadataTitle">Document Metadata</h2>
 
     <!-- Document Metadata -->
     <section class="card" data-section="metadata">
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-          <span>Document Metadata</span>
+          <span data-i18n="optMetadataTitle">Document Metadata</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
-        <div class="meta-intro">
+        <div class="meta-intro" data-i18n-html="optMetaIntro">
           Optional. Woven into exports that support it - LaTeX <code>\author</code> / abstract,
           DOCX/EPUB properties, HTML/PDF head &amp; byline, and Obsidian front matter.
           Leave blank to omit.
         </div>
         <div class="template-row">
           <div class="select-label">
-            <span class="select-name">Author</span>
-            <span class="toggle-hint">Name(s) shown as the document byline</span>
+            <span class="select-name" data-i18n="optAuthorName">Author</span>
+            <span class="toggle-hint" data-i18n="optAuthorHint">Name(s) shown as the document byline</span>
           </div>
-          <input type="text" id="metaAuthor" data-option-text="meta_author" class="template-input" placeholder="e.g. Jane Doe" maxlength="200" autocomplete="off">
+          <input type="text" id="metaAuthor" data-option-text="meta_author" class="template-input" placeholder="e.g. Jane Doe" maxlength="200" autocomplete="off" data-i18n-placeholder="optAuthorPlaceholder">
         </div>
         <div class="template-row">
           <div class="select-label">
-            <span class="select-name">Affiliation</span>
-            <span class="toggle-hint">Institution, organization or department</span>
+            <span class="select-name" data-i18n="optAffiliationName">Affiliation</span>
+            <span class="toggle-hint" data-i18n="optAffiliationHint">Institution, organization or department</span>
           </div>
-          <input type="text" id="metaAffiliation" data-option-text="meta_affiliation" class="template-input" placeholder="e.g. University of Example" maxlength="200" autocomplete="off">
+          <input type="text" id="metaAffiliation" data-option-text="meta_affiliation" class="template-input" placeholder="e.g. University of Example" maxlength="200" autocomplete="off" data-i18n-placeholder="optAffiliationPlaceholder">
         </div>
         <div class="template-row">
           <div class="select-label">
-            <span class="select-name">Keywords</span>
-            <span class="toggle-hint">Comma-separated; added to metadata and a Keywords line</span>
+            <span class="select-name" data-i18n="optKeywordsName">Keywords</span>
+            <span class="toggle-hint" data-i18n="optKeywordsHint">Comma-separated; added to metadata and a Keywords line</span>
           </div>
-          <input type="text" id="metaKeywords" data-option-text="meta_keywords" class="template-input" placeholder="e.g. machine learning, climate, policy" maxlength="300" autocomplete="off">
+          <input type="text" id="metaKeywords" data-option-text="meta_keywords" class="template-input" placeholder="e.g. machine learning, climate, policy" maxlength="300" autocomplete="off" data-i18n-placeholder="optKeywordsPlaceholder">
         </div>
         <div class="template-row">
           <div class="select-label">
-            <span class="select-name">Abstract</span>
-            <span class="toggle-hint">Short summary placed before the body</span>
+            <span class="select-name" data-i18n="optAbstractName">Abstract</span>
+            <span class="toggle-hint" data-i18n="optAbstractHint">Short summary placed before the body</span>
           </div>
-          <textarea id="metaAbstract" data-option-text="meta_abstract" class="template-input meta-textarea" rows="4" maxlength="2000" placeholder="A brief summary of the report…"></textarea>
+          <textarea id="metaAbstract" data-option-text="meta_abstract" class="template-input meta-textarea" rows="4" maxlength="2000" placeholder="A brief summary of the report…" data-i18n-placeholder="optAbstractPlaceholder"></textarea>
         </div>
       </div>
     </section>
@@ -610,76 +610,76 @@
       </section>
 
       <!-- Overrides panel -->
-      <section class="panel panel-hidden" data-panel="overrides" aria-label="Per-format Overrides">
-        <h2 class="panel-title">Per-format Overrides</h2>
+      <section class="panel panel-hidden" data-panel="overrides" aria-label="Per-format Overrides" data-i18n-aria="optOverridesTitle">
+        <h2 class="panel-title" data-i18n="optOverridesTitle">Per-format Overrides</h2>
 
     <!-- Per-format Overrides -->
     <section class="card" data-section="overrides">
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
-          <span>Per-format Overrides</span>
+          <span data-i18n="optOverridesTitle">Per-format Overrides</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
-        <div class="meta-intro">
+        <div class="meta-intro" data-i18n-html="optOverridesIntro">
           Optional. Override the global Table of Contents, Footnotes and Citation Style
           for a specific format. Pick a format, then choose <em>Inherit</em> to keep the
           global value or set an explicit one. Affects single exports and the bundle.
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Format</span>
-            <span class="toggle-hint">Which export to customize</span>
+            <span class="select-name" data-i18n="optOvFormatName">Format</span>
+            <span class="toggle-hint" data-i18n="optOvFormatHint">Which export to customize</span>
           </div>
           <select id="overrideFormat">
-            <option value="markdown">Markdown (.md)</option>
-            <option value="html">HTML (.html)</option>
-            <option value="reader">HTML – Reader (.html)</option>
-            <option value="pdf">PDF (.pdf)</option>
-            <option value="docx">Word (.docx)</option>
-            <option value="rtf">Rich Text (.rtf)</option>
-            <option value="epub">EPUB (.epub)</option>
-            <option value="latex">LaTeX (.tex)</option>
-            <option value="vault">Obsidian Vault (.zip)</option>
-            <option value="clipboard_md">Clipboard: Markdown</option>
-            <option value="clipboard_html">Clipboard: Rich HTML</option>
+            <option value="markdown" data-i18n="fmtMarkdown">Markdown (.md)</option>
+            <option value="html" data-i18n="fmtHtml">HTML (.html)</option>
+            <option value="reader" data-i18n="fmtReader">HTML – Reader (.html)</option>
+            <option value="pdf" data-i18n="fmtPdf">PDF (.pdf)</option>
+            <option value="docx" data-i18n="fmtDocx">Word (.docx)</option>
+            <option value="rtf" data-i18n="fmtRtf">Rich Text (.rtf)</option>
+            <option value="epub" data-i18n="fmtEpub">EPUB (.epub)</option>
+            <option value="latex" data-i18n="fmtLatex">LaTeX (.tex)</option>
+            <option value="vault" data-i18n="optFmtVaultObsidian">Obsidian Vault (.zip)</option>
+            <option value="clipboard_md" data-i18n="optFmtClipMd">Clipboard: Markdown</option>
+            <option value="clipboard_html" data-i18n="optFmtClipHtml">Clipboard: Rich HTML</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Table of Contents</span>
-            <span class="toggle-hint">Override the global TOC setting</span>
+            <span class="select-name" data-i18n="optOvTocName">Table of Contents</span>
+            <span class="toggle-hint" data-i18n="optOvTocHint">Override the global TOC setting</span>
           </div>
           <select id="overrideToc">
-            <option value="">Inherit (global)</option>
-            <option value="on">On</option>
-            <option value="off">Off</option>
+            <option value="" data-i18n="optInherit">Inherit (global)</option>
+            <option value="on" data-i18n="optOn">On</option>
+            <option value="off" data-i18n="optOff">Off</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Footnotes</span>
-            <span class="toggle-hint">Override the global footnotes setting</span>
+            <span class="select-name" data-i18n="optOvFootnotesName">Footnotes</span>
+            <span class="toggle-hint" data-i18n="optOvFootnotesHint">Override the global footnotes setting</span>
           </div>
           <select id="overrideFootnotes">
-            <option value="">Inherit (global)</option>
-            <option value="on">On</option>
-            <option value="off">Off</option>
+            <option value="" data-i18n="optInherit">Inherit (global)</option>
+            <option value="on" data-i18n="optOn">On</option>
+            <option value="off" data-i18n="optOff">Off</option>
           </select>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Citation Style</span>
-            <span class="toggle-hint">Override the global citation style</span>
+            <span class="select-name" data-i18n="optCitationName">Citation Style</span>
+            <span class="toggle-hint" data-i18n="optOvCitationHint">Override the global citation style</span>
           </div>
           <select id="overrideCitation">
-            <option value="">Inherit (global)</option>
-            <option value="numbered">Numbered</option>
-            <option value="apa">APA (7th edition)</option>
-            <option value="mla">MLA (9th edition)</option>
-            <option value="chicago">Chicago (Author-Date)</option>
+            <option value="" data-i18n="optInherit">Inherit (global)</option>
+            <option value="numbered" data-i18n="citeNumbered">Numbered</option>
+            <option value="apa" data-i18n="optCiteApa">APA (7th edition)</option>
+            <option value="mla" data-i18n="optCiteMla">MLA (9th edition)</option>
+            <option value="chicago" data-i18n="optCiteChicago">Chicago (Author-Date)</option>
             <option value="ieee">IEEE</option>
             <option value="vancouver">Vancouver</option>
             <option value="harvard">Harvard</option>
@@ -694,9 +694,9 @@
       </section>
 
       <!-- Formats panel -->
-      <section class="panel panel-hidden" data-panel="formats" aria-label="Formats">
-        <h2 class="panel-title">Formats</h2>
-        <p class="panel-intro">Pick which formats show up in the right-click menu and the popup. Up to 12 can be enabled at once.</p>
+      <section class="panel panel-hidden" data-panel="formats" aria-label="Formats" data-i18n-aria="optNavFormats">
+        <h2 class="panel-title" data-i18n="optNavFormats">Formats</h2>
+        <p class="panel-intro" data-i18n="optFormatsIntro">Pick which formats show up in the right-click menu and the popup. Up to 12 can be enabled at once.</p>
         <div class="formats-grid">
 
     <!-- Clipboard -->
@@ -704,32 +704,32 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"/></svg>
-          <span>Clipboard</span>
+          <span data-i18n="optClipboardTitle">Clipboard</span>
           <span class="section-badge" id="clipboardBadge">0</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <label class="toggle" data-format="clipboard_md" data-search="copy markdown md clipboard">
-          <span class="toggle-label"><span class="toggle-name">Copy as Markdown</span></span>
+          <span class="toggle-label"><span class="toggle-name" data-i18n="fmtClipboardMd">Copy as Markdown</span></span>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-format="clipboard_txt" data-search="copy plain text txt clipboard">
-          <span class="toggle-label"><span class="toggle-name">Copy as Plain Text</span></span>
+          <span class="toggle-label"><span class="toggle-name" data-i18n="fmtClipboardTxt">Copy as Plain Text</span></span>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-format="clipboard_html" data-search="copy html rich clipboard docs word">
           <div class="toggle-label">
-            <span class="toggle-name">Copy as HTML (rich)</span>
-            <span class="toggle-hint">Preserves formatting when pasting into Docs / Word</span>
+            <span class="toggle-name" data-i18n="fmtClipboardHtml">Copy as HTML (rich)</span>
+            <span class="toggle-hint" data-i18n="optClipHtmlHint">Preserves formatting when pasting into Docs / Word</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-format="clipboard_json" data-search="copy json clipboard data">
-          <span class="toggle-label"><span class="toggle-name">Copy as JSON</span></span>
+          <span class="toggle-label"><span class="toggle-name" data-i18n="fmtClipboardJson">Copy as JSON</span></span>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
@@ -741,7 +741,7 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zM13 9V3.5L18.5 9H13z"/></svg>
-          <span>Text Formats</span>
+          <span data-i18n="optTextFormatsTitle">Text Formats</span>
           <span class="section-badge" id="textBadge">0</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
@@ -753,7 +753,7 @@
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-format="txt" data-search="plain text txt">
-          <span class="toggle-label"><span class="toggle-name">Plain Text <span class="ext-tag">.txt</span></span></span>
+          <span class="toggle-label"><span class="toggle-name"><span data-i18n="optFmtPlainText">Plain Text</span> <span class="ext-tag">.txt</span></span></span>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
@@ -764,8 +764,8 @@
         </label>
         <label class="toggle" data-format="reader" data-search="reader readable html web article clean modern document">
           <div class="toggle-label">
-            <span class="toggle-name">HTML – Reader <span class="ext-tag">.html</span></span>
-            <span class="toggle-hint">Clean, modern reading page with light/dark theme</span>
+            <span class="toggle-name"><span data-i18n="optFmtReaderName">HTML – Reader</span> <span class="ext-tag">.html</span></span>
+            <span class="toggle-hint" data-i18n="optReaderFmtHint">Clean, modern reading page with light/dark theme</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -783,7 +783,7 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-          <span>Markup / Academic</span>
+          <span data-i18n="optAcademicTitle">Markup / Academic</span>
           <span class="section-badge" id="academicBadge">0</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
@@ -792,7 +792,7 @@
         <label class="toggle" data-format="latex" data-search="latex tex academic paper overleaf">
           <div class="toggle-label">
             <span class="toggle-name">LaTeX <span class="ext-tag">.tex</span></span>
-            <span class="toggle-hint">For academic papers and Overleaf</span>
+            <span class="toggle-hint" data-i18n="optLatexHint">For academic papers and Overleaf</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -805,7 +805,7 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 2v3H5V5h14zm0 5v4H5v-4h14zM5 19v-3h14v3H5z"/></svg>
-          <span>Data</span>
+          <span data-i18n="optDataTitle">Data</span>
           <span class="section-badge" id="dataBadge">0</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
@@ -814,7 +814,7 @@
         <label class="toggle" data-format="csv" data-search="csv excel google sheets tables data spreadsheet">
           <div class="toggle-label">
             <span class="toggle-name">CSV <span class="ext-tag">.csv</span></span>
-            <span class="toggle-hint">Extracts tables for Excel / Google Sheets</span>
+            <span class="toggle-hint" data-i18n="optCsvHint">Extracts tables for Excel / Google Sheets</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -827,7 +827,7 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
-          <span>References</span>
+          <span data-i18n="optReferencesTitle">References</span>
           <span class="section-badge" id="refBadge">0</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
@@ -836,7 +836,7 @@
         <label class="toggle" data-format="bibtex" data-search="bibtex bib zotero mendeley overleaf bibliography reference">
           <div class="toggle-label">
             <span class="toggle-name">BibTeX <span class="ext-tag">.bib</span></span>
-            <span class="toggle-hint">Sources for Zotero, Mendeley, Overleaf</span>
+            <span class="toggle-hint" data-i18n="optBibtexHint">Sources for Zotero, Mendeley, Overleaf</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -844,7 +844,7 @@
         <label class="toggle" data-format="ris" data-search="ris endnote zotero mendeley reference manager">
           <div class="toggle-label">
             <span class="toggle-name">RIS <span class="ext-tag">.ris</span></span>
-            <span class="toggle-hint">Sources for EndNote, Zotero, Mendeley</span>
+            <span class="toggle-hint" data-i18n="optRisHint">Sources for EndNote, Zotero, Mendeley</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -852,7 +852,7 @@
         <label class="toggle" data-format="csljson" data-search="csl json zotero pandoc citeproc bibliography">
           <div class="toggle-label">
             <span class="toggle-name">CSL-JSON <span class="ext-tag">.json</span></span>
-            <span class="toggle-hint">Sources for Zotero, Pandoc (citeproc)</span>
+            <span class="toggle-hint" data-i18n="optCsljsonHint">Sources for Zotero, Pandoc (citeproc)</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -865,7 +865,7 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
-          <span>Documents</span>
+          <span data-i18n="optDocumentsTitle">Documents</span>
           <span class="section-badge" id="docBadge">0</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
@@ -878,8 +878,8 @@
         </label>
         <label class="toggle" data-format="rtf" data-search="rtf rich text wordpad email pages textedit">
           <div class="toggle-label">
-            <span class="toggle-name">Rich Text <span class="ext-tag">.rtf</span></span>
-            <span class="toggle-hint">Universal rich text - pastes into Word, Pages, email</span>
+            <span class="toggle-name"><span data-i18n="optFmtRichText">Rich Text</span> <span class="ext-tag">.rtf</span></span>
+            <span class="toggle-hint" data-i18n="optRtfHint">Universal rich text - pastes into Word, Pages, email</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -892,7 +892,7 @@
         <label class="toggle" data-format="epub" data-search="epub ebook kindle apple books reader">
           <div class="toggle-label">
             <span class="toggle-name">EPUB <span class="ext-tag">.epub</span></span>
-            <span class="toggle-hint">E-book for Kindle, Apple Books, etc.</span>
+            <span class="toggle-hint" data-i18n="optEpubHint">E-book for Kindle, Apple Books, etc.</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -905,23 +905,23 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-          <span>Bundle</span>
+          <span data-i18n="optBundleTitle">Bundle</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <label class="toggle" data-format="vault" data-search="vault bundle obsidian notion logseq knowledge base markdown references tables zip">
           <div class="toggle-label">
-            <span class="toggle-name">Vault Bundle <span class="ext-tag">.zip</span></span>
-            <span class="toggle-hint">Markdown + references.md + per-table CSVs for Obsidian / Notion</span>
+            <span class="toggle-name"><span data-i18n="optFmtVaultBundle">Vault Bundle</span> <span class="ext-tag">.zip</span></span>
+            <span class="toggle-hint" data-i18n="optVaultHint">Markdown + references.md + per-table CSVs for Obsidian / Notion</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
         <label class="toggle" data-format="zip_all" data-search="zip all bundle download everything archive">
           <div class="toggle-label">
-            <span class="toggle-name">Download All <span class="ext-tag">.zip</span></span>
-            <span class="toggle-hint">Export all enabled formats in a single ZIP archive</span>
+            <span class="toggle-name"><span data-i18n="optFmtDownloadAll">Download All</span> <span class="ext-tag">.zip</span></span>
+            <span class="toggle-hint" data-i18n="optZipAllHint">Export all enabled formats in a single ZIP archive</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -933,36 +933,36 @@
       </section>
 
       <!-- Tools panel -->
-      <section class="panel panel-hidden" data-panel="tools" aria-label="Tools">
-        <h2 class="panel-title">Tools</h2>
+      <section class="panel panel-hidden" data-panel="tools" aria-label="Tools" data-i18n-aria="optNavTools">
+        <h2 class="panel-title" data-i18n="optNavTools">Tools</h2>
 
     <!-- Feedback -->
     <section class="card" data-section="feedback">
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/></svg>
-          <span>Feedback</span>
+          <span data-i18n="optFeedbackTitle">Feedback</span>
         </div>
       </button>
       <div class="section-body">
         <div class="debug-row">
           <div class="debug-info">
-            <span class="debug-title">Report a Bug</span>
-            <span class="toggle-hint">Opens a short report form, pre-filled with your extension version and browser. Since the extension is in beta, your reports directly help stabilize it.</span>
+            <span class="debug-title" data-i18n="optBugRowTitle">Report a Bug</span>
+            <span class="toggle-hint" data-i18n="optBugRowHint">Opens a short report form, pre-filled with your extension version and browser. Since the extension is in beta, your reports directly help stabilize it.</span>
           </div>
           <button class="backup-btn js-bug-report" id="bugReportBtn" type="button">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5s-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2.09c.05.33.09.66.09 1v1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8z"/></svg>
-            Report
+            <span data-i18n="optReportBtn">Report</span>
           </button>
         </div>
         <div class="debug-row">
           <div class="debug-info">
-            <span class="debug-title">Suggest a Feature</span>
-            <span class="toggle-hint">Have an idea or a format you'd love to see? Send a quick suggestion - it helps shape the roadmap.</span>
+            <span class="debug-title" data-i18n="optSuggestRowTitle">Suggest a Feature</span>
+            <span class="toggle-hint" data-i18n="optSuggestRowHint">Have an idea or a format you'd love to see? Send a quick suggestion - it helps shape the roadmap.</span>
           </div>
           <button class="backup-btn js-suggestion" id="suggestionBtn" type="button">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
-            Suggest
+            <span data-i18n="optSuggestBtn">Suggest</span>
           </button>
         </div>
       </div>
@@ -973,18 +973,18 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-          <span>Quality Check</span>
+          <span data-i18n="optQualityTitle">Quality Check</span>
         </div>
       </button>
       <div class="section-body">
         <div class="debug-row">
           <div class="debug-info">
-            <span class="debug-title">Check report quality</span>
-            <span class="toggle-hint">Scans the current Deep Research page for issues before you export: heading structure &amp; empty headings, empty or ragged tables, unmatched footnotes, duplicate sources, broken math, missing alt text. Runs locally (no network) and lists the findings below. Requires an active Gemini Deep Research page.</span>
+            <span class="debug-title" data-i18n="optQualityRowTitle">Check report quality</span>
+            <span class="toggle-hint" data-i18n="optQualityRowHint">Scans the current Deep Research page for issues before you export: heading structure &amp; empty headings, empty or ragged tables, unmatched footnotes, duplicate sources, broken math, missing alt text. Runs locally (no network) and lists the findings below. Requires an active Gemini Deep Research page.</span>
           </div>
           <button class="backup-btn" id="qualityBtn" type="button">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 15l-4-4 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7z"/></svg>
-            Check
+            <span data-i18n="optCheckBtn">Check</span>
           </button>
         </div>
         <div class="debug-status" id="qualityStatus" aria-live="polite"></div>
@@ -997,29 +997,29 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-          <span>Backup &amp; Restore</span>
+          <span data-i18n="optBackupTitle">Backup &amp; Restore</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <div class="backup-row">
           <div class="backup-info">
-            <span class="backup-title">Export settings</span>
-            <span class="toggle-hint">Download all formats and options as a JSON file</span>
+            <span class="backup-title" data-i18n="optExportSettingsTitle">Export settings</span>
+            <span class="toggle-hint" data-i18n="optExportSettingsHint">Download all formats and options as a JSON file</span>
           </div>
           <button class="backup-btn" id="exportSettingsBtn">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Export
+            <span data-i18n="optExportBtn">Export</span>
           </button>
         </div>
         <div class="backup-row">
           <div class="backup-info">
-            <span class="backup-title">Import settings</span>
-            <span class="toggle-hint">Restore from a previously exported JSON file</span>
+            <span class="backup-title" data-i18n="optImportSettingsTitle">Import settings</span>
+            <span class="toggle-hint" data-i18n="optImportSettingsHint">Restore from a previously exported JSON file</span>
           </div>
           <button class="backup-btn" id="importSettingsBtn">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" transform="rotate(180 12 11)"/></svg>
-            Import
+            <span data-i18n="optImportBtn">Import</span>
           </button>
           <input type="file" id="importSettingsInput" accept="application/json,.json" hidden>
         </div>
@@ -1032,50 +1032,50 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          <span>Re-export from JSON</span>
+          <span data-i18n="optReexportTitle">Re-export from JSON</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <div class="meta-intro">
-          <span class="toggle-hint">Convert a previously exported <code>.json</code> report into any other format - fully offline, using your current export options (layout, sources, citations). No Gemini page needed.</span>
+          <span class="toggle-hint" data-i18n-html="optReexportIntro">Convert a previously exported <code>.json</code> report into any other format - fully offline, using your current export options (layout, sources, citations). No Gemini page needed.</span>
         </div>
         <div class="backup-row">
           <div class="backup-info">
-            <span class="backup-title">Source file</span>
-            <span class="toggle-hint" id="reexportFileName">Choose a JSON report exported by this extension.</span>
+            <span class="backup-title" data-i18n="optSourceFileTitle">Source file</span>
+            <span class="toggle-hint" id="reexportFileName" data-i18n="optChooseFilePrompt">Choose a JSON report exported by this extension.</span>
           </div>
           <button class="backup-btn" id="reexportChooseBtn" type="button">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" transform="rotate(180 12 11)"/></svg>
-            Choose file
+            <span data-i18n="optChooseFileBtn">Choose file</span>
           </button>
           <input type="file" id="reexportFileInput" accept="application/json,.json" hidden>
         </div>
         <div class="select-row">
           <div class="select-label">
-            <span class="select-name">Export as</span>
-            <span class="toggle-hint">Target format</span>
+            <span class="select-name" data-i18n="optExportAsName">Export as</span>
+            <span class="toggle-hint" data-i18n="optExportAsHint">Target format</span>
           </div>
           <select id="reexportFormat"></select>
         </div>
         <div class="backup-row">
           <div class="backup-info">
-            <span class="backup-title">Export</span>
-            <span class="toggle-hint">Produce the chosen format from the loaded report</span>
+            <span class="backup-title" data-i18n="optExportBtn">Export</span>
+            <span class="toggle-hint" data-i18n="optReexportRowHint">Produce the chosen format from the loaded report</span>
           </div>
           <button class="backup-btn" id="reexportBtn" type="button" disabled>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Export
+            <span data-i18n="optExportBtn">Export</span>
           </button>
         </div>
         <div class="debug-status" id="reexportStatus" aria-live="polite"></div>
 
         <div class="recent-head">
           <div class="select-label">
-            <span class="select-name">Recent reports</span>
-            <span class="toggle-hint">Backed up automatically on every export (last 10, stored only on this device). Load one to re-export it without the Gemini page.</span>
+            <span class="select-name" data-i18n="optRecentTitle">Recent reports</span>
+            <span class="toggle-hint" data-i18n="optRecentHint">Backed up automatically on every export (last 10, stored only on this device). Load one to re-export it without the Gemini page.</span>
           </div>
-          <button class="backup-btn danger" id="recentClearBtn" type="button" hidden>Clear all</button>
+          <button class="backup-btn danger" id="recentClearBtn" type="button" hidden data-i18n="optClearAllBtn">Clear all</button>
         </div>
         <ul class="recent-list" id="recentList"></ul>
       </div>
@@ -1086,30 +1086,30 @@
       <button class="section-header" type="button" tabindex="-1">
         <div class="section-title-row">
           <svg class="section-icon debug-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5s-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
-          <span>Debug</span>
+          <span data-i18n="optDebugTitle">Debug</span>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
       </button>
       <div class="section-body">
         <div class="debug-row">
           <div class="debug-info">
-            <span class="debug-title">Debug Export</span>
-            <span class="toggle-hint">Exports all formats × all citation styles × all markdown flavors as a single ZIP. Requires an active Gemini Deep Research page.</span>
+            <span class="debug-title" data-i18n="optDebugExportTitle">Debug Export</span>
+            <span class="toggle-hint" data-i18n="optDebugExportHint">Exports all formats × all citation styles × all markdown flavors as a single ZIP. Requires an active Gemini Deep Research page.</span>
           </div>
           <button class="debug-btn" id="debugExportBtn">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Export All
+            <span data-i18n="optExportAllBtn">Export All</span>
           </button>
         </div>
         <div class="debug-status" id="debugStatus" aria-live="polite"></div>
         <div class="debug-row">
           <div class="debug-info">
-            <span class="debug-title">Run Diagnostics</span>
-            <span class="toggle-hint">Checks how robustly the current Gemini page maps onto the extractor (content root, block counts, source/footnote matching, math). Downloads <code>gep-diagnostics.txt</code>. Requires an active Gemini Deep Research page.</span>
+            <span class="debug-title" data-i18n="optDiagRowTitle">Run Diagnostics</span>
+            <span class="toggle-hint" data-i18n-html="optDiagRowHint">Checks how robustly the current Gemini page maps onto the extractor (content root, block counts, source/footnote matching, math). Downloads <code>gep-diagnostics.txt</code>. Requires an active Gemini Deep Research page.</span>
           </div>
           <button class="debug-btn" id="diagnoseBtn">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-            Run
+            <span data-i18n="optRunBtn">Run</span>
           </button>
         </div>
         <div class="debug-status" id="diagnoseStatus" aria-live="polite"></div>
@@ -1124,20 +1124,21 @@
 
   <div class="saved-badge" id="savedBadge" aria-live="polite">
     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-    Settings saved
+    <span data-i18n="optSavedBadge">Settings saved</span>
   </div>
 
   <!-- Reset confirmation -->
   <div class="modal-overlay" id="resetModal">
     <div class="modal">
-      <p class="modal-title">Reset all settings?</p>
-      <p class="modal-desc">This will restore every option to its default value.</p>
+      <p class="modal-title" data-i18n="optResetModalTitle">Reset all settings?</p>
+      <p class="modal-desc" data-i18n="optResetModalDesc">This will restore every option to its default value.</p>
       <div class="modal-actions">
-        <button class="modal-btn cancel" id="resetCancel" type="button">Cancel</button>
-        <button class="modal-btn confirm" id="resetConfirm" type="button">Reset</button>
+        <button class="modal-btn cancel" id="resetCancel" type="button" data-i18n="optCancel">Cancel</button>
+        <button class="modal-btn confirm" id="resetConfirm" type="button" data-i18n="optReset">Reset</button>
       </div>
     </div>
   </div>
+  <script src="../lib/i18n.js"></script>
   <script src="../lib/settings.js"></script>
   <script src="../lib/links.js"></script>
   <!-- GEP exporter stack for offline re-export from a saved JSON IR.

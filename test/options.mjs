@@ -18,6 +18,7 @@ import vm from "node:vm";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseHTML } from "linkedom";
+import { getMessage } from "./i18n-mock.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -81,6 +82,7 @@ const chromeMock = {
     getManifest: () => ({ version: "9.9.9", version_name: "9.9.9 Test" }),
   },
   tabs: { query: async () => [] },
+  i18n: { getMessage },
 };
 
 /** Simulates a write from another context (popup / second window). */
@@ -132,7 +134,7 @@ window.location = globalThis.location;
 }
 
 // ── Classic GEP libs (attach to window.GEP / globalThis.GEP) ─────────
-for (const f of ["src/lib/settings.js", "src/lib/export-opts.js", "src/lib/history.js", "src/lib/links.js"]) {
+for (const f of ["src/lib/i18n.js", "src/lib/settings.js", "src/lib/export-opts.js", "src/lib/history.js", "src/lib/links.js"]) {
   vm.runInThisContext(fs.readFileSync(path.join(root, f), "utf8"), { filename: f });
 }
 const GEP = globalThis.GEP;

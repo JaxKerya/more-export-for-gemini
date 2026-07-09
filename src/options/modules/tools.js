@@ -14,6 +14,8 @@ async function resolveGeminiTab() {
 }
 
 export function initTools() {
+  const t = GEP.i18n.t;
+
   // ── Debug mode (tap logo 15 times) ──
   const debugCard = document.querySelector('.card[data-section="debug"]');
   const logoTap = document.getElementById("logoTap");
@@ -46,28 +48,28 @@ export function initTools() {
   if (debugBtn) {
     debugBtn.addEventListener("click", async () => {
       debugBtn.disabled = true;
-      setDebugStatus("Searching for active Gemini tab...", "");
+      setDebugStatus(t("optSearchingTab"), "");
 
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setDebugStatus("No Gemini tab found. Open a Deep Research page first.", "error");
+          setDebugStatus(t("optNoGeminiTab"), "error");
           debugBtn.disabled = false;
           return;
         }
-        setDebugStatus("Exporting all combinations...", "");
+        setDebugStatus(t("optExportingAll"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_DEBUG_EXPORT" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setDebugStatus("Could not reach content script. Refresh the Gemini page.", "error");
+            setDebugStatus(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
-            setDebugStatus("Debug ZIP downloaded successfully!", "success");
+            setDebugStatus(t("optDebugZipDone"), "success");
           } else {
-            setDebugStatus(resp?.error || "Export failed.", "error");
+            setDebugStatus(resp?.error || t("optExportFailedShort"), "error");
           }
           debugBtn.disabled = false;
         });
       } catch (err) {
-        setDebugStatus("Error: " + err.message, "error");
+        setDebugStatus(t("optErrorPrefix", err.message), "error");
         debugBtn.disabled = false;
       }
     });
@@ -86,32 +88,35 @@ export function initTools() {
   if (diagnoseBtn) {
     diagnoseBtn.addEventListener("click", async () => {
       diagnoseBtn.disabled = true;
-      setDiagnoseStatus("Searching for active Gemini tab...", "");
+      setDiagnoseStatus(t("optSearchingTab"), "");
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setDiagnoseStatus("No Gemini tab found. Open a Deep Research page first.", "error");
+          setDiagnoseStatus(t("optNoGeminiTab"), "error");
           diagnoseBtn.disabled = false;
           return;
         }
-        setDiagnoseStatus("Running diagnostics...", "");
+        setDiagnoseStatus(t("optRunningDiag"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_DIAGNOSE" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setDiagnoseStatus("Could not reach content script. Refresh the Gemini page.", "error");
+            setDiagnoseStatus(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
             const r = resp.report || {};
             setDiagnoseStatus(
-              (r.ok ? "OK" : "Issues detected") +
-              ` - ${r.blockTotal || 0} blocks, ${r.footnotes ? r.footnotes.seenCount : 0} sources. Report downloaded.`,
+              t("optDiagResult", [
+                r.ok ? t("optOkLabel") : t("optIssuesDetected"),
+                String(r.blockTotal || 0),
+                String(r.footnotes ? r.footnotes.seenCount : 0),
+              ]),
               r.ok ? "success" : "error"
             );
           } else {
-            setDiagnoseStatus(resp?.error || "Diagnostics failed.", "error");
+            setDiagnoseStatus(resp?.error || t("optDiagFailedShort"), "error");
           }
           diagnoseBtn.disabled = false;
         });
       } catch (err) {
-        setDiagnoseStatus("Error: " + err.message, "error");
+        setDiagnoseStatus(t("optErrorPrefix", err.message), "error");
         diagnoseBtn.disabled = false;
       }
     });
@@ -156,33 +161,35 @@ export function initTools() {
     qualityBtn.addEventListener("click", async () => {
       qualityBtn.disabled = true;
       if (qualityFindings) { qualityFindings.replaceChildren(); qualityFindings.classList.remove("visible"); }
-      setQualityStatus("Searching for active Gemini tab...", "");
+      setQualityStatus(t("optSearchingTab"), "");
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setQualityStatus("No Gemini tab found. Open a Deep Research page first.", "error");
+          setQualityStatus(t("optNoGeminiTab"), "error");
           qualityBtn.disabled = false;
           return;
         }
-        setQualityStatus("Checking quality...", "");
+        setQualityStatus(t("optCheckingQuality"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_QUALITY" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setQualityStatus("Could not reach content script. Refresh the Gemini page.", "error");
+            setQualityStatus(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
             const s = (resp.report && resp.report.stats) || {};
             setQualityStatus(
-              (resp.report.ok ? "Quality OK" : "Issues detected") +
-              ` - ${s.errors || 0} error(s), ${s.warnings || 0} warning(s), ${s.infos || 0} info.`,
+              t("optQualityResult", [
+                resp.report.ok ? t("optQualityOkShort") : t("optIssuesDetected"),
+                String(s.errors || 0), String(s.warnings || 0), String(s.infos || 0),
+              ]),
               resp.report.ok ? "success" : "error"
             );
             renderQualityFindings(resp.report);
           } else {
-            setQualityStatus(resp?.error || "Quality check failed.", "error");
+            setQualityStatus(resp?.error || t("optQualityFailedShort"), "error");
           }
           qualityBtn.disabled = false;
         });
       } catch (err) {
-        setQualityStatus("Error: " + err.message, "error");
+        setQualityStatus(t("optErrorPrefix", err.message), "error");
         qualityBtn.disabled = false;
       }
     });

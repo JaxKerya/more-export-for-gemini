@@ -13,6 +13,7 @@ import fs from "node:fs";
 import vm from "node:vm";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { getMessage } from "./i18n-mock.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -89,6 +90,7 @@ function makeWorker(storedData) {
     commands: {
       onCommand: { addListener: (fn) => state.listeners.command.push(fn) },
     },
+    i18n: { getMessage },
   };
 
   const sandbox = { chrome, console, setTimeout, clearTimeout };

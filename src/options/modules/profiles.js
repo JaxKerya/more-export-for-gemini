@@ -6,6 +6,7 @@
 
 export async function initProfiles(ctx) {
   const { DEFAULTS: FORMAT_DEFAULTS, sanitizeOverrides } = GEP.settings;
+  const t = GEP.i18n.t;
 
   const profileNameInput = document.getElementById("profileName");
   const profileSaveBtn = document.getElementById("profileSaveBtn");
@@ -45,7 +46,7 @@ export async function initProfiles(ctx) {
     ctx.syncControlsFromState();
     await ctx.saveAll();
     ctx.refreshLastEnabled();
-    setProfileStatus(`Profile "${name}" applied.`, "success");
+    setProfileStatus(t("optProfileApplied", name), "success");
   }
 
   function renderProfiles() {
@@ -69,25 +70,25 @@ export async function initProfiles(ctx) {
       metaEl.className = "profile-item-meta";
       const enabled = Object.values(p.formats || {}).filter(Boolean).length;
       const when = p.savedAt ? new Date(p.savedAt).toLocaleDateString() : "";
-      metaEl.textContent = `${enabled} formats · ${p.options ? p.options.citation_style : ""}${when ? " · " + when : ""}`;
+      metaEl.textContent = `${t("optProfileMeta", String(enabled))} · ${p.options ? p.options.citation_style : ""}${when ? " · " + when : ""}`;
       info.append(nameEl, metaEl);
 
       const applyBtn = document.createElement("button");
       applyBtn.className = "backup-btn";
       applyBtn.type = "button";
-      applyBtn.textContent = "Apply";
+      applyBtn.textContent = t("optApplyBtn");
       applyBtn.addEventListener("click", () => { applyProfile(name); });
 
       const delBtn = document.createElement("button");
       delBtn.className = "backup-btn danger";
       delBtn.type = "button";
-      delBtn.textContent = "Delete";
-      delBtn.setAttribute("aria-label", `Delete profile ${name}`);
+      delBtn.textContent = t("optDeleteBtn");
+      delBtn.setAttribute("aria-label", t("optDeleteProfileAria", name));
       delBtn.addEventListener("click", async () => {
         delete profiles[name];
         await persistProfiles();
         renderProfiles();
-        setProfileStatus(`Profile "${name}" deleted.`, "success");
+        setProfileStatus(t("optProfileDeleted", name), "success");
       });
 
       li.append(info, applyBtn, delBtn);
@@ -99,13 +100,13 @@ export async function initProfiles(ctx) {
     profileSaveBtn.addEventListener("click", async () => {
       const name = profileNameInput.value.trim().slice(0, GEP.settings.MAX_PROFILE_NAME);
       if (!name) {
-        setProfileStatus("Give the profile a name first.", "error");
+        setProfileStatus(t("optProfileNameFirst"), "error");
         profileNameInput.focus();
         return;
       }
       const isNew = !(name in profiles);
       if (isNew && Object.keys(profiles).length >= GEP.settings.MAX_PROFILES) {
-        setProfileStatus(`Profile limit reached (${GEP.settings.MAX_PROFILES}). Delete one first.`, "error");
+        setProfileStatus(t("optProfileLimit", String(GEP.settings.MAX_PROFILES)), "error");
         return;
       }
       profiles[name] = currentSnapshot();
@@ -113,12 +114,12 @@ export async function initProfiles(ctx) {
         await persistProfiles();
       } catch (e) {
         delete profiles[name];
-        setProfileStatus("Could not save profile: " + (e && e.message ? e.message : String(e)), "error");
+        setProfileStatus(t("optProfileSaveFailed", e && e.message ? e.message : String(e)), "error");
         return;
       }
       profileNameInput.value = "";
       renderProfiles();
-      setProfileStatus(`Profile "${name}" ${isNew ? "saved" : "updated"}.`, "success");
+      setProfileStatus(t(isNew ? "optProfileSaved" : "optProfileUpdated", name), "success");
     });
     profileNameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") profileSaveBtn.click();

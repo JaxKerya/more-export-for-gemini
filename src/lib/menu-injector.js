@@ -38,6 +38,10 @@
     zip: "M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 10h-2v2h-2v-2H8v-2h2v-2h2v2h2v2z",
   };
 
+  // Localized label lookup. i18n.js loads first in the manifest, but keep a
+  // fallback (the key itself) so a stripped-down sandbox can still run us.
+  const t = (key) => (GEP.i18n ? GEP.i18n.t(key) : key);
+
   /**
    * Grouped layout: each group is rendered with a divider before it (if the
    * previous group had visible items). This keeps the menu clean.
@@ -45,46 +49,46 @@
   const GROUPS = [
     {
       items: [
-        { format: "clipboard_md", label: "Copy as Markdown", icon: ICONS.clipboard },
-        { format: "clipboard_txt", label: "Copy as Plain Text", icon: ICONS.clipboard },
-        { format: "clipboard_html", label: "Copy as HTML (rich)", icon: ICONS.clipboard },
-        { format: "clipboard_json", label: "Copy as JSON", icon: ICONS.clipboard },
+        { format: "clipboard_md", label: t("fmtClipboardMd"), icon: ICONS.clipboard },
+        { format: "clipboard_txt", label: t("fmtClipboardTxt"), icon: ICONS.clipboard },
+        { format: "clipboard_html", label: t("fmtClipboardHtml"), icon: ICONS.clipboard },
+        { format: "clipboard_json", label: t("fmtClipboardJson"), icon: ICONS.clipboard },
       ],
     },
     {
       items: [
-        { format: "markdown", label: "Markdown (.md)", icon: ICONS.markdown },
-        { format: "txt", label: "Plain text (.txt)", icon: ICONS.txt },
-        { format: "html", label: "HTML (.html)", icon: ICONS.html },
-        { format: "reader", label: "HTML – Reader (.html)", icon: ICONS.html },
-        { format: "json", label: "JSON (.json)", icon: ICONS.json },
+        { format: "markdown", label: t("fmtMarkdown"), icon: ICONS.markdown },
+        { format: "txt", label: t("fmtTxt"), icon: ICONS.txt },
+        { format: "html", label: t("fmtHtml"), icon: ICONS.html },
+        { format: "reader", label: t("fmtReader"), icon: ICONS.html },
+        { format: "json", label: t("fmtJson"), icon: ICONS.json },
       ],
     },
     {
       items: [
-        { format: "latex", label: "LaTeX (.tex)", icon: ICONS.latex },
-        { format: "csv", label: "CSV (.csv)", icon: ICONS.csv },
+        { format: "latex", label: t("fmtLatex"), icon: ICONS.latex },
+        { format: "csv", label: t("fmtCsv"), icon: ICONS.csv },
       ],
     },
     {
       items: [
-        { format: "bibtex", label: "BibTeX (.bib)", icon: ICONS.bibtex },
-        { format: "ris", label: "RIS (.ris)", icon: ICONS.bibtex },
-        { format: "csljson", label: "CSL-JSON (.json)", icon: ICONS.csljson },
+        { format: "bibtex", label: t("fmtBibtex"), icon: ICONS.bibtex },
+        { format: "ris", label: t("fmtRis"), icon: ICONS.bibtex },
+        { format: "csljson", label: t("fmtCsljson"), icon: ICONS.csljson },
       ],
     },
     {
       items: [
-        { format: "docx", label: "Word (.docx)", icon: ICONS.docx },
-        { format: "rtf", label: "Rich Text (.rtf)", icon: ICONS.rtf },
-        { format: "pdf", label: "PDF (.pdf)", icon: ICONS.pdf },
-        { format: "epub", label: "EPUB (.epub)", icon: ICONS.epub },
+        { format: "docx", label: t("fmtDocx"), icon: ICONS.docx },
+        { format: "rtf", label: t("fmtRtf"), icon: ICONS.rtf },
+        { format: "pdf", label: t("fmtPdf"), icon: ICONS.pdf },
+        { format: "epub", label: t("fmtEpub"), icon: ICONS.epub },
       ],
     },
     {
       items: [
-        { format: "vault", label: "Vault bundle (.zip)", icon: ICONS.vault },
-        { format: "zip_all", label: "Download all (.zip)", icon: ICONS.zip },
+        { format: "vault", label: t("fmtVault"), icon: ICONS.vault },
+        { format: "zip_all", label: t("fmtZipAll"), icon: ICONS.zip },
       ],
     },
   ];
@@ -228,7 +232,7 @@
 
     const label = document.createElement("span");
     label.className = "gep-label";
-    label.textContent = "More formats in Settings…";
+    label.textContent = t("menuMoreFormats");
 
     notice.append(icon, label);
     return notice;

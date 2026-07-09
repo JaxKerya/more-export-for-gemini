@@ -13,6 +13,7 @@ import vm from "node:vm";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseHTML } from "linkedom";
+import { getMessage } from "./i18n-mock.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -67,6 +68,7 @@ const chromeMock = {
     onMessage: { addListener: (fn) => messageListeners.push(fn) },
     getManifest: () => ({ version: "0.0.0-test" }),
   },
+  i18n: { getMessage },
 };
 
 const sandbox = {
@@ -90,6 +92,7 @@ vm.createContext(sandbox);
 // stack (web_accessible_resources), preloaded here so loadExporters()
 // short-circuits — vm sandboxes can't service dynamic import().
 const STACK = [
+  "src/lib/i18n.js",
   "src/vendor/katex.js", "src/vendor/highlight.js",
   "src/lib/texmath.js", "src/lib/docmeta.js", "src/lib/export-opts.js",
   "src/lib/source-hygiene.js", "src/lib/history.js",

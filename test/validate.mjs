@@ -1187,7 +1187,13 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "u
 check("manifest_version = 3", manifest.manifest_version === 3);
 check("name is correct", manifest.name === "More Export for Gemini");
 check("has version", /^\d+\.\d+\.\d+$/.test(manifest.version));
-check("has description", manifest.description.length > 20);
+// Description is localized (i18n); the placeholder must resolve in en.json.
+check("has description", (() => {
+  const m = /^__MSG_([a-zA-Z0-9_]+)__$/.exec(manifest.description);
+  if (!m) return manifest.description.length > 20;
+  const en = JSON.parse(fs.readFileSync(path.join(root, "_locales/en/messages.json"), "utf8"));
+  return !!en[m[1]] && en[m[1]].message.length > 20;
+})());
 check("permissions include storage", manifest.permissions.includes("storage"));
 check("permissions include contextMenus", manifest.permissions.includes("contextMenus"));
 check("permissions include tabs", manifest.permissions.includes("tabs"));

@@ -24,6 +24,8 @@ const outPath = join(root, "store", outName);
 const cs = manifest.content_scripts[0];
 const include = [
   "manifest.json",
+  // Locale catalogs (i18n): one messages.json per supported language.
+  ...readdirSync(join(root, "_locales")).map((lang) => `_locales/${lang}/messages.json`),
   "icons/icon16.png",
   "icons/icon48.png",
   "icons/icon128.png",

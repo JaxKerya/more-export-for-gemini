@@ -5,6 +5,7 @@
 
 export function initBackup(ctx) {
   const { DEFAULTS: FORMAT_DEFAULTS, OPTION_DEFAULTS, OPTION_ENUMS, sanitizeOverrides } = GEP.settings;
+  const t = GEP.i18n.t;
 
   const exportSettingsBtn = document.getElementById("exportSettingsBtn");
   const importSettingsBtn = document.getElementById("importSettingsBtn");
@@ -44,19 +45,19 @@ export function initBackup(ctx) {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
-      setBackupStatus("Settings exported.", "success");
+      setBackupStatus(t("optSettingsExported"), "success");
     });
   }
 
   /** Validate and merge an imported payload into the live state. */
   function applyImportedSettings(data) {
     if (!data || typeof data !== "object") {
-      return { ok: false, error: "Not a valid settings file." };
+      return { ok: false, error: t("optImportInvalidFile") };
     }
     const f = data.formats;
     const o = data.options;
     if ((f && typeof f !== "object") || (o && typeof o !== "object")) {
-      return { ok: false, error: "Malformed formats/options in file." };
+      return { ok: false, error: t("optImportMalformed") };
     }
 
     let formatCount = 0;
@@ -91,7 +92,7 @@ export function initBackup(ctx) {
     }
 
     if (!formatCount && !optionCount) {
-      return { ok: false, error: "No recognizable settings found in file." };
+      return { ok: false, error: t("optImportNothing") };
     }
     return { ok: true, formatCount, optionCount };
   }
@@ -105,7 +106,7 @@ export function initBackup(ctx) {
         const text = await file.text();
         let data;
         try { data = JSON.parse(text); }
-        catch { setBackupStatus("Invalid JSON file.", "error"); return; }
+        catch { setBackupStatus(t("optInvalidJson"), "error"); return; }
 
         const result = applyImportedSettings(data);
         if (!result.ok) {
@@ -116,11 +117,11 @@ export function initBackup(ctx) {
         await ctx.saveAll();
         ctx.refreshLastEnabled();
         setBackupStatus(
-          `Imported ${result.formatCount} format${result.formatCount === 1 ? "" : "s"} and ${result.optionCount} option${result.optionCount === 1 ? "" : "s"}.`,
+          t("optImportedSummary", [String(result.formatCount), String(result.optionCount)]),
           "success"
         );
       } catch {
-        setBackupStatus("Could not read the file.", "error");
+        setBackupStatus(t("optFileReadError"), "error");
       } finally {
         importSettingsInput.value = "";
       }

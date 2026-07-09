@@ -13,6 +13,7 @@ import vm from "node:vm";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseHTML } from "linkedom";
+import { getMessage } from "./i18n-mock.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -38,13 +39,15 @@ function section(name) {
 /** Fresh sandbox + injector per scenario so PROCESSED_ATTR / stats don't leak. */
 function makeInjector(bodyHtml) {
   const { window, document } = parseHTML(`<!DOCTYPE html><html><body>${bodyHtml}</body></html>`);
-  const sandbox = { window, document, console, Node: window.Node };
+  const sandbox = {
+    window, document, console, Node: window.Node,
+    chrome: { i18n: { getMessage } },
+  };
   vm.createContext(sandbox);
-  vm.runInContext(
-    fs.readFileSync(path.join(root, "src/lib/menu-injector.js"), "utf8"),
-    sandbox,
-    { filename: "src/lib/menu-injector.js" }
-  );
+  // i18n.js first, exactly like the manifest content_scripts order.
+  for (const f of ["src/lib/i18n.js", "src/lib/menu-injector.js"]) {
+    vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), sandbox, { filename: f });
+  }
   return { injector: sandbox.window.GEP.menuInjector, document };
 }
 

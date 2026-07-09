@@ -6,11 +6,12 @@
  */
 "use strict";
 
-importScripts("lib/settings.js");
+importScripts("lib/i18n.js", "lib/settings.js");
 
 /** @type {typeof globalThis.GEP} */
 const GEP = globalThis.GEP;
 const DEFAULT_FORMATS = GEP.settings.DEFAULTS;
+const t = GEP.i18n.t;
 
 // Menu grouped into sections; a separator is drawn only between sections that
 // each have at least one enabled item (no dangling/adjacent separators).
@@ -18,39 +19,39 @@ const DEFAULT_FORMATS = GEP.settings.DEFAULTS;
 // gates a scoped variant like "markdown@tables".
 const MENU_SECTIONS = [
   [
-    { format: "clipboard_md", title: "Copy as Markdown" },
-    { format: "clipboard_txt", title: "Copy as Plain Text" },
-    { format: "clipboard_html", title: "Copy as HTML (rich)" },
-    { format: "clipboard_json", title: "Copy as JSON" },
+    { format: "clipboard_md", title: t("fmtClipboardMd") },
+    { format: "clipboard_txt", title: t("fmtClipboardTxt") },
+    { format: "clipboard_html", title: t("fmtClipboardHtml") },
+    { format: "clipboard_json", title: t("fmtClipboardJson") },
   ],
   [
-    { format: "markdown", title: "Markdown (.md)" },
-    { format: "txt", title: "Plain text (.txt)" },
-    { format: "html", title: "HTML (.html)" },
-    { format: "reader", title: "HTML – Reader (.html)" },
-    { format: "json", title: "JSON (.json)" },
+    { format: "markdown", title: t("fmtMarkdown") },
+    { format: "txt", title: t("fmtTxt") },
+    { format: "html", title: t("fmtHtml") },
+    { format: "reader", title: t("fmtReader") },
+    { format: "json", title: t("fmtJson") },
   ],
-  [{ format: "latex", title: "LaTeX (.tex)" }],
-  [{ format: "csv", title: "CSV (.csv)" }],
+  [{ format: "latex", title: t("fmtLatex") }],
+  [{ format: "csv", title: t("fmtCsv") }],
   [
-    { format: "bibtex", title: "BibTeX (.bib)" },
-    { format: "ris", title: "RIS (.ris)" },
-    { format: "csljson", title: "CSL-JSON (.json)" },
-  ],
-  [
-    { format: "docx", title: "Word (.docx)" },
-    { format: "rtf", title: "Rich Text (.rtf)" },
-    { format: "pdf", title: "PDF (.pdf)" },
-    { format: "epub", title: "EPUB (.epub)" },
+    { format: "bibtex", title: t("fmtBibtex") },
+    { format: "ris", title: t("fmtRis") },
+    { format: "csljson", title: t("fmtCsljson") },
   ],
   [
-    { format: "vault", title: "Vault bundle (.zip)" },
-    { format: "zip_all", title: "Download all (.zip)" },
+    { format: "docx", title: t("fmtDocx") },
+    { format: "rtf", title: t("fmtRtf") },
+    { format: "pdf", title: t("fmtPdf") },
+    { format: "epub", title: t("fmtEpub") },
   ],
   [
-    { format: "markdown@tables", base: "markdown", title: "Tables only → Markdown" },
-    { format: "csv@tables", base: "csv", title: "Tables only → CSV" },
-    { format: "markdown@nosrc", base: "markdown", title: "Body only (no sources) → Markdown" },
+    { format: "vault", title: t("fmtVault") },
+    { format: "zip_all", title: t("fmtZipAll") },
+  ],
+  [
+    { format: "markdown@tables", base: "markdown", title: t("fmtTablesMd") },
+    { format: "csv@tables", base: "csv", title: t("fmtTablesCsv") },
+    { format: "markdown@nosrc", base: "markdown", title: t("fmtNosrcMd") },
   ],
 ];
 

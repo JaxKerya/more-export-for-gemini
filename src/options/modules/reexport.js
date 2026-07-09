@@ -5,6 +5,7 @@
  */
 
 export function initReexport(ctx) {
+  const t = GEP.i18n.t;
   const reexportFileInput = document.getElementById("reexportFileInput");
   const reexportChooseBtn = document.getElementById("reexportChooseBtn");
   const reexportFileName = document.getElementById("reexportFileName");
@@ -21,10 +22,19 @@ export function initReexport(ctx) {
 
   if (reexportFormat && window.GEP && GEP.exportOpts) {
     const labels = GEP.exportOpts.LABELS || {};
+    // Localized picker labels; formats without a message fall back to the
+    // English label table in export-opts.js.
+    const labelKeys = {
+      markdown: "fmtMarkdown", txt: "fmtTxt", html: "fmtHtml",
+      reader: "fmtReaderReexport", json: "fmtJson", latex: "fmtLatex",
+      csv: "fmtCsv", bibtex: "fmtBibtex", ris: "fmtRis",
+      csljson: "fmtCsljson", rtf: "fmtRtfExt", docx: "fmtDocx",
+      pdf: "fmtPdfPrint", epub: "fmtEpub", vault: "fmtVault",
+    };
     GEP.exportOpts.EXPORTABLE.forEach((fmt) => {
       const opt = document.createElement("option");
       opt.value = fmt;
-      opt.textContent = labels[fmt] || fmt;
+      opt.textContent = (labelKeys[fmt] && GEP.i18n.raw(labelKeys[fmt])) || labels[fmt] || fmt;
       reexportFormat.appendChild(opt);
     });
     reexportFormat.value = "markdown";
@@ -33,14 +43,14 @@ export function initReexport(ctx) {
   /** Strip the JSON export envelope and validate the IR shape. */
   function parseReexportIR(text) {
     let data;
-    try { data = JSON.parse(text); } catch { return { ok: false, error: "Invalid JSON file." }; }
-    if (!data || typeof data !== "object") return { ok: false, error: "Not a JSON report." };
+    try { data = JSON.parse(text); } catch { return { ok: false, error: t("optInvalidJson") }; }
+    if (!data || typeof data !== "object") return { ok: false, error: t("optNotJsonReport") };
     // The JSON exporter spreads IR fields next to envelope keys (schemaVersion,
     // generator, exportedAt); tolerate a nested `ir` shape too.
     const src = Array.isArray(data.blocks)
       ? data
       : (data.ir && Array.isArray(data.ir.blocks)) ? data.ir : null;
-    if (!src) return { ok: false, error: "No report blocks found in this JSON." };
+    if (!src) return { ok: false, error: t("optNoBlocks") };
     return { ok: true, ir: normalizeIR(src) };
   }
 
@@ -67,18 +77,19 @@ export function initReexport(ctx) {
         if (!res.ok) {
           reexportIR = null;
           if (reexportBtn) reexportBtn.disabled = true;
-          if (reexportFileName) reexportFileName.textContent = "Choose a JSON report exported by this extension.";
+          if (reexportFileName) reexportFileName.textContent = t("optChooseFilePrompt");
           setReexportStatus(res.error, "error");
           return;
         }
         reexportIR = res.ir;
         if (reexportBtn) reexportBtn.disabled = false;
         if (reexportFileName) {
-          reexportFileName.textContent = `${file.name} - ${res.ir.blocks.length} block(s), ${res.ir.footnotes.length} source(s)`;
+          reexportFileName.textContent =
+            t("optFileMeta", [file.name, String(res.ir.blocks.length), String(res.ir.footnotes.length)]);
         }
-        setReexportStatus("Report loaded. Pick a format and export.", "success");
+        setReexportStatus(t("optReportLoaded"), "success");
       } catch {
-        setReexportStatus("Could not read the file.", "error");
+        setReexportStatus(t("optFileReadError"), "error");
       } finally {
         reexportFileInput.value = "";
       }
@@ -87,8 +98,8 @@ export function initReexport(ctx) {
 
   if (reexportBtn) {
     reexportBtn.addEventListener("click", async () => {
-      if (!reexportIR) { setReexportStatus("Load a JSON report first.", "error"); return; }
-      if (!window.GEP || !GEP.exportOpts) { setReexportStatus("Exporter modules failed to load.", "error"); return; }
+      if (!reexportIR) { setReexportStatus(t("optLoadFirst"), "error"); return; }
+      if (!window.GEP || !GEP.exportOpts) { setReexportStatus(t("optModulesFailed"), "error"); return; }
       const format = reexportFormat ? reexportFormat.value : "markdown";
       const MIME = GEP.exportOpts.MIME;
       const EXT = GEP.exportOpts.EXT;
@@ -107,30 +118,30 @@ export function initReexport(ctx) {
         if (textConverters[format]) {
           const result = textConverters[format].convert(ir, opts);
           GEP.download.downloadBlob(result, name(EXT[format]), MIME[format]);
-          setReexportStatus(`Exported ${name(EXT[format])}.`, "success");
+          setReexportStatus(t("optExportedFile", name(EXT[format])), "success");
           return;
         }
         if (format === "docx") {
           GEP.download.downloadBlob(GEP.docx.convert(ir, opts), name(EXT.docx), MIME.docx);
-          setReexportStatus("Exported Word document.", "success"); return;
+          setReexportStatus(t("optExportedWord"), "success"); return;
         }
         if (format === "epub") {
           GEP.download.downloadBlob(GEP.epub.convert(ir, opts), name(EXT.epub), MIME.epub);
-          setReexportStatus("Exported EPUB.", "success"); return;
+          setReexportStatus(t("optExportedEpub"), "success"); return;
         }
         if (format === "vault") {
           const entries = GEP.vault.buildEntries(ir, opts);
-          if (!entries.length) { setReexportStatus("Nothing to export to a vault.", "error"); return; }
+          if (!entries.length) { setReexportStatus(t("toastVaultEmpty"), "error"); return; }
           GEP.download.downloadBlob(GEP.zip.build(entries), name(EXT.vault), MIME.vault);
-          setReexportStatus(`Exported vault (${entries.length} files).`, "success"); return;
+          setReexportStatus(t("optExportedVault", String(entries.length)), "success"); return;
         }
         if (format === "pdf") {
           await GEP.pdf.exportPdf(ir, opts);
-          setReexportStatus("Print dialog opened for PDF.", "success"); return;
+          setReexportStatus(t("toastPdfPrint"), "success"); return;
         }
-        setReexportStatus(`Unsupported format: ${format}.`, "error");
+        setReexportStatus(t("optUnsupportedFormat", format), "error");
       } catch (e) {
-        setReexportStatus("Export failed: " + (e && e.message ? e.message : String(e)), "error");
+        setReexportStatus(t("optExportFailed", e && e.message ? e.message : String(e)), "error");
       }
     });
   }
@@ -148,16 +159,19 @@ export function initReexport(ctx) {
   function loadHistoryEntry(entry) {
     const ir = entry && entry.ir;
     if (!ir || !Array.isArray(ir.blocks)) {
-      setReexportStatus("This backup could not be read.", "error");
+      setReexportStatus(t("optBackupUnreadable"), "error");
       return;
     }
     reexportIR = normalizeIR(ir);
     if (reexportBtn) reexportBtn.disabled = false;
     if (reexportFileName) {
-      reexportFileName.textContent =
-        `${entry.title || "Untitled report"} - ${reexportIR.blocks.length} block(s), ${reexportIR.footnotes.length} source(s) (from history)`;
+      reexportFileName.textContent = t("optFileMetaHistory", [
+        entry.title || t("optUntitledReport"),
+        String(reexportIR.blocks.length),
+        String(reexportIR.footnotes.length),
+      ]);
     }
-    setReexportStatus("Report loaded from history. Pick a format and export.", "success");
+    setReexportStatus(t("optLoadedFromHistory"), "success");
   }
 
   async function renderRecentReports() {
@@ -170,7 +184,7 @@ export function initReexport(ctx) {
     if (!items.length) {
       const li = document.createElement("li");
       li.className = "recent-empty";
-      li.textContent = "No backups yet - they appear here after your first export.";
+      li.textContent = t("optNoBackups");
       recentListEl.appendChild(li);
       return;
     }
@@ -183,21 +197,23 @@ export function initReexport(ctx) {
       info.className = "profile-info";
       const nameEl = document.createElement("span");
       nameEl.className = "profile-item-name";
-      nameEl.textContent = item.title || "Untitled report";
+      nameEl.textContent = item.title || t("optUntitledReport");
       const metaEl = document.createElement("span");
       metaEl.className = "profile-item-meta";
       const kb = Math.max(1, Math.round((item.bytes || 0) / 1024));
-      metaEl.textContent = `${formatWhen(item.savedAt)} · ${item.blocks || 0} blocks · ${item.sources || 0} sources · ${kb} KB`;
+      metaEl.textContent = t("optRecentMeta", [
+        formatWhen(item.savedAt), String(item.blocks || 0), String(item.sources || 0), String(kb),
+      ]);
       info.append(nameEl, metaEl);
 
       const loadBtn = document.createElement("button");
       loadBtn.className = "backup-btn";
       loadBtn.type = "button";
-      loadBtn.textContent = "Load";
+      loadBtn.textContent = t("optLoadBtn");
       loadBtn.addEventListener("click", async () => {
         const entry = await GEP.history.get(item.id);
         if (!entry) {
-          setReexportStatus("This backup is no longer available.", "error");
+          setReexportStatus(t("optBackupGone"), "error");
           renderRecentReports();
           return;
         }
@@ -207,8 +223,8 @@ export function initReexport(ctx) {
       const delBtn = document.createElement("button");
       delBtn.className = "backup-btn danger";
       delBtn.type = "button";
-      delBtn.textContent = "Delete";
-      delBtn.setAttribute("aria-label", `Delete backup ${item.title || ""}`);
+      delBtn.textContent = t("optDeleteBtn");
+      delBtn.setAttribute("aria-label", t("optDeleteBackupAria", item.title || ""));
       delBtn.addEventListener("click", async () => {
         await GEP.history.remove(item.id);
         renderRecentReports();
@@ -224,7 +240,7 @@ export function initReexport(ctx) {
       if (!window.GEP || !GEP.history) return;
       await GEP.history.clear();
       renderRecentReports();
-      setReexportStatus("All backups cleared.", "success");
+      setReexportStatus(t("optBackupsCleared"), "success");
     });
   }
 

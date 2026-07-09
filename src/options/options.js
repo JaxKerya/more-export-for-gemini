@@ -27,6 +27,11 @@ const {
   sanitizeOverrides,
 } = GEP.settings;
 
+const t = GEP.i18n.t;
+
+// Localize the static page before any module reads or renders labels.
+GEP.i18n.localizeDocument();
+
 const SECTION_FORMAT_KEYS = {
   clipboard:  ["clipboard_md", "clipboard_txt", "clipboard_html", "clipboard_json"],
   "text-formats": ["markdown", "txt", "html", "reader", "json"],
@@ -82,7 +87,7 @@ function showMaxToast() {
   el.textContent = "";
   const icon = document.createElement("span");
   icon.textContent = "⚠ ";
-  const msg = document.createTextNode(`Max ${MAX_ENABLED_FORMATS} formats allowed in the dropdown menu`);
+  const msg = document.createTextNode(t("optMaxToast", String(MAX_ENABLED_FORMATS)));
   el.appendChild(icon);
   el.appendChild(msg);
   el.style.borderColor = "rgba(249, 171, 0, 0.35)";
@@ -102,7 +107,7 @@ function showMaxToast() {
       p.setAttribute("d", "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z");
       checkSvg.appendChild(p);
       el.appendChild(checkSvg);
-      el.appendChild(document.createTextNode(" Settings saved"));
+      el.appendChild(document.createTextNode(" " + t("optSavedBadge")));
       el.style.borderColor = "";
       el.style.color = "";
     }, 300);
@@ -193,7 +198,10 @@ function selectLabel(sel, val) {
 function updateSummary() {
   const total = formatEnabledCount();
   const footer = document.getElementById("enabledCountFooter");
-  if (footer) footer.textContent = total + (total === 1 ? " format enabled" : " formats enabled");
+  if (footer) {
+    footer.textContent =
+      total === 1 ? t("optFormatsEnabledOne", "1") : t("optFormatsEnabledMany", String(total));
+  }
   const ovEnabled = document.getElementById("ovEnabled");
   if (ovEnabled) ovEnabled.textContent = String(total);
   const ovPrimary = document.getElementById("ovPrimary");
@@ -308,12 +316,13 @@ const selectToTri = (v) => (v === "on" ? true : v === "off" ? false : undefined)
 
 function describeOverride(fmt) {
   const o = ctx.overrides[fmt];
-  if (!o || !Object.keys(o).length) return "Inherits all global settings.";
+  if (!o || !Object.keys(o).length) return t("optOvInherits");
+  const onOff = (v) => (v ? t("optStateOn") : t("optStateOff"));
   const parts = [];
-  if (o.include_toc !== undefined) parts.push(`TOC ${o.include_toc ? "on" : "off"}`);
-  if (o.include_footnotes !== undefined) parts.push(`Footnotes ${o.include_footnotes ? "on" : "off"}`);
-  if (o.citation_style) parts.push(`Citation ${o.citation_style}`);
-  return "Overrides: " + parts.join(", ") + ".";
+  if (o.include_toc !== undefined) parts.push(t("optOvTocPart", onOff(o.include_toc)));
+  if (o.include_footnotes !== undefined) parts.push(t("optOvFnPart", onOff(o.include_footnotes)));
+  if (o.citation_style) parts.push(t("optOvCitePart", o.citation_style));
+  return t("optOvPrefix", parts.join(", "));
 }
 
 function loadOverrideControls() {
@@ -389,7 +398,7 @@ function updateTemplatePreview() {
   for (const [k, v] of Object.entries(tokens)) {
     tpl = tpl.replace(new RegExp(`\\{${k}\\}`, "g"), v);
   }
-  templatePreview.textContent = `Preview: ${tpl}.md`;
+  templatePreview.textContent = t("optPreview", `${tpl}.md`);
 }
 
 if (templateInput) {

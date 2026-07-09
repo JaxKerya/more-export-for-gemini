@@ -1,6 +1,9 @@
 (async function () {
   "use strict";
 
+  const t = GEP.i18n.t;
+  GEP.i18n.localizeDocument();
+
   const manifest = chrome.runtime.getManifest();
   document.getElementById("version").textContent = `v${manifest.version_name || manifest.version}`;
 
@@ -34,14 +37,14 @@
   }
 
   const FORMAT_LABELS = {
-    clipboard_md: "Clipboard MD", clipboard_txt: "Clipboard TXT",
-    clipboard_html: "Clipboard HTML", clipboard_json: "Clipboard JSON",
-    markdown: ".md", txt: ".txt", html: ".html", reader: "Reader", json: ".json",
+    clipboard_md: t("popChipClipMd"), clipboard_txt: t("popChipClipTxt"),
+    clipboard_html: t("popChipClipHtml"), clipboard_json: t("popChipClipJson"),
+    markdown: ".md", txt: ".txt", html: ".html", reader: t("popChipReader"), json: ".json",
     latex: ".tex",
     csv: ".csv",
     bibtex: ".bib", ris: ".ris", csljson: "CSL-JSON",
     docx: ".docx", rtf: ".rtf", pdf: ".pdf", epub: ".epub",
-    vault: "Vault", zip_all: ".zip",
+    vault: t("popChipVault"), zip_all: ".zip",
   };
 
   const DOC_FORMATS = new Set(["docx", "rtf", "pdf", "epub", "vault"]);
@@ -50,7 +53,7 @@
   const CLIP_FORMATS = new Set(["clipboard_md", "clipboard_txt", "clipboard_html", "clipboard_json"]);
 
   const CITATION_LABELS = {
-    numbered: "Numbered", apa: "APA", mla: "MLA", chicago: "Chicago", ieee: "IEEE",
+    numbered: t("citeNumbered"), apa: "APA", mla: "MLA", chicago: "Chicago", ieee: "IEEE",
     vancouver: "Vancouver", harvard: "Harvard", acs: "ACS", ama: "AMA",
   };
 
@@ -72,7 +75,7 @@
   document.getElementById("formatCount").textContent = downloadFormats.length;
   document.getElementById("clipboardCount").textContent = clipFormats.length;
   document.getElementById("citationLabel").textContent =
-    CITATION_LABELS[options.citation_style] || "Numbered";
+    CITATION_LABELS[options.citation_style] || t("citeNumbered");
 
   const chipsEl = document.getElementById("enabledFormats");
   downloadFormats.forEach(([k]) => {
@@ -87,7 +90,7 @@
   if (formats.zip_all) {
     const chip = document.createElement("span");
     chip.className = "format-chip doc";
-    chip.textContent = "ZIP all";
+    chip.textContent = t("popChipZipAll");
     chipsEl.appendChild(chip);
   }
 
@@ -103,7 +106,7 @@
       profileRow.hidden = false;
       const placeholder = document.createElement("option");
       placeholder.value = "";
-      placeholder.textContent = "Switch profile…";
+      placeholder.textContent = t("popSwitchProfile");
       profileSelect.appendChild(placeholder);
       for (const name of names) {
         const opt = document.createElement("option");
@@ -141,13 +144,13 @@
     [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   } catch {
     dot.classList.add("inactive");
-    statusText.textContent = "Tab error";
+    statusText.textContent = t("popStatusTabError");
     return;
   }
 
   if (!tab || !tab.url || !tab.url.startsWith("https://gemini.google.com")) {
     dot.classList.add("inactive");
-    statusText.textContent = "Not on Gemini";
+    statusText.textContent = t("popStatusNotGemini");
     return;
   }
 
@@ -155,13 +158,13 @@
     const response = await chrome.tabs.sendMessage(tab.id, { type: "GEP_PING" });
     if (response && response.hasContent) {
       dot.classList.add("active");
-      statusText.textContent = "Ready";
+      statusText.textContent = t("popStatusReady");
     } else {
       dot.classList.add("active");
-      statusText.textContent = "Waiting";
+      statusText.textContent = t("popStatusWaiting");
     }
   } catch {
     dot.classList.add("inactive");
-    statusText.textContent = "No connection";
+    statusText.textContent = t("popStatusNoConnection");
   }
 })();

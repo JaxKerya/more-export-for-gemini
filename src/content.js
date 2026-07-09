@@ -12,6 +12,9 @@
   "use strict";
   const GEP = (window.GEP = window.GEP || {});
 
+  // Localized string lookup (i18n.js loads first per the manifest order).
+  const t = (key, subs) => (GEP.i18n ? GEP.i18n.t(key, subs) : key);
+
   // MIME / extension tables live in GEP.exportOpts (single source of truth,
   // shared with the offline re-export UI in the Options page).
   const MIME = GEP.exportOpts.MIME;
@@ -169,8 +172,8 @@
       el.appendChild(btn);
     };
 
-    if (retryFn) addButton("Retry", retryFn);
-    if (actionFn) addButton(actionLabel || "Details", actionFn);
+    if (retryFn) addButton(t("toastRetry"), retryFn);
+    if (actionFn) addButton(actionLabel || t("toastDetails"), actionFn);
     const hasButton = !!(retryFn || actionFn);
 
     el.classList.toggle("gep-toast-error", isError);
@@ -188,7 +191,7 @@
 
     const pct = total ? Math.min(100, Math.round((done / total) * 100)) : 0;
     const textSpan = document.createElement("span");
-    textSpan.textContent = label || `Exporting… ${pct}%`;
+    textSpan.textContent = label || t("toastExportingPct", String(pct));
     el.appendChild(textSpan);
 
     const track = document.createElement("div");
@@ -234,10 +237,10 @@
   function extractionFailedToast(message) {
     toast(message, {
       isError: true,
-      actionLabel: "Get diagnostics",
+      actionLabel: t("toastGetDiagnostics"),
       actionFn: () => {
         downloadDiagnostics();
-        toast("Diagnostics report downloaded. You can attach it to a bug report from Settings.");
+        toast(t("toastDiagSaved"));
       },
     });
   }
@@ -253,7 +256,7 @@
 
       const ir = GEP.extractor.extract();
       if (!ir || !ir.blocks.length) {
-        extractionFailedToast("No Deep Research content found to export.");
+        extractionFailedToast(t("toastNoContent"));
         return null;
       }
 
@@ -263,7 +266,7 @@
       return ir;
     } catch (err) {
       console.error("[GEP] extraction failed", err);
-      extractionFailedToast("Failed to read page content.");
+      extractionFailedToast(t("toastReadFailed"));
       return null;
     }
   }
@@ -273,7 +276,7 @@
       await loadExporters();
     } catch (err) {
       console.error("[GEP] failed to load exporter modules", err);
-      toast("Failed to load export modules.", { isError: true, retryFn: () => onExport(rawFormat) });
+      toast(t("toastModulesFailed"), { isError: true, retryFn: () => onExport(rawFormat) });
       return;
     }
 
@@ -310,13 +313,13 @@
       if (TEXT_CONVERTERS[format]) {
         const converter = TEXT_CONVERTERS[format]();
         if (!converter || typeof converter.convert !== "function") {
-          toast(`Exporter "${format}" is not available.`, { isError: true });
+          toast(t("toastExporterUnavailable", format), { isError: true });
           return;
         }
         const result = converter.convert(ir, exportOpts);
         const fileName = fname(ir.title, EXT[format]);
         GEP.download.downloadBlob(result, fileName, MIME[format]);
-        toast(`Downloading: ${fileName}`);
+        toast(t("toastDownloading", fileName));
         return;
       }
 
@@ -325,29 +328,29 @@
           const blob = GEP.docx.convert(ir, exportOpts);
           const fileName = fname(ir.title, EXT.docx);
           GEP.download.downloadBlob(blob, fileName, MIME.docx);
-          toast(`Downloading: ${fileName}`);
+          toast(t("toastDownloading", fileName));
           return;
         }
         case "epub": {
           const blob = GEP.epub.convert(ir, exportOpts);
           const fileName = fname(ir.title, EXT.epub);
           GEP.download.downloadBlob(blob, fileName, MIME.epub);
-          toast(`Downloading: ${fileName}`);
+          toast(t("toastDownloading", fileName));
           return;
         }
         case "pdf":
           await GEP.pdf.exportPdf(ir, exportOpts);
-          toast("Print dialog opened for PDF.");
+          toast(t("toastPdfPrint"));
           return;
         case "clipboard_md": {
           const mdOpts = { ...exportOpts };
           await navigator.clipboard.writeText(GEP.markdown.convert(ir, mdOpts));
-          toast("Markdown copied to clipboard.");
+          toast(t("toastCopiedMd"));
           return;
         }
         case "clipboard_txt":
           await navigator.clipboard.writeText(GEP.txt.convert(ir, exportOpts).replace(/\r\n/g, "\n"));
-          toast("Plain text copied to clipboard.");
+          toast(t("toastCopiedTxt"));
           return;
         case "clipboard_html": {
           const richHtml = GEP.pdf.buildDocument(ir, exportOpts);
@@ -356,22 +359,22 @@
           await navigator.clipboard.write([
             new ClipboardItem({ "text/html": htmlBlob, "text/plain": textFallback }),
           ]);
-          toast("Rich HTML copied to clipboard.");
+          toast(t("toastCopiedHtml"));
           return;
         }
         case "clipboard_json":
           await navigator.clipboard.writeText(GEP.json.convert(ir));
-          toast("JSON copied to clipboard.");
+          toast(t("toastCopiedJson"));
           return;
         case "vault": {
           const entries = GEP.vault.buildEntries(ir, exportOpts);
           if (!entries.length) {
-            toast("Nothing to export to a vault.", { isError: true });
+            toast(t("toastVaultEmpty"), { isError: true });
             return;
           }
           const zipName = fname(ir.title, EXT.vault, "vault");
           GEP.download.downloadBlob(GEP.zip.build(entries), zipName, MIME.vault);
-          toast(`Downloading: ${zipName} (${entries.length} files)`);
+          toast(t("toastDownloadingCount", [zipName, String(entries.length)]));
           return;
         }
         case "zip_all": {
@@ -401,30 +404,30 @@
 
           const total = textJobs.length + binaryJobs.length;
           if (!total) {
-            toast("No download formats enabled. Enable at least one in Settings.", { isError: true });
+            toast(t("toastNoFormats"), { isError: true });
             return;
           }
 
           const entries = [];
           let done = 0;
           for (const [fmt, run] of textJobs) {
-            progress(done, total, `Exporting ${fmt}… (${done + 1}/${total})`);
+            progress(done, total, t("toastExportingFmt", [fmt, String(done + 1), String(total)]));
             entries.push({ name: entryName(fmt), data: run(getExportOpts(fmt)) });
             done++;
             await yieldToUI();
           }
           for (const [fmt, run] of binaryJobs) {
-            progress(done, total, `Exporting ${fmt}… (${done + 1}/${total})`);
+            progress(done, total, t("toastExportingFmt", [fmt, String(done + 1), String(total)]));
             const blob = run(getExportOpts(fmt));
             entries.push({ name: entryName(fmt), data: new Uint8Array(await blob.arrayBuffer()) });
             done++;
             await yieldToUI();
           }
 
-          progress(total, total, "Packaging ZIP…");
+          progress(total, total, t("toastPackaging"));
           const zipName = fname(ir.title, ".zip", "zip");
           GEP.download.downloadBlob(GEP.zip.build(entries), zipName, MIME.zip);
-          toast(`Downloading: ${zipName} (${entries.length} file${entries.length > 1 ? "s" : ""})`);
+          toast(t("toastDownloadingCount", [zipName, String(entries.length)]));
           return;
         }
         default:
@@ -433,7 +436,7 @@
       }
     } catch (err) {
       console.error("[GEP] export error", err);
-      toast("An error occurred during export.", {
+      toast(t("toastExportError"), {
         isError: true,
         retryFn: () => onExport(rawFormat),
       });
@@ -585,7 +588,7 @@
     progress(1, 1, "Debug: packaging ZIP…");
     const count = entries.length;
     GEP.download.downloadBlob(GEP.zip.build(entries), "debug-export.zip", MIME.zip);
-    toast(`Debug export: ${count} files downloaded.`);
+    toast(t("toastDebugExport", String(count)));
   }
 
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
@@ -634,13 +637,13 @@
           const s = report.stats;
           toast(
             report.ok
-              ? `Quality OK - no issues found.`
-              : `Quality: ${s.errors} error(s), ${s.warnings} warning(s), ${s.infos} info.`,
+              ? t("toastQualityOk")
+              : t("toastQualityIssues", [String(s.errors), String(s.warnings), String(s.infos)]),
             { isError: !report.ok }
           );
           sendResponse({ ok: true, report });
         } catch (err) {
-          toast("Quality check failed: " + String(err), { isError: true });
+          toast(t("toastQualityFailed", String(err)), { isError: true });
           sendResponse({ ok: false, error: String(err) });
         }
       });
@@ -650,10 +653,10 @@
     if (msg.type === "GEP_DIAGNOSE") {
       try {
         const report = downloadDiagnostics();
-        toast(report.ok ? "Diagnostics OK - report downloaded." : "Diagnostics found issues - report downloaded.", { isError: !report.ok });
+        toast(report.ok ? t("toastDiagOk") : t("toastDiagIssues"), { isError: !report.ok });
         sendResponse({ ok: true, report });
       } catch (err) {
-        toast("Diagnostics failed: " + String(err), { isError: true });
+        toast(t("toastDiagFailed", String(err)), { isError: true });
         sendResponse({ ok: false, error: String(err) });
       }
       return true;
