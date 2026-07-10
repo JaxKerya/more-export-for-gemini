@@ -76,6 +76,7 @@
   "popSettings": { "message": "Settings" },
   "popBugTitle": { "message": "Report a bug" },
   "popSuggestTitle": { "message": "Suggest a feature" },
+  "popDonateTitle": { "message": "Support with a coffee" },
   "popHint": { "message": "Right-click on any Gemini Deep Research page to export" },
   "popChipClipMd": { "message": "Clipboard MD" },
   "popChipClipTxt": { "message": "Clipboard TXT" },
@@ -321,6 +322,9 @@
   "optSuggestRowTitle": { "message": "Suggest a Feature" },
   "optSuggestRowHint": { "message": "Have an idea or a format you'd love to see? Send a quick suggestion - it helps shape the roadmap." },
   "optSuggestBtn": { "message": "Suggest" },
+  "optDonateRowTitle": { "message": "Support the Project" },
+  "optDonateRowHint": { "message": "The extension is free and open source. If it saves you time, a voluntary coffee helps fund new formats and languages." },
+  "optDonateBtn": { "message": "Donate" },
 
   "optQualityTitle": { "message": "Quality Check" },
   "optQualityRowTitle": { "message": "Check report quality" },

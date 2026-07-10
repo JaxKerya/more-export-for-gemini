@@ -76,6 +76,7 @@
   "popSettings": { "message": "Ayarlar" },
   "popBugTitle": { "message": "Hata bildir" },
   "popSuggestTitle": { "message": "Özellik öner" },
+  "popDonateTitle": { "message": "Bir kahveyle destek ol" },
   "popHint": { "message": "Dışa aktarmak için herhangi bir Gemini Deep Research sayfasına sağ tıklayın" },
   "popChipClipMd": { "message": "Pano MD" },
   "popChipClipTxt": { "message": "Pano TXT" },
@@ -321,6 +322,9 @@
   "optSuggestRowTitle": { "message": "Özellik Öner" },
   "optSuggestRowHint": { "message": "Bir fikriniz veya görmek istediğiniz bir format mı var? Kısa bir öneri gönderin - yol haritasını şekillendirmeye yardımcı olur." },
   "optSuggestBtn": { "message": "Öner" },
+  "optDonateRowTitle": { "message": "Projeye Destek Ol" },
+  "optDonateRowHint": { "message": "Eklenti ücretsiz ve açık kaynak. Size zaman kazandırıyorsa, gönüllü bir kahve yeni format ve dillerin geliştirilmesine katkı sağlar." },
+  "optDonateBtn": { "message": "Destek Ol" },
 
   "optQualityTitle": { "message": "Kalite Denetimi" },
   "optQualityRowTitle": { "message": "Rapor kalitesini denetle" },

@@ -4,6 +4,8 @@ A Chrome (Manifest V3) extension that adds 15+ export formats to the Google Gemi
 
 A Turkish architectural overview lives in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md), a Turkish developer guide (commands, scripts, CI/release automation) in [REHBER.md](REHBER.md); user-facing release notes in [CHANGELOG.md](CHANGELOG.md).
 
+The extension is free and open source. If it saves you time, you can [support it with a coffee](https://jaxkerya.gumroad.com/coffee) — voluntary donations fund new formats, more languages and quick fixes whenever Gemini changes its interface.
+
 ## Install (unpacked, for development)
 
 1. Clone this repository.

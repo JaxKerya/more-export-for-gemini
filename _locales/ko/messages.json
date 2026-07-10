@@ -76,6 +76,7 @@
   "popSettings": { "message": "설정" },
   "popBugTitle": { "message": "버그 신고" },
   "popSuggestTitle": { "message": "기능 제안" },
+  "popDonateTitle": { "message": "커피 한 잔으로 응원하기" },
   "popHint": { "message": "Gemini Deep Research 페이지에서 마우스 오른쪽 버튼을 클릭하면 내보낼 수 있습니다" },
   "popChipClipMd": { "message": "클립보드 MD" },
   "popChipClipTxt": { "message": "클립보드 TXT" },
@@ -321,6 +322,9 @@
   "optSuggestRowTitle": { "message": "기능 제안" },
   "optSuggestRowHint": { "message": "아이디어나 원하는 형식이 있나요? 간단한 제안을 보내주세요 - 로드맵을 만드는 데 도움이 됩니다." },
   "optSuggestBtn": { "message": "제안" },
+  "optDonateRowTitle": { "message": "프로젝트 후원" },
+  "optDonateRowHint": { "message": "이 확장 프로그램은 무료 오픈 소스입니다. 시간을 절약해 준다면, 자발적인 커피 한 잔이 새로운 형식과 언어 개발에 도움이 됩니다." },
+  "optDonateBtn": { "message": "후원하기" },
 
   "optQualityTitle": { "message": "품질 검사" },
   "optQualityRowTitle": { "message": "보고서 품질 검사" },

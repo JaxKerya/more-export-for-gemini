@@ -37,6 +37,15 @@
     });
   }
 
+  const donateLink = document.getElementById("donateLink");
+  if (donateLink && window.GEP_LINKS) {
+    donateLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const url = window.GEP_LINKS.donateUrl;
+      try { chrome.tabs.create({ url }); } catch { window.open(url, "_blank"); }
+    });
+  }
+
   const FORMAT_LABELS = {
     clipboard_md: t("popChipClipMd"), clipboard_txt: t("popChipClipTxt"),
     clipboard_html: t("popChipClipHtml"), clipboard_json: t("popChipClipJson"),

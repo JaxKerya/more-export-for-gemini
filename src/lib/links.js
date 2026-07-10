@@ -22,6 +22,8 @@
 
   const BUG_REPORT_FORM = "https://tally.so/r/ODg15K";
   const SUGGESTION_FORM = "https://tally.so/r/44qE5b";
+  // Voluntary donation page (Gumroad "coffee" product with a custom landing).
+  const DONATE_URL = "https://jaxkerya.gumroad.com/coffee";
 
   /**
    * Appends environment info as query params so Tally can pre-fill the matching
@@ -41,6 +43,7 @@
   g.GEP_LINKS = {
     bugReportForm: BUG_REPORT_FORM,
     suggestionForm: SUGGESTION_FORM,
+    donateUrl: DONATE_URL,
 
     /** Bug-report URL, pre-filled with environment info. */
     buildBugReportUrl(info) {

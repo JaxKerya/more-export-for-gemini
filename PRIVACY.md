@@ -1,6 +1,6 @@
 # Privacy Policy — More Export for Gemini
 
-**Last updated:** July 8, 2026
+**Last updated:** July 10, 2026
 
 ## Overview
 
@@ -31,9 +31,10 @@ No data is retained by the extension. Exported files are saved to your local dev
 
 ## Third-Party Services
 
-The extension performs no background communication with third parties. There is exactly one, fully user-initiated exception:
+The extension performs no background communication with third parties. There are exactly two, fully user-initiated exceptions:
 
 - **Feedback forms (Tally):** the optional "Report a bug" and "Suggest a feature" buttons in the popup and Settings page open an external form hosted on [tally.so](https://tally.so) **in a new tab, only when you click them**. To save you typing, the link pre-fills the extension version, your browser's user-agent string and (from the popup) the address of the active Gemini tab as URL parameters. Nothing is sent unless you open the form and submit it yourself; anything you enter there is governed by Tally's own privacy policy.
+- **Donation page (Gumroad):** the optional "Support" buttons in the popup and Settings page open the project's donation page hosted on [gumroad.com](https://gumroad.com) **in a new tab, only when you click them**. The link carries no parameters — no version, browser or page information is attached. Any purchase you make there is handled entirely by Gumroad and governed by Gumroad's own privacy policy.
 
 No other third-party service is contacted, embedded, or integrated.
 

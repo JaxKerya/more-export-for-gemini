@@ -76,6 +76,7 @@
   "popSettings": { "message": "Configurações" },
   "popBugTitle": { "message": "Relatar um bug" },
   "popSuggestTitle": { "message": "Sugerir um recurso" },
+  "popDonateTitle": { "message": "Apoie com um café" },
   "popHint": { "message": "Clique com o botão direito em qualquer página do Gemini Deep Research para exportar" },
   "popChipClipMd": { "message": "Área transf. MD" },
   "popChipClipTxt": { "message": "Área transf. TXT" },
@@ -321,6 +322,9 @@
   "optSuggestRowTitle": { "message": "Sugerir um recurso" },
   "optSuggestRowHint": { "message": "Tem uma ideia ou um formato que adoraria ver? Envie uma sugestão rápida - ajuda a moldar o roteiro." },
   "optSuggestBtn": { "message": "Sugerir" },
+  "optDonateRowTitle": { "message": "Apoie o projeto" },
+  "optDonateRowHint": { "message": "A extensão é gratuita e de código aberto. Se ela economiza seu tempo, um café voluntário ajuda a financiar novos formatos e idiomas." },
+  "optDonateBtn": { "message": "Doar" },
 
   "optQualityTitle": { "message": "Verificação de qualidade" },
   "optQualityRowTitle": { "message": "Verificar a qualidade do relatório" },

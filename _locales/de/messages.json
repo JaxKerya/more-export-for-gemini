@@ -76,6 +76,7 @@
   "popSettings": { "message": "Einstellungen" },
   "popBugTitle": { "message": "Fehler melden" },
   "popSuggestTitle": { "message": "Funktion vorschlagen" },
+  "popDonateTitle": { "message": "Mit einem Kaffee unterstützen" },
   "popHint": { "message": "Klicken Sie mit der rechten Maustaste auf eine beliebige Gemini-Deep-Research-Seite, um zu exportieren" },
   "popChipClipMd": { "message": "Ablage MD" },
   "popChipClipTxt": { "message": "Ablage TXT" },
@@ -321,6 +322,9 @@
   "optSuggestRowTitle": { "message": "Funktion vorschlagen" },
   "optSuggestRowHint": { "message": "Haben Sie eine Idee oder ein Format, das Sie gerne sehen würden? Senden Sie einen kurzen Vorschlag - er hilft, die Roadmap zu gestalten." },
   "optSuggestBtn": { "message": "Vorschlagen" },
+  "optDonateRowTitle": { "message": "Projekt unterstützen" },
+  "optDonateRowHint": { "message": "Die Erweiterung ist kostenlos und Open Source. Wenn sie Ihnen Zeit spart, hilft ein freiwilliger Kaffee, neue Formate und Sprachen zu finanzieren." },
+  "optDonateBtn": { "message": "Spenden" },
 
   "optQualityTitle": { "message": "Qualitätsprüfung" },
   "optQualityRowTitle": { "message": "Berichtsqualität prüfen" },

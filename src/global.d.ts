@@ -13,6 +13,7 @@ declare var GEP: Record<string, any>;
 declare var GEP_LINKS: {
   bugReportForm: string;
   suggestionForm: string;
+  donateUrl: string;
   buildBugReportUrl: (info?: { version?: string; browser?: string }) => string;
   buildSuggestionUrl: (info?: { version?: string; browser?: string }) => string;
 };

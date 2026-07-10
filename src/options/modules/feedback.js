@@ -32,4 +32,10 @@ export function initFeedback() {
       openForm(window.GEP_LINKS.buildSuggestionUrl({ version: versionName(), browser: navigator.userAgent }));
     suggestionBtns.forEach((b) => b.addEventListener("click", openSuggestion));
   }
+
+  // ── Support the project (voluntary donation) ──
+  const donateBtns = document.querySelectorAll(".js-donate");
+  if (donateBtns.length && window.GEP_LINKS) {
+    donateBtns.forEach((b) => b.addEventListener("click", () => openForm(window.GEP_LINKS.donateUrl)));
+  }
 }
