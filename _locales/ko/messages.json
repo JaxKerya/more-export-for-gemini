@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "모든 처리가 브라우저 안에서 로컬로 이루어집니다 - 보고서가 업로드되는 일은 없습니다." },
   "optCtaOptions": { "message": "내보내기 옵션" },
   "optFooterText": { "message": "연구자와 지식 노동자를 위해 만들어졌습니다" },
+  "optLanguageName": { "message": "인터페이스 언어" },
+  "optLanguageHint": { "message": "메뉴, 팝업 및 이 페이지에 적용됩니다. \"자동\"은 브라우저 언어를 따릅니다." },
+  "optLangAuto": { "message": "자동 (브라우저 언어)" },
 
   "optProfilesTitle": { "message": "프로필" },
   "optProfilesHint": { "message": "현재 형식, 옵션, 형식별 설정을 이름 있는 프로필로 저장하세요 - 예: <em>학술 논문</em>(A4, 두 줄 간격, APA)과 <em>빠른 메모</em>(Obsidian MD, 목차 없음) - 여기서든 팝업에서든 한 번의 클릭으로 전환할 수 있습니다." },

@@ -33,8 +33,11 @@ const include = [
   ...cs.js,
   ...cs.css,
   // Lazy-loaded exporter stack: fetched at runtime via import(), so it lives
-  // in web_accessible_resources instead of content_scripts.
-  ...manifest.web_accessible_resources.flatMap((war) => war.resources),
+  // in web_accessible_resources instead of content_scripts. Glob entries
+  // (e.g. _locales/*/messages.json) are expanded elsewhere in this list.
+  ...manifest.web_accessible_resources
+    .flatMap((war) => war.resources)
+    .filter((r) => !r.includes("*")),
   // Shared by the popup and options pages via <script>, but NOT a content
   // script — so it isn't covered by cs.js and must be listed explicitly.
   "src/lib/links.js",

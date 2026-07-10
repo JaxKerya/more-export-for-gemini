@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "Tudo roda localmente no seu navegador - seus relatórios nunca são enviados." },
   "optCtaOptions": { "message": "Opções de exportação" },
   "optFooterText": { "message": "Feito para pesquisadores e trabalhadores do conhecimento" },
+  "optLanguageName": { "message": "Idioma da interface" },
+  "optLanguageHint": { "message": "Menus, popup e esta página. \"Automático\" segue o idioma do navegador." },
+  "optLangAuto": { "message": "Automático (idioma do navegador)" },
 
   "optProfilesTitle": { "message": "Perfis" },
   "optProfilesHint": { "message": "Salve os formatos, opções e substituições atuais como um perfil nomeado - por exemplo, <em>Artigo acadêmico</em> (A4, espaçamento duplo, APA) versus <em>Notas rápidas</em> (MD do Obsidian, sem sumário) - e troque com um clique, aqui ou pelo popup." },

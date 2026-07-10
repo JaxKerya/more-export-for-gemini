@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "すべてブラウザ内でローカルに動作します - レポートがアップロードされることはありません。" },
   "optCtaOptions": { "message": "エクスポートオプション" },
   "optFooterText": { "message": "研究者とナレッジワーカーのために作られました" },
+  "optLanguageName": { "message": "インターフェース言語" },
+  "optLanguageHint": { "message": "メニュー、ポップアップ、このページに適用されます。「自動」はブラウザの言語に従います。" },
+  "optLangAuto": { "message": "自動（ブラウザの言語）" },
 
   "optProfilesTitle": { "message": "プロファイル" },
   "optProfilesHint": { "message": "現在の形式・オプション・個別設定を名前付きプロファイルとして保存できます - 例: <em>学術論文</em>（A4、ダブルスペース、APA）と<em>クイックノート</em>（Obsidian MD、目次なし）- ここでもポップアップからでもワンクリックで切り替えられます。" },

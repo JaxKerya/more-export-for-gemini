@@ -13,6 +13,9 @@
   const GEP = (window.GEP = window.GEP || {});
 
   // Localized string lookup (i18n.js loads first per the manifest order).
+  // init() resolves a pinned UI language; toasts happen on user action, long
+  // after this promise settles, so a fire-and-forget kick-off is enough.
+  if (GEP.i18n && GEP.i18n.init) GEP.i18n.init();
   const t = (key, subs) => (GEP.i18n ? GEP.i18n.t(key, subs) : key);
 
   // MIME / extension tables live in GEP.exportOpts (single source of truth,

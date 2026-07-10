@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "Alles läuft lokal in Ihrem Browser - Ihre Berichte werden niemals hochgeladen." },
   "optCtaOptions": { "message": "Exportoptionen" },
   "optFooterText": { "message": "Gemacht für Forschende und Wissensarbeiter" },
+  "optLanguageName": { "message": "Sprache der Benutzeroberfläche" },
+  "optLanguageHint": { "message": "Menüs, Popup und diese Seite. \"Automatisch\" folgt der Browsersprache." },
+  "optLangAuto": { "message": "Automatisch (Browsersprache)" },
 
   "optProfilesTitle": { "message": "Profile" },
   "optProfilesHint": { "message": "Speichern Sie die aktuellen Formate, Optionen und Überschreibungen als benanntes Profil - z. B. <em>Wissenschaftlicher Artikel</em> (A4, doppelter Zeilenabstand, APA) versus <em>Schnelle Notizen</em> (Obsidian-MD, kein Inhaltsverzeichnis) - und wechseln Sie mit einem Klick, hier oder über das Popup." },

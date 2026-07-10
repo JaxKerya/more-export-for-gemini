@@ -2,6 +2,7 @@
   "use strict";
 
   const t = GEP.i18n.t;
+  await GEP.i18n.init(); // pinned UI language, if any
   GEP.i18n.localizeDocument();
 
   const manifest = chrome.runtime.getManifest();

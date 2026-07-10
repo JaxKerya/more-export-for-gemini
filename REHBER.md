@@ -67,7 +67,7 @@ Release oluştuğunda zip'i **Releases** sayfasından indirip Chrome Web Store p
 
 ## Çoklu dil (i18n)
 
-Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir (`chrome.i18n`); dil tarayıcıdan seçilir, eklenti içi dil seçici yoktur. Format adları (Markdown, PDF, BibTeX…), What's New panosu ve CHANGELOG bilinçli olarak İngilizce kalır.
+Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir. Dil varsayılan olarak tarayıcıdan seçilir (`chrome.i18n`); kullanıcı Settings → Overview'daki **Interface Language** seçicisiyle bir dile sabitleyebilir (ayrı `uiLang` sync anahtarı; profillere bilinçli olarak dahil değildir). Sabitlenen dilin kataloğu `i18n.js` tarafından fetch ile yüklenir — bu yüzden `_locales/*/messages.json` `web_accessible_resources` listesindedir. Manifest'ten gelen metinler (mağaza açıklaması, kısayol açıklamaları) her zaman tarayıcı dilinde kalır. Format adları (Markdown, PDF, BibTeX…), What's New panosu ve CHANGELOG bilinçli olarak İngilizce kalır.
 
 - **Yeni string eklerken:**
   1. `_locales/en/messages.json`'a anahtarı ekleyin (yalnızca `[a-zA-Z0-9_]`; yer tutucular `$1`, `$2`…).
@@ -75,8 +75,8 @@ Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir (`chrome
   3. HTML'de: öğeye `data-i18n="anahtar"` (metin), `data-i18n-html` (işaretlemeli), `data-i18n-placeholder` / `data-i18n-title` / `data-i18n-aria` (öznitelik) verin; İngilizce metni yedek olarak satır içinde bırakın.
   4. JS'te: `GEP.i18n.t("anahtar")` veya yer tutucuyla `t("anahtar", deger)` / `t("anahtar", [d1, d2])`.
   5. `npm run test:i18n` — kullanılmayan/eksik anahtar ve yer tutucu uyumsuzluğu burada yakalanır.
-- **Yeni dil eklerken:** `_locales/<kod>/messages.json` dosyasını `en`'den kopyalayıp çevirin (Chrome dil kodları: `tr`, `es`, `pt_BR`, `de`, `fr`, `ja`, `ko`…). Başka hiçbir dosyaya dokunmak gerekmez — build betiği `_locales/` altındaki her dili otomatik paketler, parite testi anahtar kümesini doğrular. Mağaza açıklamasını Web Store panosunda aynı dilde elle girmeyi unutmayın.
-- **Denemek için:** tarayıcı dilini değiştirin (`chrome://settings/languages`) ve eklentiyi yeniden yükleyin; `chrome.i18n` kataloğu tarayıcı diline göre seçer.
+- **Yeni dil eklerken:** `_locales/<kod>/messages.json` dosyasını `en`'den kopyalayıp çevirin (Chrome dil kodları: `tr`, `es`, `pt_BR`, `de`, `fr`, `ja`, `ko`…) ve dili `src/lib/i18n.js` içindeki `SUPPORTED_LOCALES` listesi ile `options.html`'deki dil seçicisine ekleyin. Build betiği `_locales/` altındaki her dili otomatik paketler, parite testi anahtar kümesini doğrular. Mağaza açıklamasını Web Store panosunda aynı dilde elle girmeyi unutmayın.
+- **Denemek için:** Settings → Overview → Interface Language'tan dili sabitleyin; ya da tarayıcı dilini değiştirip (`chrome://settings/languages`) eklentiyi yeniden yükleyin.
 
 ## Sık senaryolar
 

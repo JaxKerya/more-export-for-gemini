@@ -1230,8 +1230,12 @@ check("content_scripts match gemini.google.com", manifest.content_scripts[0].mat
 
 const warResources = (manifest.web_accessible_resources || []).flatMap((w) => w.resources || []);
 for (const f of [...manifest.content_scripts[0].js, ...manifest.content_scripts[0].css, ...warResources]) {
+  if (f.includes("*")) continue; // glob entries (e.g. _locales/*/messages.json) checked below
   check(`file exists: ${f}`, fs.existsSync(path.join(root, f)));
 }
+// The locale catalogs must be web-accessible: a pinned UI language is loaded
+// by fetch() from content scripts, which only works for WAR-listed resources.
+check("war: locale catalogs exposed", warResources.includes("_locales/*/messages.json"));
 check("background file exists", fs.existsSync(path.join(root, manifest.background.service_worker)));
 check("popup file exists", fs.existsSync(path.join(root, manifest.action.default_popup)));
 check("options file exists", fs.existsSync(path.join(root, manifest.options_ui.page)));

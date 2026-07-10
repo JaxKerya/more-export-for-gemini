@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "Tout s'exécute localement dans votre navigateur - vos rapports ne sont jamais envoyés en ligne." },
   "optCtaOptions": { "message": "Options d'export" },
   "optFooterText": { "message": "Conçu pour les chercheurs et les travailleurs du savoir" },
+  "optLanguageName": { "message": "Langue de l'interface" },
+  "optLanguageHint": { "message": "Menus, popup et cette page. « Auto » suit la langue du navigateur." },
+  "optLangAuto": { "message": "Auto (langue du navigateur)" },
 
   "optProfilesTitle": { "message": "Profils" },
   "optProfilesHint": { "message": "Enregistrez les formats, options et redéfinitions actuels sous forme de profil nommé - par ex. <em>Article académique</em> (A4, double interligne, APA) contre <em>Notes rapides</em> (MD Obsidian, sans table des matières) - et changez en un clic, ici ou depuis le popup." },

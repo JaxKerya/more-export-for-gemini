@@ -61,6 +61,7 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "_locales/*/messages.json",
         "src/vendor/katex.js",
         "src/vendor/highlight.js",
         "src/lib/texmath.js",

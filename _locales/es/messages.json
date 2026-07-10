@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "Todo se ejecuta localmente en tu navegador: tus informes nunca se suben." },
   "optCtaOptions": { "message": "Opciones de exportación" },
   "optFooterText": { "message": "Hecho para investigadores y trabajadores del conocimiento" },
+  "optLanguageName": { "message": "Idioma de la interfaz" },
+  "optLanguageHint": { "message": "Menús, ventana emergente y esta página. \"Automático\" sigue el idioma del navegador." },
+  "optLangAuto": { "message": "Automático (idioma del navegador)" },
 
   "optProfilesTitle": { "message": "Perfiles" },
   "optProfilesHint": { "message": "Guarda los formatos, opciones y anulaciones actuales como un perfil con nombre (p. ej. <em>Artículo académico</em> (A4, doble espacio, APA) frente a <em>Notas rápidas</em> (MD de Obsidian, sin índice)) y cambia con un clic, aquí o desde el popup." },

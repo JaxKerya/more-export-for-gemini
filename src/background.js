@@ -16,42 +16,44 @@ const t = GEP.i18n.t;
 // Menu grouped into sections; a separator is drawn only between sections that
 // each have at least one enabled item (no dangling/adjacent separators).
 // `format` is the message payload; `base` (when set) is the settings key that
-// gates a scoped variant like "markdown@tables".
+// gates a scoped variant like "markdown@tables". Titles are message keys and
+// are resolved inside rebuildMenus() so a runtime language change (pinned
+// uiLang) takes effect on the next rebuild.
 const MENU_SECTIONS = [
   [
-    { format: "clipboard_md", title: t("fmtClipboardMd") },
-    { format: "clipboard_txt", title: t("fmtClipboardTxt") },
-    { format: "clipboard_html", title: t("fmtClipboardHtml") },
-    { format: "clipboard_json", title: t("fmtClipboardJson") },
+    { format: "clipboard_md", title: "fmtClipboardMd" },
+    { format: "clipboard_txt", title: "fmtClipboardTxt" },
+    { format: "clipboard_html", title: "fmtClipboardHtml" },
+    { format: "clipboard_json", title: "fmtClipboardJson" },
   ],
   [
-    { format: "markdown", title: t("fmtMarkdown") },
-    { format: "txt", title: t("fmtTxt") },
-    { format: "html", title: t("fmtHtml") },
-    { format: "reader", title: t("fmtReader") },
-    { format: "json", title: t("fmtJson") },
+    { format: "markdown", title: "fmtMarkdown" },
+    { format: "txt", title: "fmtTxt" },
+    { format: "html", title: "fmtHtml" },
+    { format: "reader", title: "fmtReader" },
+    { format: "json", title: "fmtJson" },
   ],
-  [{ format: "latex", title: t("fmtLatex") }],
-  [{ format: "csv", title: t("fmtCsv") }],
+  [{ format: "latex", title: "fmtLatex" }],
+  [{ format: "csv", title: "fmtCsv" }],
   [
-    { format: "bibtex", title: t("fmtBibtex") },
-    { format: "ris", title: t("fmtRis") },
-    { format: "csljson", title: t("fmtCsljson") },
-  ],
-  [
-    { format: "docx", title: t("fmtDocx") },
-    { format: "rtf", title: t("fmtRtf") },
-    { format: "pdf", title: t("fmtPdf") },
-    { format: "epub", title: t("fmtEpub") },
+    { format: "bibtex", title: "fmtBibtex" },
+    { format: "ris", title: "fmtRis" },
+    { format: "csljson", title: "fmtCsljson" },
   ],
   [
-    { format: "vault", title: t("fmtVault") },
-    { format: "zip_all", title: t("fmtZipAll") },
+    { format: "docx", title: "fmtDocx" },
+    { format: "rtf", title: "fmtRtf" },
+    { format: "pdf", title: "fmtPdf" },
+    { format: "epub", title: "fmtEpub" },
   ],
   [
-    { format: "markdown@tables", base: "markdown", title: t("fmtTablesMd") },
-    { format: "csv@tables", base: "csv", title: t("fmtTablesCsv") },
-    { format: "markdown@nosrc", base: "markdown", title: t("fmtNosrcMd") },
+    { format: "vault", title: "fmtVault" },
+    { format: "zip_all", title: "fmtZipAll" },
+  ],
+  [
+    { format: "markdown@tables", base: "markdown", title: "fmtTablesMd" },
+    { format: "csv@tables", base: "csv", title: "fmtTablesCsv" },
+    { format: "markdown@nosrc", base: "markdown", title: "fmtNosrcMd" },
   ],
 ];
 
@@ -66,6 +68,7 @@ async function loadFormats() {
 
 /** (Re)builds the context menu so only user-enabled formats are shown. */
 async function rebuildMenus() {
+  await GEP.i18n.init(); // resolve pinned-language catalog before titling items
   const formats = await loadFormats();
   const isEnabled = (item) => formats[item.base || item.format] === true;
 
@@ -89,7 +92,7 @@ async function rebuildMenus() {
       create({ id: `gep-sep${sepIndex++}`, parentId: "gep-parent", type: "separator" });
     }
     for (const item of visible) {
-      create({ id: `gep-${item.format}`, parentId: "gep-parent", title: item.title });
+      create({ id: `gep-${item.format}`, parentId: "gep-parent", title: t(item.title) });
     }
     sectionsShown++;
   }
@@ -108,9 +111,12 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 if (chrome.runtime.onStartup) chrome.runtime.onStartup.addListener(rebuildMenus);
 
-// Keep the menu in sync when the user toggles formats in the Options page.
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "sync" && changes.formats) rebuildMenus();
+// Keep the menu in sync when the user toggles formats in the Options page or
+// pins a different UI language (menu titles must be re-resolved).
+chrome.storage.onChanged.addListener(async (changes, area) => {
+  if (area !== "sync") return;
+  if (changes.uiLang) await GEP.i18n.init(true);
+  if (changes.formats || changes.uiLang) rebuildMenus();
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {

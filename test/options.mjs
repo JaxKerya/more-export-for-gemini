@@ -91,6 +91,8 @@ function fireExternalChange(changes) {
 }
 
 // ── Globals the page world expects ───────────────────────────────────
+let reloadCount = 0;
+
 Object.assign(globalThis, {
   window,
   document,
@@ -101,6 +103,7 @@ Object.assign(globalThis, {
     search: "",
     hash: "",
     pathname: "/src/options/options.html",
+    reload: () => { reloadCount++; },
   },
   history: { replaceState() {} },
   localStorage: {
@@ -304,6 +307,46 @@ section("storage.onChanged: external writes update the page");
   await tick();
   check("external profile change re-renders the list",
     document.getElementById("profileList").querySelectorAll(".profile-item").length === 1);
+}
+
+// =====================================================================
+section("Pinned UI language (uiLang)");
+
+{
+  const langSel = document.getElementById("uiLang");
+  check("language select present, defaults to auto", !!langSel && langSel.value === "auto");
+
+  langSel.value = "tr";
+  langSel.dispatchEvent(new window.Event("change"));
+  await tick();
+  check("language choice persisted to sync", syncStore.uiLang === "tr");
+
+  // A uiLang change (own write or another window) must reload the page so
+  // every static and dynamically-rendered string re-localizes.
+  chromeMock.runtime.getURL = (p) => p;
+  globalThis.fetch = async (p) => ({
+    ok: true,
+    json: async () => JSON.parse(fs.readFileSync(path.join(root, p), "utf8")),
+  });
+  fireExternalChange({ uiLang: { newValue: "tr" } });
+  await tick();
+  check("uiLang change reloads the page", reloadCount === 1);
+
+  // The i18n helper must serve the pinned catalog instead of chrome.i18n.
+  await GEP.i18n.init(true);
+  check("pinned catalog overrides chrome.i18n",
+    GEP.i18n.t("optLangAuto") === "Otomatik (tarayıcı dili)");
+  check("substitutions work in the pinned catalog",
+    GEP.i18n.t("toastDownloading", "x.md").includes("x.md"));
+  check("missing key falls back to chrome.i18n / key",
+    GEP.i18n.t("definitelyNotAKey") === "definitelyNotAKey");
+  check("normalizeLang clamps unknown values", GEP.i18n.normalizeLang("xx") === "auto");
+
+  // Back to auto: t() serves the browser language again.
+  syncStore.uiLang = "auto";
+  await GEP.i18n.init(true);
+  check("auto restores browser-language lookups",
+    GEP.i18n.t("optLangAuto") === "Auto (browser language)");
 }
 
 // =====================================================================

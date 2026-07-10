@@ -29,7 +29,9 @@ const {
 
 const t = GEP.i18n.t;
 
-// Localize the static page before any module reads or renders labels.
+// Resolve the pinned UI language (if any), then localize the static page
+// before any module reads or renders labels.
+await GEP.i18n.init();
 GEP.i18n.localizeDocument();
 
 const SECTION_FORMAT_KEYS = {
@@ -446,6 +448,20 @@ document.querySelectorAll(".template-tokens code").forEach((code) => {
   });
 });
 
+// ── Interface language ──
+// Stored as its own `uiLang` sync key (deliberately NOT part of the settings
+// snapshot: switching an export profile must never change the UI language).
+// The write triggers the storage listener below, which reloads the page so
+// every static and dynamically-rendered string re-resolves.
+const uiLangSelect = document.getElementById("uiLang");
+if (uiLangSelect) {
+  const storedLang = await chrome.storage.sync.get({ uiLang: "auto" });
+  uiLangSelect.value = GEP.i18n.normalizeLang(storedLang.uiLang);
+  uiLangSelect.addEventListener("change", async () => {
+    await chrome.storage.sync.set({ uiLang: uiLangSelect.value });
+  });
+}
+
 // ── Reset settings ──
 const resetModal = document.getElementById("resetModal");
 document.getElementById("resetBtn").addEventListener("click", () => {
@@ -473,6 +489,12 @@ document.getElementById("resetConfirm").addEventListener("click", async () => {
 // own writes too, but re-applying just-saved values is a visual no-op.
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "sync") return;
+  if (changes.uiLang) {
+    // Language switched (here or in another window): reload so the whole
+    // page — including dynamically rendered labels — re-localizes.
+    location.reload();
+    return;
+  }
   let touched = false;
   if (changes.formats && changes.formats.newValue) {
     Object.assign(formats, { ...FORMAT_DEFAULTS, ...changes.formats.newValue });

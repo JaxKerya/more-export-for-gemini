@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "Everything runs locally in your browser - your reports are never uploaded." },
   "optCtaOptions": { "message": "Export options" },
   "optFooterText": { "message": "Made for researchers and knowledge workers" },
+  "optLanguageName": { "message": "Interface Language" },
+  "optLanguageHint": { "message": "Menus, popup and this page. \"Auto\" follows your browser's language." },
+  "optLangAuto": { "message": "Auto (browser language)" },
 
   "optProfilesTitle": { "message": "Profiles" },
   "optProfilesHint": { "message": "Save the current formats, options and overrides as a named profile - e.g. <em>Academic paper</em> (A4, double spacing, APA) vs <em>Quick notes</em> (Obsidian MD, no TOC) - and switch in one click, here or from the popup." },

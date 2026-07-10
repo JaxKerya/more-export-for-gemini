@@ -40,6 +40,8 @@
 
   // Localized label lookup. i18n.js loads first in the manifest, but keep a
   // fallback (the key itself) so a stripped-down sandbox can still run us.
+  // `label` values in GROUPS are message keys resolved at render time via
+  // t(), so a pinned UI language (loaded async by i18n.init) is honored.
   const t = (key) => (GEP.i18n ? GEP.i18n.t(key) : key);
 
   /**
@@ -49,46 +51,46 @@
   const GROUPS = [
     {
       items: [
-        { format: "clipboard_md", label: t("fmtClipboardMd"), icon: ICONS.clipboard },
-        { format: "clipboard_txt", label: t("fmtClipboardTxt"), icon: ICONS.clipboard },
-        { format: "clipboard_html", label: t("fmtClipboardHtml"), icon: ICONS.clipboard },
-        { format: "clipboard_json", label: t("fmtClipboardJson"), icon: ICONS.clipboard },
+        { format: "clipboard_md", label: "fmtClipboardMd", icon: ICONS.clipboard },
+        { format: "clipboard_txt", label: "fmtClipboardTxt", icon: ICONS.clipboard },
+        { format: "clipboard_html", label: "fmtClipboardHtml", icon: ICONS.clipboard },
+        { format: "clipboard_json", label: "fmtClipboardJson", icon: ICONS.clipboard },
       ],
     },
     {
       items: [
-        { format: "markdown", label: t("fmtMarkdown"), icon: ICONS.markdown },
-        { format: "txt", label: t("fmtTxt"), icon: ICONS.txt },
-        { format: "html", label: t("fmtHtml"), icon: ICONS.html },
-        { format: "reader", label: t("fmtReader"), icon: ICONS.html },
-        { format: "json", label: t("fmtJson"), icon: ICONS.json },
+        { format: "markdown", label: "fmtMarkdown", icon: ICONS.markdown },
+        { format: "txt", label: "fmtTxt", icon: ICONS.txt },
+        { format: "html", label: "fmtHtml", icon: ICONS.html },
+        { format: "reader", label: "fmtReader", icon: ICONS.html },
+        { format: "json", label: "fmtJson", icon: ICONS.json },
       ],
     },
     {
       items: [
-        { format: "latex", label: t("fmtLatex"), icon: ICONS.latex },
-        { format: "csv", label: t("fmtCsv"), icon: ICONS.csv },
+        { format: "latex", label: "fmtLatex", icon: ICONS.latex },
+        { format: "csv", label: "fmtCsv", icon: ICONS.csv },
       ],
     },
     {
       items: [
-        { format: "bibtex", label: t("fmtBibtex"), icon: ICONS.bibtex },
-        { format: "ris", label: t("fmtRis"), icon: ICONS.bibtex },
-        { format: "csljson", label: t("fmtCsljson"), icon: ICONS.csljson },
+        { format: "bibtex", label: "fmtBibtex", icon: ICONS.bibtex },
+        { format: "ris", label: "fmtRis", icon: ICONS.bibtex },
+        { format: "csljson", label: "fmtCsljson", icon: ICONS.csljson },
       ],
     },
     {
       items: [
-        { format: "docx", label: t("fmtDocx"), icon: ICONS.docx },
-        { format: "rtf", label: t("fmtRtf"), icon: ICONS.rtf },
-        { format: "pdf", label: t("fmtPdf"), icon: ICONS.pdf },
-        { format: "epub", label: t("fmtEpub"), icon: ICONS.epub },
+        { format: "docx", label: "fmtDocx", icon: ICONS.docx },
+        { format: "rtf", label: "fmtRtf", icon: ICONS.rtf },
+        { format: "pdf", label: "fmtPdf", icon: ICONS.pdf },
+        { format: "epub", label: "fmtEpub", icon: ICONS.epub },
       ],
     },
     {
       items: [
-        { format: "vault", label: t("fmtVault"), icon: ICONS.vault },
-        { format: "zip_all", label: t("fmtZipAll"), icon: ICONS.zip },
+        { format: "vault", label: "fmtVault", icon: ICONS.vault },
+        { format: "zip_all", label: "fmtZipAll", icon: ICONS.zip },
       ],
     },
   ];
@@ -123,7 +125,7 @@
       item.removeAttribute(attr)
     );
     item.setAttribute("data-gep-format", def.format);
-    item.setAttribute("aria-label", def.label);
+    item.setAttribute("aria-label", t(def.label));
     item.setAttribute("role", "menuitem");
     item.setAttribute("tabindex", "-1");
     item.classList.add("gep-menu-item");
@@ -138,7 +140,7 @@
     }
 
     const label = item.querySelector(".label");
-    if (label) label.textContent = def.label;
+    if (label) label.textContent = t(def.label);
 
     const trailing = item.querySelector(".trailing-container");
     if (trailing) trailing.textContent = "";
@@ -165,7 +167,7 @@
     item.setAttribute("role", "menuitem");
     item.setAttribute("tabindex", "-1");
     item.setAttribute("data-gep-format", def.format);
-    item.setAttribute("aria-label", def.label);
+    item.setAttribute("aria-label", t(def.label));
 
     const leading = document.createElement("span");
     leading.className = "gep-icon";
@@ -173,7 +175,7 @@
 
     const label = document.createElement("span");
     label.className = "gep-label";
-    label.textContent = def.label;
+    label.textContent = t(def.label);
 
     item.append(leading, label);
 

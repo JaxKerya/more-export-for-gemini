@@ -146,6 +146,9 @@
   "optPrivacyNote": { "message": "Her şey tarayıcınızda yerel olarak çalışır - raporlarınız asla yüklenmez." },
   "optCtaOptions": { "message": "Dışa aktarma seçenekleri" },
   "optFooterText": { "message": "Araştırmacılar ve bilgi çalışanları için yapıldı" },
+  "optLanguageName": { "message": "Arayüz Dili" },
+  "optLanguageHint": { "message": "Menüler, açılır pencere ve bu sayfa. \"Otomatik\" tarayıcı dilini izler." },
+  "optLangAuto": { "message": "Otomatik (tarayıcı dili)" },
 
   "optProfilesTitle": { "message": "Profiller" },
   "optProfilesHint": { "message": "Geçerli formatları, seçenekleri ve geçersiz kılmaları adlandırılmış bir profil olarak kaydedin - ör. <em>Akademik makale</em> (A4, çift satır aralığı, APA) ile <em>Hızlı notlar</em> (Obsidian MD, içindekiler yok) - ve burada veya popup'tan tek tıkla geçiş yapın." },
