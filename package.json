@@ -19,6 +19,7 @@
     "build": "node scripts/build.mjs",
     "bump": "node scripts/bump.mjs",
     "lint": "eslint src/lib src/exporters src/popup src/options src/content.js src/background.js test scripts",
+    "lint:amo": "node scripts/lint-amo.mjs",
     "typecheck": "tsc --noEmit",
     "validate:external": "node scripts/external-validate.mjs",
     "validate:rtl": "node scripts/validate-rtl.mjs"
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/chrome": "^0.1.36",
+    "addons-linter": "^10.8.1",
     "ajv": "^8.20.0",
     "eslint": "^9.39.2",
     "globals": "^16.5.0",

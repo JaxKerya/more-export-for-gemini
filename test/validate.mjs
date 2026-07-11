@@ -1270,6 +1270,31 @@ check("permissions do NOT include tabs", !manifest.permissions.includes("tabs"))
 check("host_permissions limited to gemini", (manifest.host_permissions || []).length === 1
   && manifest.host_permissions[0] === "https://gemini.google.com/*");
 check("has background service worker", typeof manifest.background.service_worker === "string");
+
+// ── Cross-browser background (Firefox port, #15) ──
+// Firefox runs an MV3 event page from background.scripts (no service worker);
+// the list must mirror the worker's importScripts order: i18n → settings →
+// background.js. Chrome/Edge (121+) ignore the scripts key.
+check("firefox: background.scripts present", Array.isArray(manifest.background.scripts));
+check("firefox: background.scripts order mirrors importScripts",
+  JSON.stringify(manifest.background.scripts) ===
+  JSON.stringify(["src/lib/i18n.js", "src/lib/settings.js", "src/background.js"]));
+for (const f of manifest.background.scripts || []) {
+  check(`firefox: background script exists: ${f}`, fs.existsSync(path.join(root, f)));
+}
+check("firefox: gecko id present",
+  !!(manifest.browser_specific_settings
+    && manifest.browser_specific_settings.gecko
+    && /@/.test(manifest.browser_specific_settings.gecko.id || "")));
+check("firefox: strict_min_version present",
+  /^\d+\.\d+$/.test((manifest.browser_specific_settings.gecko || {}).strict_min_version || ""));
+check("firefox: data_collection_permissions declared (required by AMO)",
+  JSON.stringify((manifest.browser_specific_settings.gecko || {}).data_collection_permissions)
+    === JSON.stringify({ required: ["none"] }));
+// background.js must guard importScripts (absent on Firefox event pages).
+check("firefox: importScripts guarded in background.js",
+  /typeof importScripts === "function"/.test(
+    fs.readFileSync(path.join(root, "src/background.js"), "utf8")));
 check("has popup", typeof manifest.action.default_popup === "string");
 check("has options_ui", typeof manifest.options_ui.page === "string");
 check("content_scripts match gemini.google.com", manifest.content_scripts[0].matches[0].includes("gemini.google.com"));

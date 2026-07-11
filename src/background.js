@@ -1,12 +1,18 @@
 /**
- * Background service worker.
+ * Background script (service worker in Chrome/Edge, event page in Firefox).
  *
  * Creates a right-click context menu with export options. Each click sends a
  * message to the content script on the active tab.
  */
 "use strict";
 
-importScripts("lib/i18n.js", "lib/settings.js");
+// Chrome/Edge run this file as a service worker and load dependencies via
+// importScripts. Firefox has no MV3 service workers: it runs an event page
+// where importScripts does not exist — there the same dependencies arrive
+// through the manifest's background.scripts list (kept in the same order).
+if (typeof importScripts === "function") {
+  importScripts("lib/i18n.js", "lib/settings.js");
+}
 
 /** @type {typeof globalThis.GEP} */
 const GEP = globalThis.GEP;

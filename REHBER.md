@@ -8,7 +8,12 @@ Projedeki tüm npm komutlarının, betiklerin ve GitHub otomasyonlarının kısa
 npm install        # test/lint araç zinciri (eklentinin kendisi sıfır bağımlılık)
 ```
 
-Node.js 20+ gerekir. Eklentiyi denemek için: `chrome://extensions` → Geliştirici modu → **Paketlenmemiş öğe yükle** → depo kök klasörü.
+Node.js 20+ gerekir. Eklentiyi denemek için:
+
+- **Chrome / Edge:** `chrome://extensions` (Edge: `edge://extensions`) → Geliştirici modu → **Paketlenmemiş öğe yükle** → depo kök klasörü.
+- **Firefox (140+):** `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → `manifest.json`. Geçici eklenti tarayıcı kapanınca kalkar.
+
+Tek manifest üç tarayıcıya hizmet eder: Chrome/Edge `background.service_worker` çalıştırır, Firefox (MV3 service worker desteklemez) aynı kodu `background.scripts` üzerinden event page olarak yükler; her taraf diğerinin anahtarını yok sayar. `src/background.js` içindeki `importScripts` çağrısı bu yüzden `typeof importScripts === "function"` guard'ı arkasındadır.
 
 ## Günlük komutlar
 
@@ -16,6 +21,7 @@ Node.js 20+ gerekir. Eklentiyi denemek için: `chrome://extensions` → Gelişti
 | --- | --- |
 | `npm test` | Tüm test paketleri sırayla (~1.000 kontrol). Commit'ten önce çalıştırın. |
 | `npm run lint` | ESLint — kod stili ve hata avı (`src/`, `test/`, `scripts/`). |
+| `npm run lint:amo` | Paketi kurup Mozilla'nın `addons-linter`'ını üzerinde çalıştırır — addons.mozilla.org'un yükleme anında yaptığı doğrulamanın aynısı. Hata varsa AMO paketi reddeder. |
 | `npm run typecheck` | TypeScript `checkJs` — tip hataları (derleme yok, sadece analiz). |
 | `npm run build` | Mağaza paketini üretir: `store/more-export-for-gemini-v<sürüm>.zip`. Her işletim sisteminde çalışır. |
 
@@ -51,16 +57,17 @@ git tag v2.2.0 && git push origin master v2.2.0   # 5. gerisi otomatik
 
 | Workflow | Tetikleyici | Ne yapar |
 | --- | --- | --- |
-| `.github/workflows/ci.yml` | Her push ve PR (`master`) | İki paralel iş: `test` (`npm ci` → lint → typecheck → tüm testler) ve `e2e` (Chromium indirip `npm run test:e2e`). Kırmızıysa merge etmeyin. |
+| `.github/workflows/ci.yml` | Her push ve PR (`master`) | İki paralel iş: `test` (`npm ci` → lint → typecheck → tüm testler → `lint:amo`) ve `e2e` (Chromium indirip `npm run test:e2e`). Kırmızıysa merge etmeyin. |
 | `.github/workflows/release.yml` | `v*` tag push'u | Önce tag'in `manifest.json` sürümüyle eşleştiğini doğrular (eşleşmezse durur), sonra lint + typecheck + testler → `npm run build` → zip'i GitHub Release'e ekler. |
 
-Release oluştuğunda zip'i **Releases** sayfasından indirip Chrome Web Store panosuna yüklersiniz — mağaza yüklemesi otomatik değildir (Google API anahtarı gerektirir).
+Release oluştuğunda zip'i **Releases** sayfasından indirip üç mağazaya da yüklersiniz — Chrome Web Store, addons.mozilla.org (AMO) ve Edge Add-ons aynı zip'i kabul eder (adımlar: `store/listings/README.md`). Mağaza yüklemesi otomatik değildir.
 
 ## Yardımcı betikler (`scripts/`)
 
 | Betik | Amaç |
 | --- | --- |
 | `scripts/build.mjs` | Mağaza zip'i (dosya listesi `manifest.json`'dan türetilir; `npm run build`). |
+| `scripts/lint-amo.mjs` | Paket + `addons-linter` (`npm run lint:amo`); CI'da her push'ta koşar. |
 | `scripts/bump.mjs` | Sürüm numarası güncelleme (`npm run bump -- x.y.z`). |
 | `scripts/external-validate.mjs` | Debug export çıktısını harici araçlarla doğrular (`npm run validate:external`). |
 | `scripts/validate-rtl.mjs` | Sağdan-sola (RTL) çıktı doğrulaması (`npm run validate:rtl`). |

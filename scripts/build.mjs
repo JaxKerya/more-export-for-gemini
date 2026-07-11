@@ -29,7 +29,10 @@ const include = [
   "icons/icon16.png",
   "icons/icon48.png",
   "icons/icon128.png",
+  // Background entry points: service_worker (Chrome/Edge) and the event-page
+  // scripts list (Firefox). They overlap today; the Set below dedupes.
   manifest.background.service_worker,
+  ...(manifest.background.scripts || []),
   ...cs.js,
   ...cs.css,
   // Lazy-loaded exporter stack: fetched at runtime via import(), so it lives

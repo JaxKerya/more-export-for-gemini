@@ -34,6 +34,24 @@ const t = GEP.i18n.t;
 await GEP.i18n.init();
 GEP.i18n.localizeDocument();
 
+// The shortcut hint's catalog strings (all 8 locales) embed Chrome's
+// chrome://extensions/shortcuts URL inside a <code> tag. Fix just that URL
+// for the current browser at runtime instead of forking the catalogs.
+{
+  // typeof guard: the Node test harness has no navigator global.
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const shortcutsUrl = ua.includes("Firefox")
+    ? "about:addons ▸ ⚙ ▸ Manage Extension Shortcuts"
+    : ua.includes("Edg/")
+      ? "edge://extensions/shortcuts"
+      : null; // Chrome and everything else keeps the catalog text
+  if (shortcutsUrl) {
+    document
+      .querySelectorAll('[data-i18n-html="optShortcutsHint"] code')
+      .forEach((code) => { code.textContent = shortcutsUrl; });
+  }
+}
+
 const SECTION_FORMAT_KEYS = {
   clipboard:  ["clipboard_md", "clipboard_txt", "clipboard_html", "clipboard_json"],
   "text-formats": ["markdown", "txt", "html", "reader", "json"],

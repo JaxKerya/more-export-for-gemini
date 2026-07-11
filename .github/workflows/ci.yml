@@ -25,6 +25,10 @@ jobs:
 
       - run: npm test
 
+      # Mozilla's addons-linter on the built zip — the same validation AMO
+      # runs on upload, so a Firefox-breaking change fails here, not there.
+      - run: npm run lint:amo
+
   # Real-browser smoke test: the extension loaded into Chromium, content
   # script injection on a faked gemini.google.com, and one real export.
   e2e:

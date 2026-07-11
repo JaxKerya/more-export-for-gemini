@@ -41,8 +41,11 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
 /**
  * Builds a sandbox with a recording chrome mock and loads background.js.
  * @param {object} storedData what chrome.storage.sync "contains"
+ * @param {{firefox?: boolean}} [opts] firefox:true simulates the MV3 event
+ *   page: no importScripts — dependencies arrive via the manifest's
+ *   background.scripts list, loaded in order before background.js.
  */
-function makeWorker(storedData) {
+function makeWorker(storedData, opts) {
   const state = {
     stored: storedData || {},
     created: [],          // chrome.contextMenus.create calls (props)
@@ -94,18 +97,31 @@ function makeWorker(storedData) {
   };
 
   const sandbox = { chrome, console, setTimeout, clearTimeout };
-  sandbox.importScripts = (...rels) => {
-    for (const rel of rels) {
-      const file = path.join(root, "src", rel);
-      vm.runInContext(fs.readFileSync(file, "utf8"), sandbox, { filename: rel });
-    }
-  };
+  const firefox = !!(opts && opts.firefox);
+  if (!firefox) {
+    // Chrome/Edge service worker: dependencies load via importScripts.
+    sandbox.importScripts = (...rels) => {
+      for (const rel of rels) {
+        const file = path.join(root, "src", rel);
+        vm.runInContext(fs.readFileSync(file, "utf8"), sandbox, { filename: rel });
+      }
+    };
+  }
   vm.createContext(sandbox);
-  vm.runInContext(
-    fs.readFileSync(path.join(root, "src/background.js"), "utf8"),
-    sandbox,
-    { filename: "src/background.js" }
-  );
+  if (firefox) {
+    // Firefox event page: the manifest's background.scripts list, in order
+    // (background.js last). importScripts stays undefined, like in Firefox.
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
+    for (const rel of manifest.background.scripts) {
+      vm.runInContext(fs.readFileSync(path.join(root, rel), "utf8"), sandbox, { filename: rel });
+    }
+  } else {
+    vm.runInContext(
+      fs.readFileSync(path.join(root, "src/background.js"), "utf8"),
+      sandbox,
+      { filename: "src/background.js" }
+    );
+  }
   return { state, sandbox };
 }
 
@@ -130,6 +146,21 @@ section("Single source of truth");
     "DEFAULT_FORMATS is GEP.settings.DEFAULTS",
     vm.runInContext("DEFAULT_FORMATS === GEP.settings.DEFAULTS", sandbox) === true
   );
+}
+
+// =====================================================================
+section("Firefox event page (no importScripts)");
+
+{
+  // Firefox has no MV3 service workers: background.js must boot with
+  // importScripts undefined, its dependencies coming from the manifest's
+  // background.scripts list instead. A regression here breaks the entire
+  // Firefox build at load time.
+  const { state, sandbox } = makeWorker({}, { firefox: true });
+  check("boots without importScripts", !!(sandbox.GEP && sandbox.GEP.settings && sandbox.GEP.i18n));
+  await install(state);
+  check("menu builds on the event page", state.created.some((p) => p.id === "gep-parent"));
+  check("default item present: markdown", itemIds(state).includes("gep-markdown"));
 }
 
 // =====================================================================

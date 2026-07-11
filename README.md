@@ -1,6 +1,6 @@
 # More Export for Gemini
 
-A Chrome (Manifest V3) extension that adds 15+ export formats to the Google Gemini **Deep Research** share menu — Markdown, PDF, Word (.docx), Reader HTML, EPUB, LaTeX, RTF, HTML, plain text, JSON, CSV, BibTeX, RIS, CSL-JSON and a multi-file Vault ZIP — with citations (9 styles), page/typography controls, document metadata, source hygiene and offline re-export. Everything runs locally in the browser; no data ever leaves it (see [PRIVACY.md](PRIVACY.md)).
+A browser (Manifest V3) extension for **Chrome, Edge and Firefox** that adds 15+ export formats to the Google Gemini **Deep Research** share menu — Markdown, PDF, Word (.docx), Reader HTML, EPUB, LaTeX, RTF, HTML, plain text, JSON, CSV, BibTeX, RIS, CSL-JSON and a multi-file Vault ZIP — with citations (9 styles), page/typography controls, document metadata, source hygiene and offline re-export. Everything runs locally in the browser; no data ever leaves it (see [PRIVACY.md](PRIVACY.md)).
 
 A Turkish architectural overview lives in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md), a Turkish developer guide (commands, scripts, CI/release automation) in [REHBER.md](REHBER.md); user-facing release notes in [CHANGELOG.md](CHANGELOG.md).
 
@@ -8,10 +8,20 @@ The extension is free and open source. If it saves you time, you can [support it
 
 ## Install (unpacked, for development)
 
+**Chrome / Edge**
+
 1. Clone this repository.
-2. Open `chrome://extensions`, enable **Developer mode**.
+2. Open `chrome://extensions` (Edge: `edge://extensions`), enable **Developer mode**.
 3. Click **Load unpacked** and select the repository root (the folder containing `manifest.json`).
 4. Open a Gemini Deep Research report — the new entries appear in the share menu and the right-click menu.
+
+**Firefox** (140+)
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on…** and select `manifest.json`.
+3. Temporary add-ons are removed when Firefox closes; reload after a restart.
+
+One manifest serves all three browsers: Chrome/Edge run `background.service_worker`, Firefox (no MV3 service workers) runs the same code as an event page via `background.scripts`, and each side ignores the other's key.
 
 ## Development setup
 
@@ -33,9 +43,10 @@ npm install
 | `npm run test:options`     | Options page against the real HTML (toggles, profiles, history, sync). |
 | `npm run test:e2e`         | Real-browser smoke test (Playwright Chromium): extension load, content-script injection on a faked gemini.google.com, one real export, Options/popup render. Needs `npx playwright install chromium` once. |
 | `npm run lint`             | ESLint over `src/`, `test/`, `scripts/`.                            |
+| `npm run lint:amo`         | Builds the package and runs Mozilla's `addons-linter` on it — the exact validation addons.mozilla.org applies on upload. |
 | `npm run typecheck`        | TypeScript `checkJs` static analysis (no emit).                     |
 
-CI (GitHub Actions) runs lint, typecheck and the full test suite on every push and pull request, plus the e2e smoke test as a separate job.
+CI (GitHub Actions) runs lint, typecheck, the full test suite and the AMO linter on every push and pull request, plus the e2e smoke test as a separate job.
 
 ## Build a store package
 
@@ -43,7 +54,7 @@ CI (GitHub Actions) runs lint, typecheck and the full test suite on every push a
 npm run build
 ```
 
-Produces `store/more-export-for-gemini-v<version>.zip` (works on any OS — plain Node, no dependencies). The file list is derived from `manifest.json` (content scripts + `web_accessible_resources` + popup/options pages), so it cannot drift from what the extension actually loads.
+Produces `store/more-export-for-gemini-v<version>.zip` (works on any OS — plain Node, no dependencies). The file list is derived from `manifest.json` (content scripts + background scripts + `web_accessible_resources` + popup/options pages), so it cannot drift from what the extension actually loads. **The same zip is uploaded to all three stores** — Chrome Web Store, addons.mozilla.org (AMO) and Edge Add-ons; per-store steps live in [store/listings/README.md](store/listings/README.md).
 
 ## Releases
 
