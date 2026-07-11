@@ -311,7 +311,7 @@
   "optLatexHint": { "message": "학술 논문과 Overleaf용" },
   "optDataTitle": { "message": "데이터" },
   "optCsvHint": { "message": "Excel / Google 스프레드시트용으로 표를 추출합니다" },
-  "optXlsxHint": { "message": "진짜 Excel 통합 문서 — 표마다 시트 하나, 굵은 고정 머리글 행, 수식에 바로 쓸 수 있는 숫자 셀" },
+  "optXlsxHint": { "message": "실제 Excel 통합 문서 — 표마다 시트 하나, 굵은 고정 머리글 행, 수식에 바로 쓸 수 있는 숫자 셀" },
   "optReferencesTitle": { "message": "참고 문헌" },
   "optBibtexHint": { "message": "Zotero, Mendeley, Overleaf용 출처" },
   "optRisHint": { "message": "EndNote, Zotero, Mendeley용 출처" },
