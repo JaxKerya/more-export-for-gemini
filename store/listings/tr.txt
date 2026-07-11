@@ -1,0 +1,49 @@
+Gemini Deep Research raporlarınızı ihtiyacınız olan her formatta dışa aktarın.
+
+"More Export for Gemini", Google Gemini'nin yerleşik paylaşım menüsünü güçlü ve %100 çevrimdışı çalışan dışa aktarma seçenekleriyle genişletir.
+
+BELGELER
+- Word (.docx) - Gerçek OOXML belgesi; Microsoft Word, Google Dokümanlar ve LibreOffice'te açılır
+- PDF (.pdf) - Kusursuz çıktı için tarayıcınızın yerleşik PDF'e yazdırma özelliğini kullanır
+- EPUB (.epub) - İçindekiler tablosu ve işlenmiş matematik içeren geçerli EPUB 3 e-kitabı
+- LaTeX (.tex) - Akademik yazım için derlenmeye hazır kaynak
+- RTF (.rtf) - Her kelime işlemcide açılan zengin metin
+- HTML (.html) - Her tarayıcıda açılmaya hazır, bağımsız ve stillendirilmiş web sayfası
+- Okuyucu HTML - Tema ve düzen seçenekleriyle sade, dikkat dağıtmayan okuma görünümü
+
+METİN VE VERİ
+- Markdown (.md) - GitHub, Obsidian, Notion ve CommonMark lehçeleri
+- Düz Metin (.txt) - Biçimlendirme içermeyen temiz, okunabilir metin
+- JSON (.json) - Geliştiriciler ve otomasyon araçları için yapılandırılmış veri
+- CSV (.csv) - Tablolar elektronik tabloya hazır veri olarak (Excel'de doğru açılır)
+
+ATIF VE KAYNAKÇA
+- BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Doğrudan Zotero, Mendeley ve EndNote'a aktarın
+- 9 atıf stili: APA, MLA, IEEE, Chicago, Harvard, Vancouver ve daha fazlası
+- Kaynak bağlantılarından otomatik DOI / ISBN tespiti (çevrimdışı)
+
+PAKETLER VE PANO
+- Vault paketi (.zip) - Ayrılmış tablolar ve kaynaklarla Obsidian'a hazır notlar
+- Tümünü İndir (.zip) - Etkin tüm formatlar tek ZIP dosyasında
+- Markdown, düz metin, zengin HTML (Google Dokümanlar'a biçimli yapışır) veya JSON olarak kopyalama
+
+ÖNE ÇIKAN ÖZELLİKLER
+- Dışa aktarma profilleri: eksiksiz kurulumları (formatlar + seçenekler) kaydedin, tek tıkla geçiş yapın
+- Dışa aktarma geçmişi: son raporlar yerel olarak yedeklenir ve Gemini sohbeti silinse bile çevrimdışı yeniden dışa aktarılabilir
+- Sayfa ve tipografi kontrolleri: PDF, HTML, Word ve LaTeX için kâğıt boyutu, kenar boşlukları, yazı boyutu, satır aralığı ve yazı tipi
+- Kaynak temizliği: kaynakça listenizi tekrarsızlaştırın, sıralayın ve zenginleştirin
+- Aslına uygun matematik (KaTeX), kod renklendirme, tablolar, dipnotlar ve sağdan sola dil desteği
+- 8 dilde arayüz: İngilizce, Türkçe, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Japonca, Korece - ayarlardan değiştirilebilir
+- Birincil formatınız, Markdown Kopyala ve Tümünü İndir için klavye kısayolları
+- Gemini'nin yerel menüsüne sorunsuz entegrasyon, ayrıca sağ tık menüsü
+
+GİZLİLİK
+Bu uzantı hiçbir veri toplamaz, saklamaz veya iletmez. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir. Analitik yok, izleme yok, harici sunucu yok.
+
+NASIL KULLANILIR
+1. Bir Gemini Deep Research raporu açın
+2. "Paylaş ve dışa aktar"a tıklayın - yeni seçenekler altta görünür
+   (veya herhangi bir yere sağ tıklayıp "More Export for Gemini"yi seçin)
+3. Formatınızı seçin ve indirin!
+
+Yalnızca gemini.google.com Deep Research sayfalarında çalışır.

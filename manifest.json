@@ -10,7 +10,8 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["activeTab", "contextMenus", "storage", "tabs"],
+  "permissions": ["activeTab", "contextMenus", "storage"],
+  "host_permissions": ["https://gemini.google.com/*"],
   "background": {
     "service_worker": "src/background.js"
   },

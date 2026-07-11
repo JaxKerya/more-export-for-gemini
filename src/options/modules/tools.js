@@ -5,11 +5,13 @@
  */
 
 async function resolveGeminiTab() {
+  // https only: URL-filtered tabs.query relies on the gemini host permission
+  // (there is no broad "tabs" permission), which is granted for https alone.
   const [tab] = await chrome.tabs.query({
-    active: true, currentWindow: true, url: "*://gemini.google.com/*",
+    active: true, currentWindow: true, url: "https://gemini.google.com/*",
   });
   if (tab) return tab;
-  const geminiTabs = await chrome.tabs.query({ url: "*://gemini.google.com/*" });
+  const geminiTabs = await chrome.tabs.query({ url: "https://gemini.google.com/*" });
   return geminiTabs[0] || null;
 }
 

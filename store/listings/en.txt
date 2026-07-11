@@ -7,6 +7,7 @@ DOCUMENTS
 - PDF (.pdf) - Uses your browser's native print-to-PDF for perfect output
 - EPUB (.epub) - Valid EPUB 3 e-book with a table of contents and rendered math
 - LaTeX (.tex) - Ready-to-compile source for academic writing
+- RTF (.rtf) - Rich text for any word processor
 - HTML (.html) - Standalone styled webpage, ready to open in any browser
 - Reader HTML - A clean, distraction-free reading view with theme and layout options
 
@@ -14,26 +15,27 @@ TEXT & DATA
 - Markdown (.md) - GitHub, Obsidian, Notion and CommonMark flavors
 - Plain Text (.txt) - Clean, readable text without any markup
 - JSON (.json) - Structured data for developers and automation tools
-- CSV (.csv) - Extracted tables as spreadsheet-ready data
+- CSV (.csv) - Extracted tables as spreadsheet-ready data (opens correctly in Excel)
 
 CITATIONS & BIBLIOGRAPHY
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Import straight into Zotero, Mendeley, EndNote
-- Multiple citation styles: APA, MLA, IEEE, Chicago, Harvard, Vancouver and more
+- 9 citation styles: APA, MLA, IEEE, Chicago, Harvard, Vancouver and more
 - Automatic DOI / ISBN detection from source links (offline)
 
-BUNDLES
+BUNDLES & CLIPBOARD
 - Vault bundle (.zip) - Obsidian-ready notes with separated tables and references
 - Download All (.zip) - Every enabled format bundled in a single ZIP
-- Copy as Markdown - One-click copy to clipboard
+- Copy as Markdown, plain text, rich HTML (pastes formatted into Google Docs) or JSON
 
 KEY FEATURES
+- Export profiles: save complete setups (formats + options) and switch them with one click
+- Export history: recent reports are backed up locally and can be re-exported offline - even after the Gemini conversation is gone
 - Page & typography controls: paper size, margins, font size, line spacing and font family for PDF, HTML, Word and LaTeX
 - Source hygiene: de-duplicate, sort and enrich your reference list
-- Offline re-export: save a report as JSON once, then regenerate any format later without reopening Gemini
 - Faithful math (KaTeX), code highlighting, tables, footnotes and right-to-left language support
+- Interface in 8 languages: English, Turkish, Spanish, Portuguese (Brazil), German, French, Japanese, Korean - switchable in settings
+- Keyboard shortcuts for your primary format, Copy as Markdown and Download All
 - Seamless integration into Gemini's native menu, plus a right-click context menu
-- Date-stamped file names (e.g. "Report - 2026-06-04.md")
-- Works across page re-renders (SPA-aware via MutationObserver)
 
 PRIVACY
 This extension does not collect, store, or transmit any data. All processing happens locally in your browser. No analytics, no tracking, no external servers.

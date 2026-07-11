@@ -1,0 +1,49 @@
+Exporta tus informes de Gemini Deep Research en cualquier formato que necesites.
+
+"More Export for Gemini" amplía el menú de compartir integrado de Google Gemini con potentes opciones de exportación 100 % sin conexión.
+
+DOCUMENTOS
+- Word (.docx) - Documento OOXML real; se abre en Microsoft Word, Google Docs y LibreOffice
+- PDF (.pdf) - Usa la impresión a PDF nativa de tu navegador para un resultado perfecto
+- EPUB (.epub) - Libro electrónico EPUB 3 válido con índice y matemáticas renderizadas
+- LaTeX (.tex) - Código fuente listo para compilar, ideal para escritura académica
+- RTF (.rtf) - Texto enriquecido para cualquier procesador de textos
+- HTML (.html) - Página web independiente con estilos, lista para abrir en cualquier navegador
+- HTML de lectura - Vista de lectura limpia y sin distracciones con opciones de tema y diseño
+
+TEXTO Y DATOS
+- Markdown (.md) - Variantes GitHub, Obsidian, Notion y CommonMark
+- Texto plano (.txt) - Texto limpio y legible sin ningún marcado
+- JSON (.json) - Datos estructurados para desarrolladores y herramientas de automatización
+- CSV (.csv) - Tablas extraídas como datos listos para hojas de cálculo (se abre correctamente en Excel)
+
+CITAS Y BIBLIOGRAFÍA
+- BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Importa directamente en Zotero, Mendeley, EndNote
+- 9 estilos de cita: APA, MLA, IEEE, Chicago, Harvard, Vancouver y más
+- Detección automática de DOI / ISBN a partir de los enlaces de las fuentes (sin conexión)
+
+PAQUETES Y PORTAPAPELES
+- Paquete Vault (.zip) - Notas listas para Obsidian con tablas y referencias separadas
+- Descargar todo (.zip) - Todos los formatos activados en un único ZIP
+- Copiar como Markdown, texto plano, HTML enriquecido (se pega con formato en Google Docs) o JSON
+
+CARACTERÍSTICAS DESTACADAS
+- Perfiles de exportación: guarda configuraciones completas (formatos + opciones) y cámbialas con un clic
+- Historial de exportación: los informes recientes se respaldan localmente y pueden reexportarse sin conexión, incluso si la conversación de Gemini ya no existe
+- Controles de página y tipografía: tamaño de papel, márgenes, tamaño de fuente, interlineado y familia tipográfica para PDF, HTML, Word y LaTeX
+- Higiene de fuentes: elimina duplicados, ordena y enriquece tu lista de referencias
+- Matemáticas fieles (KaTeX), resaltado de código, tablas, notas al pie y soporte para idiomas de derecha a izquierda
+- Interfaz en 8 idiomas: inglés, turco, español, portugués (Brasil), alemán, francés, japonés y coreano - cambiable en la configuración
+- Atajos de teclado para tu formato principal, Copiar como Markdown y Descargar todo
+- Integración perfecta en el menú nativo de Gemini, más un menú contextual de clic derecho
+
+PRIVACIDAD
+Esta extensión no recopila, almacena ni transmite ningún dato. Todo el procesamiento ocurre localmente en tu navegador. Sin analíticas, sin rastreo, sin servidores externos.
+
+CÓMO USARLA
+1. Abre un informe de Gemini Deep Research
+2. Haz clic en "Compartir y exportar" - las nuevas opciones aparecen abajo
+   (o haz clic derecho en cualquier parte y elige "More Export for Gemini")
+3. ¡Elige tu formato y descarga!
+
+Funciona únicamente en las páginas de Deep Research de gemini.google.com.

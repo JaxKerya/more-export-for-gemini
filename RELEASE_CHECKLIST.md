@@ -19,6 +19,9 @@ Updates `manifest.json` (`version` + `version_name`), `package.json` and
 - [ ] `CHANGELOG.md` — move the `[Unreleased]` items into a new `[x.y.z]` section.
 - [ ] `src/options/modules/whats-new.js` — add a `RELEASE_NOTES` entry so the
       What's New panel matches the changelog (user-facing highlights only).
+- [ ] `store/listings/*.txt` — if a user-visible feature was added or removed,
+      update the store description in all 8 languages (source of truth: `en.txt`)
+      and re-paste the changed ones into the Web Store dashboard.
 
 ## 3. Manual smoke test (~5 minutes, real Gemini page)
 

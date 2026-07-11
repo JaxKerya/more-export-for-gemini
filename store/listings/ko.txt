@@ -1,0 +1,49 @@
+Gemini Deep Research 보고서를 필요한 모든 형식으로 내보내세요.
+
+"More Export for Gemini"는 Google Gemini의 기본 공유 메뉴에 100% 오프라인으로 동작하는 강력한 내보내기 옵션을 추가합니다.
+
+문서
+- Word (.docx) - 진짜 OOXML 문서. Microsoft Word, Google Docs, LibreOffice에서 열립니다
+- PDF (.pdf) - 브라우저의 기본 PDF 인쇄 기능으로 완벽한 출력
+- EPUB (.epub) - 목차와 수식 렌더링을 갖춘 유효한 EPUB 3 전자책
+- LaTeX (.tex) - 학술 글쓰기를 위한 바로 컴파일 가능한 소스
+- RTF (.rtf) - 모든 워드프로세서에서 열리는 서식 있는 텍스트
+- HTML (.html) - 어떤 브라우저에서든 바로 열 수 있는 독립형 스타일 웹페이지
+- 리더 HTML - 테마와 레이아웃 옵션을 갖춘 깔끔하고 집중하기 좋은 읽기 화면
+
+텍스트 & 데이터
+- Markdown (.md) - GitHub, Obsidian, Notion, CommonMark 방언 지원
+- 일반 텍스트 (.txt) - 마크업 없는 깔끔하고 읽기 쉬운 텍스트
+- JSON (.json) - 개발자와 자동화 도구를 위한 구조화된 데이터
+- CSV (.csv) - 표를 스프레드시트용 데이터로 추출 (Excel에서 올바르게 열립니다)
+
+인용 & 참고문헌
+- BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Zotero, Mendeley, EndNote로 바로 가져오기
+- 9가지 인용 스타일: APA, MLA, IEEE, Chicago, Harvard, Vancouver 등
+- 출처 링크에서 DOI / ISBN 자동 감지 (오프라인)
+
+번들 & 클립보드
+- Vault 번들 (.zip) - 표와 참고문헌이 분리된 Obsidian용 노트
+- 모두 다운로드 (.zip) - 활성화된 모든 형식을 하나의 ZIP으로
+- Markdown, 일반 텍스트, 서식 있는 HTML(Google Docs에 서식 그대로 붙여넣기), JSON으로 복사
+
+주요 기능
+- 내보내기 프로필: 형식과 옵션 전체 구성을 저장하고 클릭 한 번으로 전환
+- 내보내기 기록: 최근 보고서를 로컬에 백업하여 Gemini 대화가 사라진 뒤에도 오프라인으로 다시 내보내기 가능
+- 페이지 및 타이포그래피 설정: PDF, HTML, Word, LaTeX의 용지 크기, 여백, 글꼴 크기, 줄 간격, 글꼴
+- 출처 정리: 참고문헌 목록의 중복 제거, 정렬, 보강
+- 정확한 수식(KaTeX), 코드 하이라이팅, 표, 각주, 오른쪽에서 왼쪽으로 쓰는 언어 지원
+- 8개 언어 인터페이스: 영어, 터키어, 스페인어, 포르투갈어(브라질), 독일어, 프랑스어, 일본어, 한국어 - 설정에서 전환 가능
+- 기본 형식, Markdown 복사, 모두 다운로드를 위한 키보드 단축키
+- Gemini 기본 메뉴에 매끄럽게 통합, 우클릭 메뉴도 지원
+
+개인정보 보호
+이 확장 프로그램은 어떤 데이터도 수집, 저장, 전송하지 않습니다. 모든 처리는 브라우저 안에서 로컬로 이루어집니다. 분석 없음, 추적 없음, 외부 서버 없음.
+
+사용 방법
+1. Gemini Deep Research 보고서를 엽니다
+2. "공유 및 내보내기"를 클릭 - 새 옵션이 하단에 나타납니다
+   (또는 아무 곳이나 우클릭하여 "More Export for Gemini" 선택)
+3. 형식을 고르고 다운로드하세요!
+
+gemini.google.com의 Deep Research 페이지에서만 동작합니다.

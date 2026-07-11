@@ -1222,7 +1222,12 @@ check("has description", (() => {
 })());
 check("permissions include storage", manifest.permissions.includes("storage"));
 check("permissions include contextMenus", manifest.permissions.includes("contextMenus"));
-check("permissions include tabs", manifest.permissions.includes("tabs"));
+// The broad "tabs" permission triggers Chrome's scary "Read your browsing
+// history" install warning. URL-filtered tabs.query only needs a host
+// permission for gemini.google.com, so the manifest must never regress to it.
+check("permissions do NOT include tabs", !manifest.permissions.includes("tabs"));
+check("host_permissions limited to gemini", (manifest.host_permissions || []).length === 1
+  && manifest.host_permissions[0] === "https://gemini.google.com/*");
 check("has background service worker", typeof manifest.background.service_worker === "string");
 check("has popup", typeof manifest.action.default_popup === "string");
 check("has options_ui", typeof manifest.options_ui.page === "string");

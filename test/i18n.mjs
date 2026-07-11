@@ -124,6 +124,15 @@ for (const file of jsFiles) {
   check(`JS sources: all t() keys resolve (${usedInJs.size} keys)`, missing.length === 0, missing.join(", "));
 }
 
+// ── Store listings: one detailed description per shipped locale ──
+// The Web Store summary localizes itself via __MSG_appDesc__, but the detailed
+// description is pasted per language from store/listings/<locale>.txt.
+for (const loc of locales) {
+  const p = path.join(root, "store", "listings", `${loc}.txt`);
+  check(`store listing exists for ${loc}`,
+    fs.existsSync(p) && fs.readFileSync(p, "utf8").trim().length > 500);
+}
+
 // ── 5: manifest __MSG_ references ──
 const manifest = readJSON("manifest.json");
 check("manifest default_locale", manifest.default_locale === "en");

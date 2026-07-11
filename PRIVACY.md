@@ -23,7 +23,7 @@ This extension does **not** collect, store, transmit, or share any personal data
 | `activeTab`     | Access the current Gemini tab to read visible report content on click.       |
 | `contextMenus`  | Add a right-click "More Export for Gemini" menu on Gemini pages.             |
 | `storage`       | Save your export preferences (formats, citation style, options) locally and sync them across your browser profile. No browsing data is stored. |
-| `tabs`          | Detect the active Gemini tab so the popup and keyboard shortcuts can trigger an export on the correct page. |
+| Host access to `gemini.google.com` | Run the export menu on Gemini pages and let the popup and keyboard shortcuts find the open Gemini tab. The extension cannot see any other site or your browsing history. |
 
 ## Data Retention
 
