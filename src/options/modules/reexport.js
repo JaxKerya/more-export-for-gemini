@@ -55,11 +55,15 @@ export function initReexport(ctx) {
   }
 
   function normalizeIR(src) {
+    // Upgrade older schema versions first (v0 backups / .json files keep
+    // loading forever); migrate() stamps the current version.
+    if (window.GEP && GEP.json && GEP.json.migrate) src = GEP.json.migrate(src);
     const ir = {
       title: typeof src.title === "string" ? src.title : "",
       blocks: src.blocks,
       footnotes: Array.isArray(src.footnotes) ? src.footnotes : [],
     };
+    if (src.v) ir.v = src.v;
     if (src.lang) ir.lang = src.lang;
     if (src.dir) ir.dir = src.dir;
     if (src.url) ir.url = src.url;

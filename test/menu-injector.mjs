@@ -44,8 +44,8 @@ function makeInjector(bodyHtml) {
     chrome: { i18n: { getMessage } },
   };
   vm.createContext(sandbox);
-  // i18n.js first, exactly like the manifest content_scripts order.
-  for (const f of ["src/lib/i18n.js", "src/lib/menu-injector.js"]) {
+  // i18n.js + selectors.js first, exactly like the manifest content_scripts order.
+  for (const f of ["src/lib/i18n.js", "src/lib/selectors.js", "src/lib/menu-injector.js"]) {
     vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), sandbox, { filename: f });
   }
   return { injector: sandbox.window.GEP.menuInjector, document };

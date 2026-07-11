@@ -84,6 +84,7 @@ for (const f of [
   "src/lib/texmath.js", "src/lib/links.js", "src/lib/citation.js",
   "src/lib/docmeta.js", "src/lib/toc.js", "src/lib/validator.js", "src/lib/ir-filter.js",
 ]) load(f);
+load("src/lib/selectors.js");
 load("src/lib/extractor.js");
 for (const f of fs.readdirSync(path.join(root, "src/exporters")).sort()) {
   if (f.endsWith(".js")) load(`src/exporters/${f}`, { optional: true });

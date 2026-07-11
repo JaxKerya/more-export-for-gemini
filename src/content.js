@@ -18,6 +18,11 @@
   if (GEP.i18n && GEP.i18n.init) GEP.i18n.init();
   const t = (key, subs) => (GEP.i18n ? GEP.i18n.t(key, subs) : key);
 
+  /** Local error log (errlog.js): fire-and-forget, never throws. */
+  const logError = (context, err) => {
+    if (GEP.errlog) GEP.errlog.record(context, err);
+  };
+
   // MIME / extension tables live in GEP.exportOpts (single source of truth,
   // shared with the offline re-export UI in the Options page).
   const MIME = GEP.exportOpts.MIME;
@@ -52,7 +57,10 @@
     if (GEP.vault && GEP.texmath) return Promise.resolve();
     if (!exportersReady) {
       const war = chrome.runtime.getManifest().web_accessible_resources || [];
-      const files = (war[0] && war[0].resources) || [];
+      // Only script files: the WAR list also carries non-JS entries (the
+      // _locales/*/messages.json glob for pinned-language catalogs), which
+      // dynamic import() would reject — caught by the e2e smoke test.
+      const files = ((war[0] && war[0].resources) || []).filter((f) => f.endsWith(".js"));
       const t0 = Date.now();
       exportersReady = (async () => {
         for (const f of files) {
@@ -229,9 +237,13 @@
    * "Run Diagnostics" tool (GEP_DIAGNOSE) and the extraction-failure toast, so
    * users can attach the report to a bug form when the Gemini DOM changes.
    */
-  function downloadDiagnostics() {
+  async function downloadDiagnostics() {
     const report = GEP.extractor.diagnose();
-    const text = formatDiagnostics(report);
+    // Recent local errors (errlog.js) round out the report: the DOM may look
+    // fine while a specific export path fails on this device.
+    let errors = [];
+    try { errors = GEP.errlog ? await GEP.errlog.list() : []; } catch { errors = []; }
+    const text = formatDiagnostics(report, errors);
     GEP.download.downloadBlob(text, "gep-diagnostics.txt", "text/plain;charset=utf-8");
     return report;
   }
@@ -241,8 +253,8 @@
     toast(message, {
       isError: true,
       actionLabel: t("toastGetDiagnostics"),
-      actionFn: () => {
-        downloadDiagnostics();
+      actionFn: async () => {
+        await downloadDiagnostics();
         toast(t("toastDiagSaved"));
       },
     });
@@ -269,6 +281,7 @@
       return ir;
     } catch (err) {
       console.error("[GEP] extraction failed", err);
+      logError("extract", err);
       extractionFailedToast(t("toastReadFailed"));
       return null;
     }
@@ -279,6 +292,7 @@
       await loadExporters();
     } catch (err) {
       console.error("[GEP] failed to load exporter modules", err);
+      logError("load-exporters", err);
       toast(t("toastModulesFailed"), { isError: true, retryFn: () => onExport(rawFormat) });
       return;
     }
@@ -439,6 +453,7 @@
       }
     } catch (err) {
       console.error("[GEP] export error", err);
+      logError(`export:${rawFormat}`, err);
       toast(t("toastExportError"), {
         isError: true,
         retryFn: () => onExport(rawFormat),
@@ -446,19 +461,23 @@
     }
   }
 
+  // The menu-panel selector comes from selectors.js (single source of truth).
+  const MENU_CONTENT_SEL = GEP.selectors.MENU_CONTENT;
+
   /** Synchronous scan — settings must already be loaded. */
   function processNodeSync(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const menus = [];
-    if (node.matches && node.matches(".mat-mdc-menu-content")) menus.push(node);
+    if (node.matches && node.matches(MENU_CONTENT_SEL)) menus.push(node);
     if (node.querySelectorAll) {
-      node.querySelectorAll(".mat-mdc-menu-content").forEach((m) => menus.push(m));
+      node.querySelectorAll(MENU_CONTENT_SEL).forEach((m) => menus.push(m));
     }
     for (const menu of menus) {
       try {
         GEP.menuInjector.inject(menu, onExport, enabledFormats);
       } catch (err) {
         console.error("[GEP] injection failed", err);
+        logError("inject", err);
       }
     }
   }
@@ -478,7 +497,7 @@
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
   loadSettings().then(() => {
-    document.querySelectorAll(".mat-mdc-menu-content").forEach((m) => {
+    document.querySelectorAll(MENU_CONTENT_SEL).forEach((m) => {
       try {
         GEP.menuInjector.inject(m, onExport, enabledFormats);
       } catch (err) {
@@ -654,20 +673,21 @@
     }
 
     if (msg.type === "GEP_DIAGNOSE") {
-      try {
-        const report = downloadDiagnostics();
-        toast(report.ok ? t("toastDiagOk") : t("toastDiagIssues"), { isError: !report.ok });
-        sendResponse({ ok: true, report });
-      } catch (err) {
-        toast(t("toastDiagFailed", String(err)), { isError: true });
-        sendResponse({ ok: false, error: String(err) });
-      }
+      downloadDiagnostics()
+        .then((report) => {
+          toast(report.ok ? t("toastDiagOk") : t("toastDiagIssues"), { isError: !report.ok });
+          sendResponse({ ok: true, report });
+        })
+        .catch((err) => {
+          toast(t("toastDiagFailed", String(err)), { isError: true });
+          sendResponse({ ok: false, error: String(err) });
+        });
       return true;
     }
   });
 
   /** Renders the diagnose() report object into a human-readable text file. */
-  function formatDiagnostics(r) {
+  function formatDiagnostics(r, errors) {
     const lines = [
       "Gemini Export — Diagnostics Report",
       "==================================",
@@ -720,6 +740,19 @@
       );
     }
     if (r.error) lines.push("Error", "  " + r.error, "");
+    // Local error log (errlog.js): newest last. Stays on this device — the
+    // user decides whether to attach the file to a bug report.
+    if (errors && errors.length) {
+      lines.push(`Recent errors (this device, last ${errors.length})`);
+      for (const e of errors) {
+        lines.push(`  ${e.ts} [${e.context}] ${e.message}`);
+        if (e.stack) {
+          const firstFrame = String(e.stack).split("\n").slice(0, 2).join(" | ");
+          lines.push(`    ${firstFrame}`);
+        }
+      }
+      lines.push("");
+    }
     return lines.join("\n");
   }
 

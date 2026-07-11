@@ -50,11 +50,10 @@ function makeExtractor(html, url) {
     chrome: undefined,
   };
   vm.createContext(sandbox);
-  vm.runInContext(
-    fs.readFileSync(path.join(root, "src/lib/extractor.js"), "utf8"),
-    sandbox,
-    { filename: "src/lib/extractor.js" }
-  );
+  // selectors.js first, exactly like the manifest content_scripts order.
+  for (const f of ["src/lib/selectors.js", "src/lib/extractor.js"]) {
+    vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), sandbox, { filename: f });
+  }
   return sandbox.window.GEP.extractor;
 }
 
@@ -74,6 +73,9 @@ const ir = extractor.extract();
 check("extract() returns an IR", ir !== null && typeof ir === "object");
 
 if (ir) {
+  // Schema version stamp (persisted backups rely on it for future migration).
+  check("IR carries schema version v=1", ir.v === 1);
+
   // Title
   check("title resolved", ir.title === "The Ontology of Sound");
 

@@ -58,6 +58,7 @@ for (const f of [
   "src/lib/toc.js",
   "src/lib/ir-filter.js",
   "src/lib/validator.js",
+  "src/lib/selectors.js",
   "src/lib/extractor.js",
 ]) {
   vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), sandbox, { filename: f });

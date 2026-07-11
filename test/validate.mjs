@@ -717,6 +717,21 @@ const ir = {
 const optsOn = { includeToc: true, includeFootnotes: true, flavor: "gfm" };
 const optsOff = { includeToc: false, includeFootnotes: false };
 
+// ── IR schema version round-trip ──
+// extract() stamps v=1 (checked in test/extractor.mjs); here: the JSON
+// envelope carries it as schemaVersion, and migrate() upgrades legacy
+// (pre-versioning) IRs so old backups / .json exports keep loading.
+{
+  const parsed = JSON.parse(GEP.json.convert({ ...ir, v: 1 }));
+  check("json envelope: schemaVersion from ir.v", parsed.schemaVersion === 1);
+  check("json envelope: no duplicate v field", !("v" in parsed));
+  const legacy = GEP.json.migrate({ title: "old", blocks: [], footnotes: [] });
+  check("migrate: stamps current version on legacy IR", legacy.v === GEP.json.SCHEMA_VERSION);
+  const fromEnvelope = GEP.json.migrate(parsed);
+  check("migrate: envelope schemaVersion folded into v",
+    fromEnvelope.v === 1 && !("schemaVersion" in fromEnvelope));
+}
+
 for (const [name, convertFn, fnMarker, srcMarker] of [
   ["markdown", () => GEP.markdown.convert(ir, optsOn), "[^1]", "[^1]:"],
   ["txt", () => GEP.txt.convert(ir, optsOn), "[1]", "Sources"],
@@ -1248,6 +1263,12 @@ check("options file exists", fs.existsSync(path.join(root, manifest.options_ui.p
 check("no auto-export.js in manifest", !manifest.content_scripts[0].js.includes("src/lib/auto-export.js"));
 check("export-opts.js in static core", manifest.content_scripts[0].js.includes("src/lib/export-opts.js"));
 check("settings.js in static core", manifest.content_scripts[0].js.includes("src/lib/settings.js"));
+// selectors.js is the single source of truth for Gemini DOM selectors and
+// must load before every consumer (extractor, menu-injector, content.js).
+check("selectors.js loads before extractor.js",
+  manifest.content_scripts[0].js.indexOf("src/lib/selectors.js") !== -1 &&
+  manifest.content_scripts[0].js.indexOf("src/lib/selectors.js") <
+    manifest.content_scripts[0].js.indexOf("src/lib/extractor.js"));
 check("content.js loads last in static core", manifest.content_scripts[0].js.at(-1) === "src/content.js");
 
 // Lazy stack integrity: no file may be in both lists, and everything the

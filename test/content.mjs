@@ -93,6 +93,8 @@ vm.createContext(sandbox);
 // short-circuits — vm sandboxes can't service dynamic import().
 const STACK = [
   "src/lib/i18n.js",
+  "src/lib/selectors.js",
+  "src/lib/errlog.js",
   "src/vendor/katex.js", "src/vendor/highlight.js",
   "src/lib/texmath.js", "src/lib/docmeta.js", "src/lib/export-opts.js",
   "src/lib/source-hygiene.js", "src/lib/history.js",
@@ -231,6 +233,54 @@ section("QUALITY & DIAGNOSE");
   const text = downloads[0].data;
   check("diagnostics text includes content root", typeof text === "string" && text.includes("Content root"));
   check("diagnostics text includes menu stats", typeof text === "string" && text.includes("Menu injection"));
+}
+
+// =====================================================================
+section("Local error log (errlog)");
+
+{
+  // A real export failure must be recorded automatically.
+  await GEP.errlog.clear();
+  const origConvert = GEP.rtf.convert;
+  GEP.rtf.convert = () => { throw new Error("forced-rtf-failure"); };
+  await send({ type: "GEP_EXPORT", format: "rtf" });
+  await tick();
+  GEP.rtf.convert = origConvert;
+  const auto = await GEP.errlog.list();
+  check("failed export lands in the error log",
+    auto.some((e) => e.context === "export:rtf" && e.message.includes("forced-rtf-failure")));
+
+  // Ring buffer basics.
+  await GEP.errlog.clear();
+  await GEP.errlog.record("export:pdf", new Error("Print window blocked"));
+  await GEP.errlog.record("extract", "plain string failure");
+  let entries = await GEP.errlog.list();
+  check("record() appends entries", entries.length === 2);
+  check("entry carries context + message",
+    entries[0].context === "export:pdf" && entries[0].message === "Print window blocked");
+  check("non-Error values are captured too", entries[1].message === "plain string failure");
+  check("entries carry an ISO timestamp", /^\d{4}-\d{2}-\d{2}T/.test(entries[0].ts));
+
+  // Eviction: only the newest MAX_ENTRIES survive.
+  for (let i = 0; i < GEP.errlog.MAX_ENTRIES + 5; i++) {
+    await GEP.errlog.record("flood", new Error(`e${i}`));
+  }
+  entries = await GEP.errlog.list();
+  check("ring buffer caps at MAX_ENTRIES", entries.length === GEP.errlog.MAX_ENTRIES);
+  check("oldest entries evicted first", entries[entries.length - 1].message === `e${GEP.errlog.MAX_ENTRIES + 4}`);
+
+  // Recorded errors surface in the diagnostics report.
+  await GEP.errlog.clear();
+  await GEP.errlog.record("export:docx", new Error("boom-marker"));
+  downloads.length = 0;
+  await send({ type: "GEP_DIAGNOSE" });
+  const text = downloads[0] && downloads[0].data;
+  check("diagnostics includes recent errors section",
+    typeof text === "string" && text.includes("Recent errors") && text.includes("boom-marker"));
+
+  // clear() empties the log (and diagnostics omits the section again).
+  await GEP.errlog.clear();
+  check("clear() empties the log", (await GEP.errlog.list()).length === 0);
 }
 
 // =====================================================================

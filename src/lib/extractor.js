@@ -33,14 +33,16 @@
 
   const MAX_DEPTH = 64;
 
-  const CONTENT_SELECTORS = [
-    "#extended-response-markdown-content",
-    ".markdown-main-panel",
-    "deep-research-immersive-panel .markdown",
-    "message-content .markdown",
-    ".response-container .markdown",
-    "[data-test-id='message-content'] .markdown",
-  ];
+  // IR schema version, stamped on every extraction. Persisted copies (export
+  // history backups, .json exports) carry it so future structural changes can
+  // be migrated on load — see GEP.json.migrate(). Keep in sync with
+  // SCHEMA_VERSION in src/exporters/json.js.
+  const IR_VERSION = 1;
+
+  // All Gemini DOM selectors live in selectors.js — the single source of
+  // truth, loaded before this file per the manifest order (tests mirror it).
+  const SEL = GEP.selectors;
+  const SKIP_CUSTOM = new Set(SEL.SKIP_CUSTOM_TAGS);
 
   const BLOCK_HEADINGS = new Set(["H1", "H2", "H3", "H4", "H5", "H6"]);
 
@@ -75,7 +77,7 @@
 
   function findContentRoot() {
     // Try explicit selectors first
-    for (const selector of CONTENT_SELECTORS) {
+    for (const selector of SEL.CONTENT_ROOTS) {
       try {
         const node = document.querySelector(selector);
         if (node && node.textContent.trim().length > 0) {
@@ -87,7 +89,7 @@
 
     // Heuristic fallback: find the largest [class*="markdown"] element (#26)
     try {
-      const candidates = document.querySelectorAll('[class*="markdown"]');
+      const candidates = document.querySelectorAll(SEL.CONTENT_HEURISTIC);
       let best = null;
       let bestLen = 0;
       for (const el of candidates) {
@@ -111,9 +113,7 @@
     if (heading && heading.textContent.trim()) return heading.textContent.trim();
 
     try {
-      const toolbarTitle = document.querySelector(
-        "deep-research-immersive-panel .title, toolbar .title, .title-text"
-      );
+      const toolbarTitle = document.querySelector(SEL.TITLE_FALLBACK);
       if (toolbarTitle && toolbarTitle.textContent.trim()) {
         return toolbarTitle.textContent.trim();
       }
@@ -196,9 +196,9 @@
     }
     // Gemini renders code inside a <code-block> whose header shows the language
     // label in the first <span> of .code-block-decoration (no class on <pre>).
-    const cb = pre.closest ? pre.closest("code-block") : null;
+    const cb = pre.closest ? pre.closest(SEL.CODE_BLOCK_HOST) : null;
     if (cb && cb.querySelector) {
-      const dec = cb.querySelector(".code-block-decoration");
+      const dec = cb.querySelector(SEL.CODE_BLOCK_LABEL);
       const span = dec && dec.querySelector ? dec.querySelector("span") : null;
       const label = span && span.textContent ? span.textContent.trim() : "";
       const norm = normalizeLang(label);
@@ -270,7 +270,7 @@
       if (child.getAttribute && child.getAttribute("aria-hidden") === "true") continue;
 
       // Skip carousel UI elements entirely — they are not content.
-      if (tag === "SOURCES-CAROUSEL-INLINE" || tag === "SOURCES-CAROUSEL") continue;
+      if (SKIP_CUSTOM.has(tag)) continue;
 
       // Elements with hide-from-message-actions are UI buttons, skip them.
       if (child.hasAttribute && child.hasAttribute("hide-from-message-actions")) continue;
@@ -297,8 +297,8 @@
       }
 
       // Handle source footnotes — extract the source index.
-      if (tag === "SOURCE-FOOTNOTE") {
-        const sup = child.querySelector("sup[data-turn-source-index]");
+      if (tag === SEL.FOOTNOTE_TAG) {
+        const sup = child.querySelector(SEL.FOOTNOTE_SUP);
         if (sup) {
           const idx = parseInt(sup.getAttribute("data-turn-source-index"), 10);
           if (!isNaN(idx)) {
@@ -316,7 +316,7 @@
       }
 
       // RESPONSE-ELEMENT is a wrapper that contains footnotes inside — traverse it.
-      if (tag === "RESPONSE-ELEMENT") {
+      if (tag === SEL.RESPONSE_WRAPPER_TAG) {
         collectRuns(child, style, runs, depth + 1);
         continue;
       }
@@ -517,14 +517,8 @@
     const items = [];
 
     // Selector chain from most specific to broadest.
-    const panelSelectors = [
-      ".source-list.used-sources",
-      ".source-list",
-      ".used-sources",
-    ];
-
     let panel = null;
-    for (const sel of panelSelectors) {
+    for (const sel of SEL.SOURCE_PANELS) {
       try {
         panel = document.querySelector(sel);
         if (panel) break;
@@ -534,20 +528,20 @@
     // Find browse-web-item elements.
     // If we found a panel, search within it; otherwise search the whole doc.
     const browseItems = panel
-      ? panel.querySelectorAll("browse-web-item")
-      : document.querySelectorAll("browse-web-item");
+      ? panel.querySelectorAll(SEL.SOURCE_ITEM)
+      : document.querySelectorAll(SEL.SOURCE_ITEM);
 
     if (browseItems.length === 0) return items;
 
     for (const browseItem of browseItems) {
-      const a = browseItem.querySelector("a[href]");
+      const a = browseItem.querySelector(SEL.SOURCE_LINK);
       if (!a) continue;
 
       const href = a.getAttribute("href");
       if (!href || !href.startsWith("http")) continue;
 
       // Extract domain from .display-name element or from the URL.
-      const displayNameEl = browseItem.querySelector(".display-name, [data-test-id='domain-name']");
+      const displayNameEl = browseItem.querySelector(SEL.SOURCE_DOMAIN);
       let domain = "";
       if (displayNameEl) {
         domain = displayNameEl.textContent.trim();
@@ -557,7 +551,7 @@
       }
 
       // Extract title from .sub-title element.
-      const subTitleEl = browseItem.querySelector(".sub-title, [data-test-id='sub-title']");
+      const subTitleEl = browseItem.querySelector(SEL.SOURCE_TITLE);
       let title = "";
       if (subTitleEl) {
         title = subTitleEl.textContent.trim();
@@ -606,7 +600,7 @@
     const sample = `${title || ""} ${root.textContent || ""}`.slice(0, 4000);
     const dir = detectDir(sample);
 
-    return { title, blocks, footnotes, lang, dir, root };
+    return { v: IR_VERSION, title, blocks, footnotes, lang, dir, root };
   }
 
   /**
@@ -615,7 +609,7 @@
    * findContentRoot but returns metadata instead of just the node.
    */
   function resolveRootWithMethod() {
-    for (const selector of CONTENT_SELECTORS) {
+    for (const selector of SEL.CONTENT_ROOTS) {
       try {
         const node = document.querySelector(selector);
         if (node && node.textContent.trim().length > 0) {
@@ -624,7 +618,7 @@
       } catch { /* invalid selector */ }
     }
     try {
-      const candidates = document.querySelectorAll('[class*="markdown"]');
+      const candidates = document.querySelectorAll(SEL.CONTENT_HEURISTIC);
       let best = null;
       let bestLen = 0;
       for (const el of candidates) {
@@ -708,5 +702,5 @@
     return report;
   }
 
-  GEP.extractor = { extract, findContentRoot, findTitle, diagnose, detectDir };
+  GEP.extractor = { extract, findContentRoot, findTitle, diagnose, detectDir, IR_VERSION };
 })();

@@ -32,6 +32,7 @@ Node.js 20+ gerekir. Eklentiyi denemek için: `chrome://extensions` → Gelişti
 | `npm run test:history` | Export geçmişi (LRU, boyut sınırları) + profil doğrulama. |
 | `npm run test:options` | Options sayfası, gerçek HTML üzerinde (toggle'lar, profiller, geçmiş, senkron). |
 | `npm run test:i18n` | Çeviri katalogları: diller arası anahtar pariteleri, `$1` yer tutucu sayıları, HTML/JS/manifest referanslarının çözülmesi. |
+| `npm run test:e2e` | Gerçek Chromium'da duman testi (Playwright): eklenti yüklenir, sahte `gemini.google.com`'a content script enjekte edilir, gerçek bir Markdown indirmesi yapılır, Options/popup render edilir. `npm test`'e dahil değildir; önce bir kez `npx playwright install chromium` gerekir. |
 
 ## Sürüm çıkarma (özet)
 
@@ -50,7 +51,7 @@ git tag v2.2.0 && git push origin master v2.2.0   # 5. gerisi otomatik
 
 | Workflow | Tetikleyici | Ne yapar |
 | --- | --- | --- |
-| `.github/workflows/ci.yml` | Her push ve PR (`master`) | `npm ci` → lint → typecheck → tüm testler. Kırmızıysa merge etmeyin. |
+| `.github/workflows/ci.yml` | Her push ve PR (`master`) | İki paralel iş: `test` (`npm ci` → lint → typecheck → tüm testler) ve `e2e` (Chromium indirip `npm run test:e2e`). Kırmızıysa merge etmeyin. |
 | `.github/workflows/release.yml` | `v*` tag push'u | Önce tag'in `manifest.json` sürümüyle eşleştiğini doğrular (eşleşmezse durur), sonra lint + typecheck + testler → `npm run build` → zip'i GitHub Release'e ekler. |
 
 Release oluştuğunda zip'i **Releases** sayfasından indirip Chrome Web Store panosuna yüklersiniz — mağaza yüklemesi otomatik değildir (Google API anahtarı gerektirir).
@@ -83,5 +84,5 @@ Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir. Dil var
 - **Kod değiştirdim, göndermeden önce:** `npm run lint && npm run typecheck && npm test`
 - **Yeni ayar kartı ekleyeceğim:** `src/options/modules/` altına yeni modül + `options.js`'te `init` çağrısı; `test/options.mjs`'e kontrol ekleyin.
 - **Yeni export formatı ekleyeceğim:** `src/exporters/` + `manifest.json` `web_accessible_resources` + `settings.js` DEFAULTS + `export-opts.js`; `test/edge-cases.mjs`'e test ekleyin (build dosya listesi manifest'ten geldiği için pakete otomatik girer).
-- **Gemini DOM'u değişti, menü çıkmıyor:** başlangıç noktaları `src/lib/menu-injector.js` seçicileri ve Settings → Tools → Run diagnostics çıktısı.
+- **Gemini DOM'u değişti (menü çıkmıyor / içerik bulunamıyor):** tüm Gemini seçicileri tek dosyada — `src/lib/selectors.js`. Düzeltmeyi orada yapın, `referance/reports/` korpusuna güncel bir DOM kopyası ekleyip `npm run test:extractor` ile doğrulayın; kullanıcı tarafında Settings → Tools → Run diagnostics çıktısı (artık cihazdaki son hataları da içerir) ipucu verir.
 - **CI kırmızı ama yerelde yeşil:** CI Ubuntu'da çalışır; yol ayracı / satır sonu (CRLF) farklarına bakın.

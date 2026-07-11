@@ -47,6 +47,8 @@
       "world": "ISOLATED",
       "js": [
         "src/lib/i18n.js",
+        "src/lib/selectors.js",
+        "src/lib/errlog.js",
         "src/lib/settings.js",
         "src/lib/export-opts.js",
         "src/lib/extractor.js",

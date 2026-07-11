@@ -31,10 +31,11 @@ npm install
 | `npm run test:background`  | Service-worker tests with a mocked `chrome` API.                    |
 | `npm run test:content`     | Content-script message-handler smoke tests (PING/EXPORT/QUALITY).   |
 | `npm run test:options`     | Options page against the real HTML (toggles, profiles, history, sync). |
+| `npm run test:e2e`         | Real-browser smoke test (Playwright Chromium): extension load, content-script injection on a faked gemini.google.com, one real export, Options/popup render. Needs `npx playwright install chromium` once. |
 | `npm run lint`             | ESLint over `src/`, `test/`, `scripts/`.                            |
 | `npm run typecheck`        | TypeScript `checkJs` static analysis (no emit).                     |
 
-CI (GitHub Actions) runs lint, typecheck and the full test suite on every push and pull request.
+CI (GitHub Actions) runs lint, typecheck and the full test suite on every push and pull request, plus the e2e smoke test as a separate job.
 
 ## Build a store package
 

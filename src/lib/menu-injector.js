@@ -13,6 +13,10 @@
 (function () {
   const GEP = (window.GEP = window.GEP || {});
 
+  // Gemini DOM selectors come from selectors.js (single source of truth,
+  // loaded before this file per the manifest order; tests mirror it).
+  const SEL = GEP.selectors;
+
   const PROCESSED_ATTR = "data-gep-processed";
   const MAX_MENU_ITEMS = 12;
 
@@ -110,7 +114,7 @@
   }
 
   function closeMenu() {
-    const backdrop = document.querySelector(".cdk-overlay-backdrop");
+    const backdrop = document.querySelector(SEL.OVERLAY_BACKDROP);
     if (backdrop) {
       backdrop.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
       return;
@@ -198,21 +202,8 @@
     return div;
   }
 
-  // Exact selectors first (today's Gemini markup), then substring fallbacks so
-  // a renamed test id (e.g. "copy-report-button") still identifies the export
-  // menu instead of silently disabling injection.
-  const EXPORT_MENU_SELECTOR = [
-    '[data-test-id="copy-button"]',
-    '[data-test-id="export-to-docs-button"]',
-    "copy-button",
-    "export-to-docs-button",
-    '[data-test-id*="copy"]',
-    '[data-test-id*="export"]',
-    '[data-test-id*="share"]',
-  ].join(", ");
-
   function isExportMenu(menuContent) {
-    return !!menuContent.querySelector(EXPORT_MENU_SELECTOR);
+    return !!menuContent.querySelector(SEL.EXPORT_MENU);
   }
 
   /**
@@ -259,8 +250,8 @@
     menuContent.setAttribute(PROCESSED_ATTR, "1");
 
     const reference =
-      menuContent.querySelector('[data-test-id="copy-button"] gem-menu-item') ||
-      menuContent.querySelector("gem-menu-item");
+      menuContent.querySelector(SEL.MENU_REFERENCE_ITEM) ||
+      menuContent.querySelector(SEL.MENU_ANY_ITEM);
 
     const enabled = enabledFormats || {};
 
