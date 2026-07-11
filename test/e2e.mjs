@@ -27,6 +27,8 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import selfsigned from "selfsigned";
 
+/* global chrome, document -- evaluate() callbacks run inside the browser */
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
