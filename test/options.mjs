@@ -52,6 +52,7 @@ const syncStore = {};
 const localStore = {};
 const syncWrites = [];
 const changedListeners = [];
+let bytesInUseOverride = null; // lets the quota tests force a near-full store
 
 function storageGet(store) {
   return async (defaults) => {
@@ -71,6 +72,9 @@ const chromeMock = {
         Object.assign(syncStore, structuredClone(obj));
         syncWrites.push(structuredClone(obj));
       },
+      getBytesInUse: async () =>
+        bytesInUseOverride !== null ? bytesInUseOverride : JSON.stringify(syncStore).length,
+      QUOTA_BYTES: 102400,
     },
     local: {
       get: storageGet(localStore),
@@ -258,6 +262,29 @@ section("Profiles: save / apply / delete");
   await tick();
   check("delete removes profile from sync", !(syncStore.profiles && syncStore.profiles.Academic));
   check("delete removes profile from UI", list.querySelectorAll(".profile-item").length === 0);
+}
+
+// =====================================================================
+section("Sync quota indicator");
+
+{
+  const row = document.getElementById("syncQuotaRow");
+  const label = document.getElementById("syncQuotaLabel");
+  check("quota row visible after boot", !!row && row.hidden === false);
+  check("quota label shows a percentage", /\d+%|%\d+/.test(label.textContent));
+  check("normal usage has no warning class", !row.classList.contains("quota-warn"));
+
+  // Near-full store: any sync change triggers a refresh; ≥80% flips to warn.
+  bytesInUseOverride = 90000; // ~88% of 102400
+  fireExternalChange({ formats: { newValue: { ...syncStore.formats } } });
+  await tick();
+  check("near-full store shows the warning state", row.classList.contains("quota-warn"));
+  check("warning label rendered", label.textContent.length > 0 && /\d/.test(label.textContent));
+
+  bytesInUseOverride = null;
+  fireExternalChange({ formats: { newValue: { ...syncStore.formats } } });
+  await tick();
+  check("warning clears when usage drops", !row.classList.contains("quota-warn"));
 }
 
 // =====================================================================

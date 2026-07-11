@@ -571,6 +571,58 @@ check("irFilter: withoutSources strips refs in list items", !noSrc.blocks[2].ite
 check("irFilter: withoutSources drops footnotes", noSrc.footnotes.length === 0);
 check("irFilter: apply unknown scope returns same ir", GEP.irFilter.apply(filterIR, "bogus") === filterIR);
 
+// ── Section-scoped export (#9) ──
+const sectionIR = {
+  title: "Sectioned",
+  blocks: [
+    /* 0 */ { type: "heading", level: 1, runs: [{ text: "Doc Title" }] },
+    /* 1 */ { type: "paragraph", runs: [{ text: "intro" }, { text: "", footnoteIndex: 1 }] },
+    /* 2 */ { type: "heading", level: 2, runs: [{ text: "Alpha" }] },
+    /* 3 */ { type: "paragraph", runs: [{ text: "alpha body" }, { text: "", footnoteIndex: 2 }] },
+    /* 4 */ { type: "heading", level: 3, runs: [{ text: "Alpha sub" }] },
+    /* 5 */ { type: "list", ordered: false, items: [{ runs: [{ text: "item" }, { text: "", footnoteIndex: 3 }], level: 0 }] },
+    /* 6 */ { type: "heading", level: 2, runs: [{ text: "Beta" }] },
+    /* 7 */ { type: "table", header: [[{ text: "H" }]], rows: [[[{ text: "cell" }, { text: "", footnoteIndex: 4 }]]] },
+  ],
+  footnotes: [{ index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }],
+};
+
+const secList = GEP.irFilter.sectionList(sectionIR);
+check("irFilter: sectionList finds all headings", secList.length === 4);
+check("irFilter: sectionList carries index/level/title",
+  secList[1].blockIndex === 2 && secList[1].level === 2 && secList[1].title === "Alpha");
+
+// Selecting "Alpha" (h2 @2) spans its sub-heading but stops before "Beta".
+const alpha = GEP.irFilter.apply(sectionIR, "sections:2");
+check("irFilter: section spans until next same-level heading",
+  alpha.blocks.length === 4 && alpha.blocks[0].runs[0].text === "Alpha" && alpha.blocks[3].type === "list");
+check("irFilter: section footnotes reduced to referenced ones",
+  alpha.footnotes.length === 2 && alpha.footnotes.every((f) => f.index === 2 || f.index === 3));
+check("irFilter: sections does not mutate original", sectionIR.blocks.length === 8 && sectionIR.footnotes.length === 4);
+
+// Multiple selections, including a table cell footnote.
+const multi = GEP.irFilter.apply(sectionIR, "sections:6,2");
+check("irFilter: multi-section keeps both sections in document order",
+  multi.blocks.length === 6 && multi.blocks[4].runs[0].text === "Beta");
+check("irFilter: table-cell footnote survives the scan",
+  multi.footnotes.some((f) => f.index === 4));
+
+// The h1 spans everything below it (no other h1 in the report).
+const whole = GEP.irFilter.apply(sectionIR, "sections:0");
+check("irFilter: top-level heading keeps the whole report", whole.blocks.length === 8);
+
+// Sub-section only: "Alpha sub" (h3 @4) ends at the h2 "Beta".
+const sub = GEP.irFilter.apply(sectionIR, "sections:4");
+check("irFilter: sub-section stops at higher-level heading",
+  sub.blocks.length === 2 && sub.blocks[1].type === "list");
+
+// Bad input degrades safely.
+check("irFilter: non-heading index yields empty blocks",
+  GEP.irFilter.apply(sectionIR, "sections:1").blocks.length === 0);
+check("irFilter: malformed sections scope returns same ir",
+  GEP.irFilter.apply(sectionIR, "sections:") === sectionIR
+  && GEP.irFilter.apply(sectionIR, "sections:x,-1") === sectionIR);
+
 // ============================================================
 // 19. New formats: CSL-JSON, RTF
 // ============================================================

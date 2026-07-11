@@ -40,6 +40,7 @@
     rtf: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm0 7V3.5L18.5 9H14zM8 13h2.5a1.5 1.5 0 0 1 .9 2.7l1.1 2.3h-1.4l-1-2H9.4v2H8v-5zm1.4 1.2v1h1a.5.5 0 0 0 0-1h-1zM13 13h3.5v1.2h-1v3.8H14.5v-3.8h-1.5V13z",
     vault: "M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 4v10h16V8H4zm3 2h4v6H7v-6z",
     zip: "M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 10h-2v2h-2v-2H8v-2h2v-2h2v2h2v2z",
+    sections: "M4 4h16v3H4V4zm0 5h9v2H4V9zm0 4h16v2H4v-2zm0 4h9v2H4v-2z",
   };
 
   // Localized label lookup. i18n.js loads first in the manifest, but keep a
@@ -95,6 +96,8 @@
       items: [
         { format: "vault", label: "fmtVault", icon: ICONS.vault },
         { format: "zip_all", label: "fmtZipAll", icon: ICONS.zip },
+        // Opens the section picker panel instead of exporting directly (#9).
+        { format: "sections_pick", label: "fmtSections", icon: ICONS.sections },
       ],
     },
   ];

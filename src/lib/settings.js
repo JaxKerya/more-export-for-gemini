@@ -48,6 +48,8 @@
     // Bundle
     vault: false,
     zip_all: false,
+    // Tools ("Export section…" picker in the share menu)
+    sections_pick: true,
   };
 
   /** Export options (non-format settings). */

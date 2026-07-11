@@ -50,29 +50,72 @@
   // IIFEs that register themselves on window.GEP, so importing them as
   // modules in the isolated world is enough — no exports needed.
 
-  let exportersReady = null;
+  let exportersReady = null; // non-vendor conversion stack (memoized)
+  /** @type {Record<string, Promise<any>>} vendor file -> import promise */
+  const vendorReady = {};
 
-  function loadExporters() {
-    // Already present (options-page sandbox and tests preload the full stack).
+  /** Script entries from web_accessible_resources (non-JS entries like the
+   *  _locales catalog glob would break dynamic import — caught by e2e). */
+  function warScripts() {
+    const war = chrome.runtime.getManifest().web_accessible_resources || [];
+    return ((war[0] && war[0].resources) || []).filter((f) => f.endsWith(".js"));
+  }
+
+  function importVendor(file) {
+    if (!vendorReady[file]) {
+      vendorReady[file] = import(chrome.runtime.getURL(file)).catch((err) => {
+        delete vendorReady[file]; // allow retry on the next export attempt
+        throw err;
+      });
+    }
+    return vendorReady[file];
+  }
+
+  /**
+   * Loads the conversion stack. The KaTeX (~360 KB) and highlight.js
+   * (~136 KB) vendors are imported only when the report actually contains
+   * math / code blocks (#10); pass no IR to force the full stack (quality
+   * check, debug export — diagnostics must be complete). A later math-heavy
+   * report tops up the missing vendor on demand (memoized per file).
+   */
+  function loadExporters(ir) {
+    // Already present (options-page sandbox and tests preload the full stack,
+    // vendors included).
     if (GEP.vault && GEP.texmath) return Promise.resolve();
+
+    const files = warScripts();
+    const vendors = files.filter((f) => f.startsWith("src/vendor/"));
+    const rest = files.filter((f) => !f.startsWith("src/vendor/"));
+
+    const needs = ir && GEP.exportOpts.vendorNeeds
+      ? GEP.exportOpts.vendorNeeds(ir)
+      : { math: true, code: true };
+    const wanted = vendors.filter((f) => {
+      if (f.includes("katex")) return needs.math && !GEP.katex;
+      if (f.includes("highlight")) return needs.code && !GEP.hljs;
+      return true; // unknown future vendor: load unconditionally
+    });
+
     if (!exportersReady) {
-      const war = chrome.runtime.getManifest().web_accessible_resources || [];
-      // Only script files: the WAR list also carries non-JS entries (the
-      // _locales/*/messages.json glob for pinned-language catalogs), which
-      // dynamic import() would reject — caught by the e2e smoke test.
-      const files = ((war[0] && war[0].resources) || []).filter((f) => f.endsWith(".js"));
       const t0 = Date.now();
       exportersReady = (async () => {
-        for (const f of files) {
+        for (const f of rest) {
           await import(chrome.runtime.getURL(f));
         }
-        console.debug(`[GEP] exporter stack loaded (${files.length} files, ${Date.now() - t0}ms)`);
+        console.debug(`[GEP] exporter stack loaded (${rest.length} files, ${Date.now() - t0}ms)`);
       })().catch((err) => {
         exportersReady = null; // allow retry on the next export attempt
         throw err;
       });
     }
-    return exportersReady;
+
+    return exportersReady.then(async () => {
+      for (const f of wanted) {
+        const t0 = Date.now();
+        await importVendor(f);
+        console.debug(`[GEP] vendor loaded: ${f} (${Date.now() - t0}ms)`);
+      }
+    });
   }
 
   let enabledFormats = null;
@@ -219,6 +262,199 @@
   /** Yield control to the event loop so the page stays responsive. */
   const yieldToUI = () => new Promise((r) => setTimeout(r, 0));
 
+  // --- Section picker (#9): choose headings + a format, export just those
+  // sections. Own Shadow DOM host (like the toast) so Gemini's styles can
+  // never leak in. ---
+
+  const PICKER_CSS = `
+    .gep-sec-overlay {
+      position: fixed; inset: 0; z-index: 2147483647;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Google Sans Text", "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .gep-sec-panel {
+      background: #1f1f1f; color: #e3e3e3;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      width: min(440px, calc(100vw - 48px));
+      max-height: min(70vh, 560px);
+      display: flex; flex-direction: column;
+    }
+    .gep-sec-title { font-size: 15px; font-weight: 600; padding: 16px 18px 4px; }
+    .gep-sec-all {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; font-size: 12px; color: #9aa0a6;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer; user-select: none;
+    }
+    .gep-sec-list { overflow-y: auto; padding: 6px 10px; flex: 1; }
+    .gep-sec-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 8px; border-radius: 6px; font-size: 13px;
+      cursor: pointer; user-select: none;
+    }
+    .gep-sec-item:hover { background: rgba(255, 255, 255, 0.06); }
+    .gep-sec-item input, .gep-sec-all input { accent-color: #8ab4f8; }
+    .gep-sec-item .gep-sec-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gep-sec-footer {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 18px 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gep-sec-footer select {
+      flex: 1; min-width: 0;
+      background: #2a2a2a; color: #e3e3e3;
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px;
+      padding: 7px 8px; font-size: 12px; font-family: inherit;
+    }
+    .gep-sec-btn {
+      border-radius: 6px; padding: 7px 16px; font-size: 12.5px; font-weight: 500;
+      font-family: inherit; cursor: pointer; white-space: nowrap;
+      background: rgba(255, 255, 255, 0.08); color: #e3e3e3;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .gep-sec-btn.primary {
+      background: rgba(138, 180, 248, 0.2); color: #8ab4f8;
+      border-color: rgba(138, 180, 248, 0.4);
+    }
+    .gep-sec-btn:disabled { opacity: 0.4; cursor: default; }
+  `;
+
+  /** Single-document formats that make sense for a section slice. */
+  const SECTION_FORMATS = [
+    ["markdown", "fmtMarkdown"], ["txt", "fmtTxt"], ["html", "fmtHtml"],
+    ["reader", "fmtReader"], ["json", "fmtJson"], ["latex", "fmtLatex"],
+    ["rtf", "fmtRtf"], ["docx", "fmtDocx"], ["pdf", "fmtPdf"], ["epub", "fmtEpub"],
+  ];
+
+  let pickerHost = null;
+
+  function closeSectionPicker() {
+    if (pickerHost) { pickerHost.remove(); pickerHost = null; }
+  }
+
+  /** @param {Array<{blockIndex:number, level:number, title:string}>} sections */
+  function openSectionPicker(sections) {
+    closeSectionPicker();
+    const host = document.createElement("div");
+    host.id = "gep-section-picker-host";
+    const root = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
+
+    const style = document.createElement("style");
+    style.textContent = PICKER_CSS;
+    root.appendChild(style);
+
+    const overlay = document.createElement("div");
+    overlay.className = "gep-sec-overlay";
+
+    const panel = document.createElement("div");
+    panel.className = "gep-sec-panel";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+
+    const title = document.createElement("div");
+    title.className = "gep-sec-title";
+    title.textContent = t("secPanelTitle");
+
+    // "Select all" row
+    const allRow = document.createElement("label");
+    allRow.className = "gep-sec-all";
+    const allBox = document.createElement("input");
+    allBox.type = "checkbox";
+    const allText = document.createElement("span");
+    allText.textContent = t("secSelectAll");
+    allRow.append(allBox, allText);
+
+    // Heading list, indented relative to the shallowest level present.
+    const list = document.createElement("div");
+    list.className = "gep-sec-list";
+    const minLevel = Math.min(...sections.map((s) => s.level));
+    /** @type {HTMLInputElement[]} */
+    const boxes = [];
+    for (const sec of sections) {
+      const item = document.createElement("label");
+      item.className = "gep-sec-item";
+      item.style.paddingLeft = 8 + (sec.level - minLevel) * 16 + "px";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.value = String(sec.blockIndex);
+      const text = document.createElement("span");
+      text.className = "gep-sec-text";
+      text.textContent = sec.title || "…";
+      text.title = sec.title;
+      item.append(box, text);
+      list.appendChild(item);
+      boxes.push(box);
+    }
+
+    // Footer: format picker + cancel/export.
+    const footer = document.createElement("div");
+    footer.className = "gep-sec-footer";
+    const formatSel = document.createElement("select");
+    formatSel.setAttribute("aria-label", t("secFormatLabel"));
+    const ef = enabledFormats || {};
+    for (const [fmt, labelKey] of SECTION_FORMATS) {
+      if (ef[fmt] === false) continue; // hidden formats stay hidden here too
+      const opt = document.createElement("option");
+      opt.value = fmt;
+      opt.textContent = t(labelKey);
+      formatSel.appendChild(opt);
+    }
+    if (!formatSel.options.length) {
+      const opt = document.createElement("option");
+      opt.value = "markdown";
+      opt.textContent = t("fmtMarkdown");
+      formatSel.appendChild(opt);
+    }
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "gep-sec-btn";
+    cancelBtn.type = "button";
+    cancelBtn.textContent = t("secCancelBtn");
+
+    const exportBtn = document.createElement("button");
+    exportBtn.className = "gep-sec-btn primary";
+    exportBtn.type = "button";
+    exportBtn.textContent = t("secExportBtn");
+    exportBtn.disabled = true;
+
+    footer.append(formatSel, cancelBtn, exportBtn);
+    panel.append(title, allRow, list, footer);
+    overlay.appendChild(panel);
+    root.appendChild(overlay);
+
+    const syncButtons = () => {
+      const checked = boxes.filter((b) => b.checked).length;
+      exportBtn.disabled = checked === 0;
+      allBox.checked = checked === boxes.length;
+    };
+    boxes.forEach((b) => b.addEventListener("change", syncButtons));
+    allBox.addEventListener("change", () => {
+      boxes.forEach((b) => { b.checked = allBox.checked; });
+      syncButtons();
+    });
+
+    cancelBtn.addEventListener("click", closeSectionPicker);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeSectionPicker();
+    });
+    overlay.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeSectionPicker();
+    });
+
+    exportBtn.addEventListener("click", () => {
+      const indices = boxes.filter((b) => b.checked).map((b) => b.value);
+      if (!indices.length) return;
+      const fmt = formatSel.value;
+      closeSectionPicker();
+      onExport(`${fmt}@sections:${indices.join(",")}`);
+    });
+
+    (document.body || document.documentElement).appendChild(host);
+    pickerHost = host;
+    try { formatSel.focus(); } catch { /* not focusable in some contexts */ }
+  }
+
   // --- In-memory IR cache: exporting the same report in several formats
   // should not re-scan the DOM each time. We key the cache on the content
   // root node identity plus a cheap content signature for invalidation. ---
@@ -288,12 +524,17 @@
   }
 
   async function onExport(rawFormat) {
-    try {
-      await loadExporters();
-    } catch (err) {
-      console.error("[GEP] failed to load exporter modules", err);
-      logError("load-exporters", err);
-      toast(t("toastModulesFailed"), { isError: true, retryFn: () => onExport(rawFormat) });
+    // "Export section…" opens the picker (no exporters needed yet); the
+    // actual export re-enters onExport as e.g. "markdown@sections:3,7".
+    if (rawFormat === "sections_pick") {
+      const ir = getIR();
+      if (!ir) return;
+      const sections = GEP.irFilter ? GEP.irFilter.sectionList(ir) : [];
+      if (!sections.length) {
+        toast(t("toastNoHeadings"), { isError: true });
+        return;
+      }
+      openSectionPicker(sections);
       return;
     }
 
@@ -304,8 +545,19 @@
       [format, scope] = rawFormat.split("@");
     }
 
+    // Extraction first (static core only) so the loader can skip the KaTeX /
+    // highlight.js vendors when the report doesn't need them (#10).
     let ir = getIR();
     if (!ir) return;
+
+    try {
+      await loadExporters(ir);
+    } catch (err) {
+      console.error("[GEP] failed to load exporter modules", err);
+      logError("load-exporters", err);
+      toast(t("toastModulesFailed"), { isError: true, retryFn: () => onExport(rawFormat) });
+      return;
+    }
     // Auto-backup (#13): snapshot the full IR so the report can be re-exported
     // from Options later, even after the Gemini conversation is deleted.
     // Fire-and-forget — a backup failure must never block the export itself.
@@ -322,7 +574,9 @@
     // and bundle exports that reuse this IR. Defaults are a no-op.
     if (GEP.sourceHygiene) ir = GEP.sourceHygiene.apply(ir, exportOpts);
     const tpl = enabledFormats ? enabledFormats.filename_template : null;
-    const fmtToken = scope ? `${format}-${scope}` : format;
+    // Scope may carry arguments ("sections:3,7"); only the keyword goes into
+    // the file name token (e.g. "markdown-sections").
+    const fmtToken = scope ? `${format}-${scope.split(":")[0]}` : format;
     const fname = (title, ext, fmt) =>
       GEP.download.templateFileName(title, ext, fmt || fmtToken, tpl, ir);
 

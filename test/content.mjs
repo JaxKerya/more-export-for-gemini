@@ -42,6 +42,27 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
 const fixtureHtml = fs.readFileSync(path.join(__dirname, "fixtures", "gemini-report.html"), "utf8");
 const { window, document } = parseHTML(fixtureHtml);
 
+// linkedom's <select> exposes only a value getter; give it browser-like
+// get/set semantics (same patch as test/options.mjs) for the section picker.
+{
+  const selectProto = Object.getPrototypeOf(document.createElement("select"));
+  Object.defineProperty(selectProto, "value", {
+    configurable: true,
+    get() {
+      const opts = [...this.querySelectorAll("option")];
+      const sel = opts.find((o) => o.hasAttribute("selected")) || opts[0];
+      return sel ? (sel.getAttribute("value") ?? sel.textContent) : "";
+    },
+    set(v) {
+      for (const o of this.querySelectorAll("option")) {
+        const val = o.getAttribute("value") ?? o.textContent;
+        if (val === String(v)) o.setAttribute("selected", "");
+        else o.removeAttribute("selected");
+      }
+    },
+  });
+}
+
 const messageListeners = [];
 const storageListeners = [];
 
@@ -175,6 +196,52 @@ let fullMarkdown = "";
   const dl = downloads[0] || {};
   check("scoped output is filtered (smaller than full export)",
     typeof dl.data === "string" && dl.data.length > 0 && dl.data.length < fullMarkdown.length);
+}
+
+{
+  // Section-scoped export (#9): a single h2's slice must be a strict subset.
+  const ir = GEP.extractor.extract();
+  const secs = GEP.irFilter.sectionList(ir);
+  check("fixture exposes section headings", secs.length >= 2);
+  const target = secs[1];
+
+  downloads.length = 0;
+  const res = await send({ type: "GEP_EXPORT", format: `markdown@sections:${target.blockIndex}` });
+  await tick();
+  check("section export responds ok", res && res.ok === true);
+  check("section export downloads one file", downloads.length === 1);
+  const dl = downloads[0] || {};
+  check("section output contains the chosen heading",
+    typeof dl.data === "string" && dl.data.includes(target.title));
+  check("section output is a strict subset of the full export",
+    typeof dl.data === "string" && dl.data.length > 0 && dl.data.length < fullMarkdown.length);
+}
+
+{
+  // "Export section…" opens the picker; walking through it fires the export.
+  const res = await send({ type: "GEP_EXPORT", format: "sections_pick" });
+  check("sections_pick responds ok", res && res.ok === true);
+  const host = document.getElementById("gep-section-picker-host");
+  check("picker panel opened", !!host);
+  if (host) {
+    const rootEl = host.shadowRoot || host;
+    const boxes = [...rootEl.querySelectorAll(".gep-sec-item input")];
+    const secs = GEP.irFilter.sectionList(GEP.extractor.extract());
+    check("picker lists every heading", boxes.length === secs.length);
+    const exportBtn = rootEl.querySelector(".gep-sec-btn.primary");
+    check("export disabled until a section is picked", exportBtn.disabled === true);
+
+    boxes[1].checked = true;
+    boxes[1].dispatchEvent(new window.Event("change"));
+    check("picking a section enables export", exportBtn.disabled === false);
+
+    downloads.length = 0;
+    exportBtn.dispatchEvent(new window.Event("click"));
+    await tick();
+    await tick();
+    check("picker export downloads the slice", downloads.length === 1);
+    check("picker closed after export", !document.getElementById("gep-section-picker-host"));
+  }
 }
 
 {

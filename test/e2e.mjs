@@ -160,6 +160,32 @@ try {
   check("no page errors during export", pageErrors.length === 0);
   if (pageErrors.length) console.error("    page errors:", pageErrors.join(" | "));
 
+  // ── Section picker: choose one heading, export the slice ──
+  section("Section picker end to end");
+
+  await page.click('[data-gep-format="sections_pick"]');
+  // Playwright locators pierce the open shadow root of the picker host.
+  await page.waitForSelector("#gep-section-picker-host .gep-sec-item", { timeout: 15000 });
+  const boxes = page.locator("#gep-section-picker-host .gep-sec-item input");
+  check("picker lists the report's headings", (await boxes.count()) >= 3);
+
+  const exportBtn = page.locator("#gep-section-picker-host .gep-sec-btn.primary");
+  check("picker export starts disabled", await exportBtn.isDisabled());
+
+  await boxes.nth(1).check(); // first h2 section
+  check("selecting a section enables export", !(await exportBtn.isDisabled()));
+
+  const [secDownload] = await Promise.all([
+    page.waitForEvent("download", { timeout: 30000 }),
+    exportBtn.click(),
+  ]);
+  check("section export downloads a .md file", secDownload.suggestedFilename().endsWith(".md"));
+  const secMd = fs.readFileSync(await secDownload.path(), "utf8");
+  check("section slice is a strict subset of the full export",
+    secMd.length > 0 && secMd.length < md.length);
+  check("picker closed after export",
+    (await page.locator("#gep-section-picker-host").count()) === 0);
+
   // ── Options page renders and reaches storage ──
   section("Options page");
 

@@ -244,6 +244,10 @@
         </div>
         <ul class="profile-list" id="profileList"></ul>
         <div class="debug-status" id="profileStatus" aria-live="polite"></div>
+        <div class="quota-row" id="syncQuotaRow" hidden>
+          <div class="quota-track" aria-hidden="true"><div class="quota-bar" id="syncQuotaBar"></div></div>
+          <span class="quota-label" id="syncQuotaLabel"></span>
+        </div>
       </div>
     </section>
 
@@ -937,6 +941,14 @@
           <div class="toggle-label">
             <span class="toggle-name"><span data-i18n="optFmtDownloadAll">Download All</span> <span class="ext-tag">.zip</span></span>
             <span class="toggle-hint" data-i18n="optZipAllHint">Export all enabled formats in a single ZIP archive</span>
+          </div>
+          <input type="checkbox">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+        <label class="toggle" data-format="sections_pick" data-search="section chapter heading partial export pick select">
+          <div class="toggle-label">
+            <span class="toggle-name"><span data-i18n="optFmtSections">Export Section…</span></span>
+            <span class="toggle-hint" data-i18n="optSectionsHint">Pick one or more headings from the report and export just those sections in any format</span>
           </div>
           <input type="checkbox">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>

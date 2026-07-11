@@ -20,6 +20,31 @@ export async function initProfiles(ctx) {
     profileStatus.className = "debug-status visible " + (type || "");
   }
 
+  // ── Sync quota indicator (#8) ──
+  // chrome.storage.sync is hard-capped (100 KB total / 8 KB per item); the
+  // bar surfaces usage so the quota error never comes as a surprise.
+  const quotaRow = document.getElementById("syncQuotaRow");
+  const quotaBar = document.getElementById("syncQuotaBar");
+  const quotaLabel = document.getElementById("syncQuotaLabel");
+  const QUOTA_WARN_PCT = 80;
+
+  async function refreshQuota() {
+    if (!quotaRow || !quotaBar || !quotaLabel) return;
+    try {
+      if (!chrome.storage.sync.getBytesInUse) return; // not available (older mock/browser)
+      const used = await chrome.storage.sync.getBytesInUse(null);
+      const total = chrome.storage.sync.QUOTA_BYTES || 102400;
+      const pct = Math.min(100, Math.round((used / total) * 100));
+      quotaRow.hidden = false;
+      quotaBar.style.width = pct + "%";
+      const warn = pct >= QUOTA_WARN_PCT;
+      quotaRow.classList.toggle("quota-warn", warn);
+      quotaLabel.textContent = warn
+        ? t("optSyncQuotaWarn", String(pct))
+        : t("optSyncQuota", String(pct));
+    } catch { /* leave the row hidden */ }
+  }
+
   function currentSnapshot() {
     const cleanFormats = {};
     for (const key of Object.keys(FORMAT_DEFAULTS)) {
@@ -88,6 +113,7 @@ export async function initProfiles(ctx) {
         delete profiles[name];
         await persistProfiles();
         renderProfiles();
+        refreshQuota();
         setProfileStatus(t("optProfileDeleted", name), "success");
       });
 
@@ -119,6 +145,7 @@ export async function initProfiles(ctx) {
       }
       profileNameInput.value = "";
       renderProfiles();
+      refreshQuota();
       setProfileStatus(t(isNew ? "optProfileSaved" : "optProfileUpdated", name), "success");
     });
     profileNameInput.addEventListener("keydown", (e) => {
@@ -129,7 +156,9 @@ export async function initProfiles(ctx) {
   // Keep the list fresh when profiles change in another context (a second
   // Options window; our own writes just re-render idempotently).
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "sync" || !changes.profiles) return;
+    if (area !== "sync") return;
+    refreshQuota(); // any sync write moves the usage needle
+    if (!changes.profiles) return;
     const next = GEP.settings.sanitizeProfiles(changes.profiles.newValue);
     for (const key of Object.keys(profiles)) delete profiles[key];
     Object.assign(profiles, next);
@@ -137,4 +166,5 @@ export async function initProfiles(ctx) {
   });
 
   renderProfiles();
+  refreshQuota();
 }

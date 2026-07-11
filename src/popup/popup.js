@@ -77,8 +77,9 @@
   const formats = { ...FORMAT_DEFAULTS, ...stored.formats };
   const options = { ...OPTION_DEFAULTS, ...stored.options };
 
+  // zip_all gets its own chip below; sections_pick is a picker tool, not a format.
   const downloadFormats = Object.entries(formats)
-    .filter(([k, v]) => v && !CLIP_FORMATS.has(k) && k !== "zip_all");
+    .filter(([k, v]) => v && !CLIP_FORMATS.has(k) && k !== "zip_all" && k !== "sections_pick");
   const clipFormats = Object.entries(formats)
     .filter(([k, v]) => v && CLIP_FORMATS.has(k));
 

@@ -63,7 +63,7 @@ The `Release` workflow refuses tags that don't match `manifest.json`, runs lint 
 
 ## Architecture in one paragraph
 
-A small content-script core (8 files) watches the Gemini page and injects export entries into the share menu; the heavy conversion stack (KaTeX/highlight.js vendors + 16 exporters) is lazy-loaded via dynamic `import()` on the first export. Extraction produces a format-agnostic intermediate representation (IR: title, blocks, footnotes, lang/dir), which every exporter consumes independently — adding a format never touches the DOM-scraping code. All modules attach to a shared `window.GEP` namespace and are dependency-free (ZIP, DOCX/OOXML, EPUB and LaTeX-math conversion are implemented from scratch).
+A small content-script core (8 files) watches the Gemini page and injects export entries into the share menu; the heavy conversion stack (16 exporters) is lazy-loaded via dynamic `import()` on the first export, and the KaTeX/highlight.js vendors are imported only when the report actually contains math/code blocks. Extraction produces a format-agnostic intermediate representation (IR: title, blocks, footnotes, lang/dir), which every exporter consumes independently — adding a format never touches the DOM-scraping code. All modules attach to a shared `window.GEP` namespace and are dependency-free (ZIP, DOCX/OOXML, EPUB and LaTeX-math conversion are implemented from scratch).
 
 ## Repository layout
 

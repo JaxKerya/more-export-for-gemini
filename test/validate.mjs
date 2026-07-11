@@ -732,6 +732,32 @@ const optsOff = { includeToc: false, includeFootnotes: false };
     fromEnvelope.v === 1 && !("schemaVersion" in fromEnvelope));
 }
 
+// ── Conditional vendor loading (#10): needs detection ──
+// The content script imports KaTeX / highlight.js only when vendorNeeds()
+// flags the report; these pin the detection rules.
+{
+  const vn = GEP.exportOpts.vendorNeeds;
+  const p = (runs) => ({ type: "paragraph", runs });
+  check("vendorNeeds: plain prose needs no vendors", (() => {
+    const n = vn({ blocks: [p([{ text: "hello" }, { text: "inline", code: true }])] });
+    return n.math === false && n.code === false;
+  })());
+  check("vendorNeeds: code block flags code only", (() => {
+    const n = vn({ blocks: [{ type: "code", text: "x = 1" }] });
+    return n.code === true && n.math === false;
+  })());
+  check("vendorNeeds: math block flags math", (() => {
+    const n = vn({ blocks: [{ type: "math", tex: "x^2" }] });
+    return n.math === true && n.code === false;
+  })());
+  check("vendorNeeds: inline math run flags math",
+    vn({ blocks: [p([{ text: "", math: { tex: "a" } }])] }).math === true);
+  check("vendorNeeds: math inside a table cell detected",
+    vn({ blocks: [{ type: "table", header: null, rows: [[[{ text: "", math: { tex: "b" } }]]] }] }).math === true);
+  check("vendorNeeds: math inside a list item detected",
+    vn({ blocks: [{ type: "list", ordered: false, items: [{ runs: [{ text: "", math: { tex: "c" } }], level: 0 }] }] }).math === true);
+}
+
 for (const [name, convertFn, fnMarker, srcMarker] of [
   ["markdown", () => GEP.markdown.convert(ir, optsOn), "[^1]", "[^1]:"],
   ["txt", () => GEP.txt.convert(ir, optsOn), "[1]", "Sources"],
@@ -1145,7 +1171,7 @@ check("templateFileName timestamp is numeric", /^\d+\.md$/.test(tplTimestamp));
 section("Settings module");
 
 check("DEFAULTS object exists", typeof GEP.settings.DEFAULTS === "object");
-check("20 format keys", Object.keys(GEP.settings.DEFAULTS).length === 20);
+check("21 format keys", Object.keys(GEP.settings.DEFAULTS).length === 21);
 check("OPTION_DEFAULTS exists", typeof GEP.settings.OPTION_DEFAULTS === "object");
 check("markdown_flavor default = gfm", GEP.settings.OPTION_DEFAULTS.markdown_flavor === "gfm");
 check("include_toc default = false", GEP.settings.OPTION_DEFAULTS.include_toc === false);
@@ -1155,8 +1181,8 @@ check("filename_template default", GEP.settings.OPTION_DEFAULTS.filename_templat
 check("no auto_export keys", !("auto_export_enabled" in GEP.settings.OPTION_DEFAULTS));
 
 const onCount = Object.values(GEP.settings.DEFAULTS).filter(Boolean).length;
-check("5 formats on by default", onCount === 5);
-for (const k of ["clipboard_md", "markdown", "reader", "docx", "pdf"]) {
+check("6 formats on by default", onCount === 6);
+for (const k of ["clipboard_md", "markdown", "reader", "docx", "pdf", "sections_pick"]) {
   check(`default ON: ${k}`, GEP.settings.DEFAULTS[k] === true);
 }
 for (const k of ["clipboard_txt", "clipboard_html", "clipboard_json", "txt", "html", "json", "latex", "csv", "bibtex", "ris", "csljson", "rtf", "epub", "vault", "zip_all"]) {

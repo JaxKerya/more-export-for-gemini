@@ -1333,6 +1333,32 @@ kbd {
   margin-left: 0;
 }
 
+/* ── Sync storage quota indicator ── */
+.quota-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px var(--card-pad) 14px;
+}
+.quota-track {
+  flex: 0 0 120px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.quota-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.quota-label { font-size: 11px; color: var(--text-faint); }
+.quota-row.quota-warn .quota-bar { background: var(--danger); }
+.quota-row.quota-warn .quota-label { color: var(--danger); }
+
 .backup-btn.danger {
   border-color: rgba(242, 139, 130, 0.3);
   background: var(--danger-weak);

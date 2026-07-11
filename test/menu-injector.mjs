@@ -116,7 +116,7 @@ section("Injection & format filtering");
     clipboard_txt: false, clipboard_html: false, clipboard_json: false,
     txt: false, html: false, json: false, latex: false, csv: false,
     bibtex: false, ris: false, csljson: false, rtf: false, epub: false,
-    vault: false, zip_all: false,
+    vault: false, zip_all: false, sections_pick: false,
   };
   check("inject() succeeds on export menu", injector.inject(menu, noop, enabled) === true);
 
@@ -141,6 +141,21 @@ section("Injection & format filtering");
   const items = menu.querySelectorAll(".gep-menu-item:not(.gep-limit-notice)");
   check("item cap enforced (12)", items.length === 12);
   check("limit notice shown", menu.querySelectorAll(".gep-limit-notice").length === 1);
+}
+
+{
+  // "Export section…" (#9) is a menu entry like any format and must inject
+  // with its localized label when enabled.
+  const { injector, document } = makeInjector(EXPORT_MENU);
+  const menu = document.querySelector(".mat-mdc-menu-content");
+  const enabled = { sections_pick: true };
+  for (const g of injector.GROUPS) for (const it of g.items) {
+    if (it.format !== "sections_pick") enabled[it.format] = false;
+  }
+  injector.inject(menu, noop, enabled);
+  const item = menu.querySelector('[data-gep-format="sections_pick"]');
+  check("sections_pick entry injected", !!item);
+  check("sections_pick label resolved", !!item && item.textContent.includes("Export section"));
 }
 
 {

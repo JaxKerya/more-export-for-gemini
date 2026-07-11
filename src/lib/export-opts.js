@@ -120,5 +120,33 @@
     };
   }
 
-  GEP.exportOpts = { build, layoutFrom, MIME, EXT, EXPORTABLE, LABELS };
+  /**
+   * Which heavyweight vendors does this report actually need?
+   * KaTeX (~360 KB) only matters when the report contains math; highlight.js
+   * (~136 KB) only when it contains code BLOCKS (inline code is never
+   * highlighted — mirrors irHasCode in exporters/reader.js). The content
+   * script uses this to skip vendor imports for typical prose reports.
+   * @param {{blocks?: any[]}} ir
+   * @returns {{math: boolean, code: boolean}}
+   */
+  function vendorNeeds(ir) {
+    let math = false;
+    let code = false;
+    const scanRuns = (runs) => {
+      if (!math) math = (runs || []).some((r) => r && r.math);
+    };
+    for (const b of (ir && ir.blocks) || []) {
+      if (!b) continue;
+      if (b.type === "math") math = true;
+      else if (b.type === "code") code = true;
+      scanRuns(b.runs);
+      (b.items || []).forEach((it) => scanRuns(it && it.runs));
+      (b.header || []).forEach(scanRuns);
+      (b.rows || []).forEach((row) => (row || []).forEach(scanRuns));
+      if (math && code) break;
+    }
+    return { math, code };
+  }
+
+  GEP.exportOpts = { build, layoutFrom, MIME, EXT, EXPORTABLE, LABELS, vendorNeeds };
 })();
