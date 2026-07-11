@@ -36,6 +36,7 @@
     latex: false,
     // Data
     csv: false,
+    xlsx: false,
     // References
     bibtex: false,
     ris: false,

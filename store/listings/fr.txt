@@ -16,6 +16,7 @@ TEXTE & DONNÉES
 - Texte brut (.txt) - Texte propre et lisible, sans aucun balisage
 - JSON (.json) - Données structurées pour les développeurs et les outils d'automatisation
 - CSV (.csv) - Tableaux extraits en données prêtes pour tableur (s'ouvre correctement dans Excel)
+- Excel (.xlsx) - Véritable classeur Excel : une feuille par tableau, en-têtes figés, cellules numériques prêtes pour les formules
 
 CITATIONS & BIBLIOGRAPHIE
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Import direct dans Zotero, Mendeley, EndNote

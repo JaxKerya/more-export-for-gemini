@@ -16,6 +16,7 @@ TEXTO E DADOS
 - Texto simples (.txt) - Texto limpo e legível, sem nenhuma marcação
 - JSON (.json) - Dados estruturados para desenvolvedores e ferramentas de automação
 - CSV (.csv) - Tabelas extraídas como dados prontos para planilhas (abre corretamente no Excel)
+- Excel (.xlsx) - Pasta de trabalho real do Excel: uma planilha por tabela, cabeçalhos fixos, células numéricas prontas para fórmulas
 
 CITAÇÕES E BIBLIOGRAFIA
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Importe diretamente no Zotero, Mendeley, EndNote

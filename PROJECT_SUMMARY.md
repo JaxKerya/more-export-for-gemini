@@ -16,7 +16,7 @@ Kullanıcı bir formata tıkladığında, sayfa içerisindeki rapor elementleri 
 
 * **Dışa Aktarma Formatları**:
   * **Metin Formatları**: Markdown (.md) [GFM, CommonMark, Obsidian ve Notion biçimleri], Düz Metin (.txt), HTML (.html), HTML – Reader (.html) [tema/anahat/okuma ilerlemesi içeren, kendi kendine yeten okuma sayfası], JSON (.json), LaTeX (.tex).
-  * **Veri Formatları**: CSV (.csv) [rapor tabloları].
+  * **Veri Formatları**: CSV (.csv) [rapor tabloları], Excel (.xlsx) [tablo başına sayfa içeren gerçek çalışma kitabı].
   * **Akademik Referans Formatları**: BibTeX (.bib), RIS (.ris), CSL-JSON (.json) [Zotero/Pandoc citeproc].
   * **Zengin Doküman Formatları**: Word (.docx) [OpenXML standartlarında], Rich Text (.rtf), PDF (.pdf) [yazdırma arayüzü ile], EPUB (.epub) [e-kitap paketi olarak].
   * **Paketler**: Vault ZIP [ana Markdown + references.md + tablo başına CSV], tüm etkin formatları tek arşivde toplayan Download All ZIP.

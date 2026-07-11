@@ -28,6 +28,7 @@
     json: "M5 3h2v2H5v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5h2v2H5c-1.1 0-2-.9-2-2v-4a2 2 0 0 0-2-2v-2a2 2 0 0 0 2-2V5c0-1.1.9-2 2-2zm14 0c1.1 0 2 .9 2 2v4a2 2 0 0 0 2 2v2a2 2 0 0 0-2 2v4c0 1.1-.9 2-2 2h-2v-2h2v-5a2 2 0 0 1 2-2 2 2 0 0 1-2-2V5h-2V3h2z",
     latex: "M5 3h14v2H5V3zm0 4h9v2H5V7zm0 4h14v2H5v-2zm0 4h9v2H5v-2zm0 4h14v2H5v-2z",
     csv: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 16H9v-2h4v2zm0-4H9v-2h4v2zm-5 4H7v-2h2v2zm0-4H7v-2h2v2zm8 4h-2v-2h2v2zm0-4h-2v-2h2v2zM13 9V3.5L18.5 9H13z",
+    xlsx: "M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 4v3h7V8H4zm9 0v3h7V8h-7zm-9 5v3h7v-3H4zm9 0v3h7v-3h-7z",
     bibtex: "M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 0v5h5l-5-5zM8 12h8v2H8v-2zm0 3h6v2H8v-2zm0-6h8v2H8V9z",
     docx:
       "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm0 7V3.5L18.5 9H14zM8 13h8v2H8v-2zm0 4h8v2H8v-2z",
@@ -75,6 +76,7 @@
       items: [
         { format: "latex", label: "fmtLatex", icon: ICONS.latex },
         { format: "csv", label: "fmtCsv", icon: ICONS.csv },
+        { format: "xlsx", label: "fmtXlsx", icon: ICONS.xlsx },
       ],
     },
     {

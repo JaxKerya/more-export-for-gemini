@@ -29,6 +29,7 @@
     ris: "application/x-research-info-systems;charset=utf-8",
     csljson: "application/vnd.citationstyles.csl+json;charset=utf-8",
     rtf: "application/rtf;charset=utf-8",
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     epub: "application/epub+zip",
     zip: "application/zip",
@@ -37,7 +38,7 @@
 
   const EXT = {
     markdown: ".md", txt: ".txt", html: ".html", reader: ".reader.html", json: ".json",
-    latex: ".tex", csv: ".csv", bibtex: ".bib", ris: ".ris",
+    latex: ".tex", csv: ".csv", xlsx: ".xlsx", bibtex: ".bib", ris: ".ris",
     csljson: ".json", rtf: ".rtf",
     docx: ".docx", pdf: ".pdf", epub: ".epub", vault: ".zip",
   };
@@ -48,7 +49,7 @@
    */
   const EXPORTABLE = [
     "markdown", "txt", "html", "reader", "json", "latex",
-    "csv", "bibtex", "ris", "csljson", "rtf",
+    "csv", "xlsx", "bibtex", "ris", "csljson", "rtf",
     "docx", "pdf", "epub", "vault",
   ];
 
@@ -56,7 +57,7 @@
   const LABELS = {
     markdown: "Markdown (.md)", txt: "Plain text (.txt)", html: "HTML (.html)",
     reader: "Reader HTML (.reader.html)", json: "JSON (.json)", latex: "LaTeX (.tex)",
-    csv: "CSV (.csv)", bibtex: "BibTeX (.bib)", ris: "RIS (.ris)",
+    csv: "CSV (.csv)", xlsx: "Excel (.xlsx)", bibtex: "BibTeX (.bib)", ris: "RIS (.ris)",
     csljson: "CSL-JSON (.json)", rtf: "RTF (.rtf)", docx: "Word (.docx)",
     pdf: "PDF (print)", epub: "EPUB (.epub)", vault: "Vault bundle (.zip)",
   };

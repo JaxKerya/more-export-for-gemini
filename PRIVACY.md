@@ -4,7 +4,7 @@
 
 ## Overview
 
-"More Export for Gemini" is a browser extension that adds extra export formats to the Google Gemini Deep Research share menu: Markdown, Plain Text, HTML, HTML – Reader, JSON, LaTeX, CSV, BibTeX, RIS, CSL-JSON, RTF, Word (.docx), PDF, EPUB and a multi-file Vault ZIP bundle, plus clipboard copies (Markdown, Plain Text, rich HTML, JSON). All conversion runs entirely in your browser with no external servers.
+"More Export for Gemini" is a browser extension that adds extra export formats to the Google Gemini Deep Research share menu: Markdown, Plain Text, HTML, HTML – Reader, JSON, LaTeX, CSV, Excel (.xlsx), BibTeX, RIS, CSL-JSON, RTF, Word (.docx), PDF, EPUB and a multi-file Vault ZIP bundle, plus clipboard copies (Markdown, Plain Text, rich HTML, JSON). All conversion runs entirely in your browser with no external servers.
 
 ## Data Collection
 

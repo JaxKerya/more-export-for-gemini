@@ -155,6 +155,7 @@ for (const f of [
   "src/exporters/json.js",
   "src/exporters/latex.js",
   "src/exporters/csv.js",
+  "src/exporters/xlsx.js",
   "src/exporters/epub.js",
   "src/exporters/bibtex.js",
   "src/exporters/ris.js",
@@ -1171,7 +1172,7 @@ check("templateFileName timestamp is numeric", /^\d+\.md$/.test(tplTimestamp));
 section("Settings module");
 
 check("DEFAULTS object exists", typeof GEP.settings.DEFAULTS === "object");
-check("21 format keys", Object.keys(GEP.settings.DEFAULTS).length === 21);
+check("22 format keys", Object.keys(GEP.settings.DEFAULTS).length === 22);
 check("OPTION_DEFAULTS exists", typeof GEP.settings.OPTION_DEFAULTS === "object");
 check("markdown_flavor default = gfm", GEP.settings.OPTION_DEFAULTS.markdown_flavor === "gfm");
 check("include_toc default = false", GEP.settings.OPTION_DEFAULTS.include_toc === false);
@@ -1334,9 +1335,9 @@ for (const f of [
   "src/exporters/zip.js", "src/exporters/markdown.js", "src/exporters/txt.js",
   "src/exporters/docx.js", "src/exporters/pdf.js", "src/exporters/html.js",
   "src/exporters/reader.js", "src/exporters/json.js", "src/exporters/latex.js",
-  "src/exporters/csv.js", "src/exporters/epub.js", "src/exporters/bibtex.js",
-  "src/exporters/ris.js", "src/exporters/csljson.js", "src/exporters/rtf.js",
-  "src/exporters/vault.js",
+  "src/exporters/csv.js", "src/exporters/xlsx.js", "src/exporters/epub.js",
+  "src/exporters/bibtex.js", "src/exporters/ris.js", "src/exporters/csljson.js",
+  "src/exporters/rtf.js", "src/exporters/vault.js",
 ]) {
   check(`lazy stack includes ${f}`, warResources.includes(f));
 }

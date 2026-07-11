@@ -46,6 +46,7 @@ for (const f of [
   "src/exporters/json.js",
   "src/exporters/latex.js",
   "src/exporters/csv.js",
+  "src/exporters/xlsx.js",
   "src/exporters/epub.js",
   "src/exporters/bibtex.js",
   "src/exporters/ris.js",
@@ -1007,6 +1008,71 @@ const epubParts = readZipText(epubBuf);
 check("meta epub: dc:creator", (epubParts["OEBPS/content.opf"] || "").includes("<dc:creator>Jane Doe</dc:creator>"));
 check("meta epub: dc:subject keyword", (epubParts["OEBPS/content.opf"] || "").includes("<dc:subject>alpha</dc:subject>"));
 check("meta epub: dc:description", (epubParts["OEBPS/content.opf"] || "").includes("<dc:description>This is the abstract.</dc:description>"));
+
+// ── XLSX exporter (#12): real Excel workbook, one sheet per table ──
+{
+  const r = (text) => [{ text }];
+  const xlsxIR = {
+    title: "Workbook test",
+    blocks: [
+      { type: "heading", level: 2, runs: r("Yıllık Satış: A/B [test]") },
+      { type: "table", header: [r("Ürün"), r("Adet"), r("Fiyat")], rows: [
+        [r("Kalem <&> \"ş\""), r("120"), r("3.5")],
+        [r("Defter"), r("80"), r("12%")],
+      ] },
+      { type: "paragraph", runs: r("prose between tables") },
+      { type: "table", header: null, rows: [[r("no header"), r("-42")]] },
+      { type: "heading", level: 2, runs: r("Yıllık Satış: A/B [test]") },
+      { type: "table", header: [r("k")], rows: [[r("v")]] },
+    ],
+  };
+  const parts = readZipText(Buffer.from(await GEP.xlsx.convert(xlsxIR).arrayBuffer()));
+
+  check("xlsx: required package parts present",
+    "[Content_Types].xml" in parts && "_rels/.rels" in parts
+    && "xl/workbook.xml" in parts && "xl/_rels/workbook.xml.rels" in parts
+    && "xl/styles.xml" in parts);
+  check("xlsx: one worksheet per table",
+    "xl/worksheets/sheet1.xml" in parts && "xl/worksheets/sheet2.xml" in parts
+    && "xl/worksheets/sheet3.xml" in parts && !("xl/worksheets/sheet4.xml" in parts));
+  check("xlsx: content types register every sheet",
+    (parts["[Content_Types].xml"].match(/worksheet\+xml/g) || []).length === 3);
+
+  const wb = parts["xl/workbook.xml"];
+  check("xlsx: sheet named after nearest heading (illegal chars stripped)",
+    wb.includes('name="Yıllık Satış A B test"') && !/name="[^"]*[:\\/?*[\]]/.test(wb));
+  check("xlsx: duplicate heading names deduped", wb.includes('name="Yıllık Satış A B test (2)"'));
+  check("xlsx: headingless table falls back to Table N", wb.includes('name="Table 2"'));
+
+  const s1 = parts["xl/worksheets/sheet1.xml"];
+  check("xlsx: header row uses the bold style", s1.includes('<row r="1"><c r="A1" s="1"'));
+  check("xlsx: header row frozen", s1.includes('state="frozen"'));
+  check("xlsx: xml-escaped inline string with unicode",
+    s1.includes("<t xml:space=\"preserve\">Kalem &lt;&amp;&gt; &quot;ş&quot;</t>"));
+  check("xlsx: plain integers become numeric cells", s1.includes("<v>120</v>") && s1.includes("<v>3.5</v>"));
+  check("xlsx: units/percent stay text", s1.includes(">12%</t>") && !s1.includes("<v>12%</v>"));
+
+  const s2 = parts["xl/worksheets/sheet2.xml"];
+  check("xlsx: negative number typed as number", s2.includes("<v>-42</v>"));
+  check("xlsx: headerless sheet has no freeze pane", !s2.includes('state="frozen"'));
+
+  // No tables at all → a valid single-sheet workbook explaining why.
+  const empty = readZipText(Buffer.from(await GEP.xlsx.convert({ title: "x", blocks: [
+    { type: "paragraph", runs: r("just prose") },
+  ] }).arrayBuffer()));
+  check("xlsx: table-less report yields one explanatory sheet",
+    empty["xl/workbook.xml"].includes('name="Report"')
+    && empty["xl/worksheets/sheet1.xml"].includes("(No tables found in this report)"));
+
+  // Sheet-name length cap (Excel hard limit: 31 chars).
+  const longIR = { title: "t", blocks: [
+    { type: "heading", level: 2, runs: r("This heading is far far longer than thirty-one characters") },
+    { type: "table", header: [r("a")], rows: [[r("b")]] },
+  ] };
+  const longWb = readZipText(Buffer.from(await GEP.xlsx.convert(longIR).arrayBuffer()))["xl/workbook.xml"];
+  const nameMatch = /<sheet name="([^"]+)"/.exec(longWb);
+  check("xlsx: sheet name capped at 31 chars", !!nameMatch && nameMatch[1].length <= 31);
+}
 
 // ============================================================
 // 30. texmath converter (LaTeX → MathML / OMML)

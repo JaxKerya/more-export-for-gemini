@@ -40,7 +40,10 @@ const MENU_SECTIONS = [
     { format: "json", title: "fmtJson" },
   ],
   [{ format: "latex", title: "fmtLatex" }],
-  [{ format: "csv", title: "fmtCsv" }],
+  [
+    { format: "csv", title: "fmtCsv" },
+    { format: "xlsx", title: "fmtXlsx" },
+  ],
   [
     { format: "bibtex", title: "fmtBibtex" },
     { format: "ris", title: "fmtRis" },

@@ -16,6 +16,7 @@ TEXT & DATEN
 - Reiner Text (.txt) - Sauberer, lesbarer Text ganz ohne Markup
 - JSON (.json) - Strukturierte Daten für Entwickler und Automatisierungstools
 - CSV (.csv) - Extrahierte Tabellen als tabellenkalkulationsfertige Daten (öffnet korrekt in Excel)
+- Excel (.xlsx) - Echte Excel-Arbeitsmappe: ein Blatt pro Tabelle, fixierte Kopfzeilen, formelbereite numerische Zellen
 
 ZITATE & LITERATURVERZEICHNIS
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Direkt in Zotero, Mendeley, EndNote importieren

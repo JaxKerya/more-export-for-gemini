@@ -94,6 +94,7 @@
         "src/exporters/json.js",
         "src/exporters/latex.js",
         "src/exporters/csv.js",
+        "src/exporters/xlsx.js",
         "src/exporters/epub.js",
         "src/exporters/bibtex.js",
         "src/exporters/ris.js",

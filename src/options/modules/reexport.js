@@ -27,7 +27,7 @@ export function initReexport(ctx) {
     const labelKeys = {
       markdown: "fmtMarkdown", txt: "fmtTxt", html: "fmtHtml",
       reader: "fmtReaderReexport", json: "fmtJson", latex: "fmtLatex",
-      csv: "fmtCsv", bibtex: "fmtBibtex", ris: "fmtRis",
+      csv: "fmtCsv", xlsx: "fmtXlsx", bibtex: "fmtBibtex", ris: "fmtRis",
       csljson: "fmtCsljson", rtf: "fmtRtfExt", docx: "fmtDocx",
       pdf: "fmtPdfPrint", epub: "fmtEpub", vault: "fmtVault",
     };
@@ -128,6 +128,10 @@ export function initReexport(ctx) {
         if (format === "docx") {
           GEP.download.downloadBlob(GEP.docx.convert(ir, opts), name(EXT.docx), MIME.docx);
           setReexportStatus(t("optExportedWord"), "success"); return;
+        }
+        if (format === "xlsx") {
+          GEP.download.downloadBlob(GEP.xlsx.convert(ir), name(EXT.xlsx), MIME.xlsx);
+          setReexportStatus(t("optExportedExcel"), "success"); return;
         }
         if (format === "epub") {
           GEP.download.downloadBlob(GEP.epub.convert(ir, opts), name(EXT.epub), MIME.epub);

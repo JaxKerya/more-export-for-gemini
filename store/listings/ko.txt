@@ -16,6 +16,7 @@ Gemini Deep Research 보고서를 필요한 모든 형식으로 내보내세요.
 - 일반 텍스트 (.txt) - 마크업 없는 깔끔하고 읽기 쉬운 텍스트
 - JSON (.json) - 개발자와 자동화 도구를 위한 구조화된 데이터
 - CSV (.csv) - 표를 스프레드시트용 데이터로 추출 (Excel에서 올바르게 열립니다)
+- Excel (.xlsx) - 진짜 Excel 통합 문서: 표마다 시트 하나, 고정 머리글, 수식에 바로 쓸 수 있는 숫자 셀
 
 인용 & 참고문헌
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Zotero, Mendeley, EndNote로 바로 가져오기

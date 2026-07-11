@@ -122,9 +122,9 @@ const STACK = [
   "src/exporters/zip.js", "src/exporters/markdown.js", "src/exporters/txt.js",
   "src/exporters/docx.js", "src/exporters/pdf.js", "src/exporters/html.js",
   "src/exporters/reader.js", "src/exporters/json.js", "src/exporters/latex.js",
-  "src/exporters/csv.js", "src/exporters/epub.js", "src/exporters/bibtex.js",
-  "src/exporters/ris.js", "src/exporters/csljson.js", "src/exporters/rtf.js",
-  "src/exporters/vault.js",
+  "src/exporters/csv.js", "src/exporters/xlsx.js", "src/exporters/epub.js",
+  "src/exporters/bibtex.js", "src/exporters/ris.js", "src/exporters/csljson.js",
+  "src/exporters/rtf.js", "src/exporters/vault.js",
   "src/lib/extractor.js", "src/lib/validator.js", "src/lib/download.js",
   "src/lib/settings.js", "src/lib/citation.js", "src/lib/toc.js",
   "src/lib/ir-filter.js", "src/lib/menu-injector.js",
@@ -251,6 +251,15 @@ let fullMarkdown = "";
   check("docx export responds ok", res && res.ok === true);
   check("docx export downloads a Blob", downloads.length === 1 && downloads[0].data instanceof Blob);
   check("docx file name carries .docx", downloads[0].fileName.endsWith(".docx"));
+}
+
+{
+  downloads.length = 0;
+  const res = await send({ type: "GEP_EXPORT", format: "xlsx" });
+  await tick();
+  check("xlsx export responds ok", res && res.ok === true);
+  check("xlsx export downloads a Blob", downloads.length === 1 && downloads[0].data instanceof Blob);
+  check("xlsx file name carries .xlsx", downloads[0].fileName.endsWith(".xlsx"));
 }
 
 {

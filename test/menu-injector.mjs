@@ -114,7 +114,7 @@ section("Injection & format filtering");
   const enabled = {
     clipboard_md: true, markdown: true, docx: true, pdf: true, reader: true,
     clipboard_txt: false, clipboard_html: false, clipboard_json: false,
-    txt: false, html: false, json: false, latex: false, csv: false,
+    txt: false, html: false, json: false, latex: false, csv: false, xlsx: false,
     bibtex: false, ris: false, csljson: false, rtf: false, epub: false,
     vault: false, zip_all: false, sections_pick: false,
   };

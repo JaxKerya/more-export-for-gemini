@@ -602,6 +602,13 @@
           toast(t("toastDownloading", fileName));
           return;
         }
+        case "xlsx": {
+          const blob = GEP.xlsx.convert(ir);
+          const fileName = fname(ir.title, EXT.xlsx);
+          GEP.download.downloadBlob(blob, fileName, MIME.xlsx);
+          toast(t("toastDownloading", fileName));
+          return;
+        }
         case "epub": {
           const blob = GEP.epub.convert(ir, exportOpts);
           const fileName = fname(ir.title, EXT.epub);
@@ -671,6 +678,7 @@
 
           const binaryJobs = [];
           if (ef.docx) binaryJobs.push(["docx", (o) => GEP.docx.convert(ir, o)]);
+          if (ef.xlsx && GEP.xlsx) binaryJobs.push(["xlsx", () => GEP.xlsx.convert(ir)]);
           if (ef.epub && GEP.epub) binaryJobs.push(["epub", (o) => GEP.epub.convert(ir, o)]);
 
           const total = textJobs.length + binaryJobs.length;

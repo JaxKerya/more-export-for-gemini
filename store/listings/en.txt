@@ -16,6 +16,7 @@ TEXT & DATA
 - Plain Text (.txt) - Clean, readable text without any markup
 - JSON (.json) - Structured data for developers and automation tools
 - CSV (.csv) - Extracted tables as spreadsheet-ready data (opens correctly in Excel)
+- Excel (.xlsx) - Real Excel workbook: one sheet per table, frozen headers, formula-ready numeric cells
 
 CITATIONS & BIBLIOGRAPHY
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Import straight into Zotero, Mendeley, EndNote

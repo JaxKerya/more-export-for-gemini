@@ -16,6 +16,7 @@ METİN VE VERİ
 - Düz Metin (.txt) - Biçimlendirme içermeyen temiz, okunabilir metin
 - JSON (.json) - Geliştiriciler ve otomasyon araçları için yapılandırılmış veri
 - CSV (.csv) - Tablolar elektronik tabloya hazır veri olarak (Excel'de doğru açılır)
+- Excel (.xlsx) - Gerçek Excel çalışma kitabı: her tablo ayrı sayfada, sabit başlıklar, formüle hazır sayısal hücreler
 
 ATIF VE KAYNAKÇA
 - BibTeX (.bib), RIS (.ris), CSL-JSON (.json) - Doğrudan Zotero, Mendeley ve EndNote'a aktarın

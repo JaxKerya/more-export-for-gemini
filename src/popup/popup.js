@@ -51,7 +51,7 @@
     clipboard_html: t("popChipClipHtml"), clipboard_json: t("popChipClipJson"),
     markdown: ".md", txt: ".txt", html: ".html", reader: t("popChipReader"), json: ".json",
     latex: ".tex",
-    csv: ".csv",
+    csv: ".csv", xlsx: ".xlsx",
     bibtex: ".bib", ris: ".ris", csljson: "CSL-JSON",
     docx: ".docx", rtf: ".rtf", pdf: ".pdf", epub: ".epub",
     vault: t("popChipVault"), zip_all: ".zip",
@@ -59,7 +59,7 @@
 
   const DOC_FORMATS = new Set(["docx", "rtf", "pdf", "epub", "vault"]);
   const REF_FORMATS = new Set(["bibtex", "ris", "csljson"]);
-  const DATA_FORMATS = new Set(["csv"]);
+  const DATA_FORMATS = new Set(["csv", "xlsx"]);
   const CLIP_FORMATS = new Set(["clipboard_md", "clipboard_txt", "clipboard_html", "clipboard_json"]);
 
   const CITATION_LABELS = {
