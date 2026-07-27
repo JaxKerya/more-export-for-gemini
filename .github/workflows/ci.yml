@@ -5,6 +5,12 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  # The external-validator job is too slow for every push (it compiles every
+  # corpus report with a real LaTeX engine), so it also runs on a weekly
+  # schedule and on demand.
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
 
 jobs:
   test:
@@ -46,3 +52,31 @@ jobs:
       - run: npx playwright install --with-deps chromium
 
       - run: npm run test:e2e
+
+  # Reference-parser validation: every corpus report exported to disk, then
+  # checked by the real tools that consume these formats (pandoc, a LaTeX
+  # engine, EPUBCheck, W3C vnu, LibreOffice). Each tool that isn't installed
+  # degrades to SKIP, so this is useful even on a bare runner. Weekly /
+  # on-demand only — a full LaTeX pass over 8 reports takes minutes.
+  external-validate:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      # pandoc reads Markdown/HTML/DOCX/RTF; latexmk+recommended gives a real
+      # LaTeX engine. Deliberately no full texlive (multi-GB) — the CJK font
+      # packages stay out, so non-Latin reports report missing glyphs (a WARN,
+      # not a FAIL).
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends pandoc texlive-luatex texlive-latex-recommended texlive-latex-extra
+
+      - run: npm run validate:corpus

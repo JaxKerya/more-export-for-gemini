@@ -26,6 +26,19 @@ export function noObjectLeak(s) {
 }
 
 /**
+ * Drops the *bodies* of inline <script>/<style> blocks (keeping the tags).
+ * JS and CSS source legitimately contains `<` and `>` — highlight.js ships
+ * string literals like "<span>", CSS uses child selectors — and a regex tag
+ * scanner would read those as markup. They are not markup, so markup checks
+ * must not see them.
+ */
+export function stripInlineAssets(s) {
+  return String(s)
+    .replace(/(<script\b[^>]*>)[\s\S]*?(<\/script>)/gi, "$1$2")
+    .replace(/(<style\b[^>]*>)[\s\S]*?(<\/style>)/gi, "$1$2");
+}
+
+/**
  * Structural tag-balance check for XML/HTML-ish content.
  * Returns true when every opened tag is closed in the right order.
  */
@@ -86,6 +99,94 @@ export function readZipEntries(buf) {
   return entries;
 }
 
+// ── Content fidelity ─────────────────────────────────────────────────
+//
+// Every other check in this file verifies that an output is well-FORMED.
+// None of them verify that the report's CONTENT survived: an exporter that
+// silently drops a section, half a table's cells, or truncates at 50% still
+// produces structurally perfect output. These helpers close that gap by
+// comparing the IR's word multiset against the output's.
+//
+// Thresholds are per-format because each one legitimately loses a little:
+// word-splitting across markup, math rendered as TeX, hyphenation. Measured
+// across the whole report corpus the real figures sit at 99.6–100%, so 99%
+// leaves headroom for a new report without tolerating actual loss.
+
+export const FIDELITY_MIN = {
+  markdown: 99, txt: 99, html: 99, reader: 99,
+  latex: 99, rtf: 99, docx: 99, epub: 99,
+};
+
+/** Words worth tracking: 4+ letters/digits, case-folded. */
+function wordsOf(s) {
+  return (String(s).match(/[\p{L}\p{N}]{4,}/gu) || []).map((w) => w.toLowerCase());
+}
+
+/**
+ * The report's prose words, from the IR (ground truth). Code blocks are
+ * excluded: exporters legitimately reflow, escape or (in RTF) re-encode them,
+ * and `edge-cases` already asserts code survives verbatim.
+ */
+export function irWords(parsed) {
+  if (!parsed) return [];
+  let t = parsed.title || "";
+  for (const b of parsed.blocks || []) {
+    if (!b || b.type === "code") continue;
+    if (Array.isArray(b.runs)) t += " " + b.runs.map((r) => (r.math ? "" : r.text || "")).join("");
+    if (Array.isArray(b.items)) t += " " + b.items.map((i) => (i.runs || []).map((r) => r.text || "").join("")).join(" ");
+    if (b.type === "table") {
+      for (const c of b.header || []) t += " " + (c || []).map((r) => r.text || "").join("");
+      for (const row of b.rows || []) for (const c of row || []) t += " " + (c || []).map((r) => r.text || "").join("");
+    }
+  }
+  return wordsOf(t);
+}
+
+/** RTF encodes every non-ASCII char as `\uN?` — decode before comparing. */
+export function decodeRtfEscapes(s) {
+  return String(s).replace(/\\u(-?\d+)\??/g, (_, n) => String.fromCharCode(((+n) + 65536) % 65536));
+}
+
+/** Concatenated text of a DOCX/EPUB zip's XML parts, for fidelity checks. */
+export function zipTextContent(buf, namePattern) {
+  return readZipEntries(buf)
+    .filter((e) => namePattern.test(e.name) && e.content)
+    .map((e) => e.content)
+    .join(" ");
+}
+
+/**
+ * Fraction (0–100) of the IR's word occurrences present in `output`.
+ * Multiset containment, so dropping one of three "protein"s still registers.
+ */
+export function fidelityPct(want, output) {
+  if (!want.length) return 100;
+  const have = new Map();
+  for (const w of wordsOf(output)) have.set(w, (have.get(w) || 0) + 1);
+  let hit = 0;
+  for (const w of want) {
+    const n = have.get(w) || 0;
+    if (n > 0) { have.set(w, n - 1); hit++; }
+  }
+  return (hit / want.length) * 100;
+}
+
+/**
+ * Asserts every supplied output carries the report's content.
+ * `outputs` maps format key -> already-normalized text (see decodeRtfEscapes /
+ * zipTextContent for RTF and DOCX/EPUB).
+ */
+export function checkFidelity(check, outputs, ctx) {
+  const want = ctx.irWords || irWords(ctx.parsed);
+  if (want.length < 50) return; // too little prose to measure meaningfully
+  for (const [fmt, text] of Object.entries(outputs)) {
+    if (text == null) continue;
+    const min = FIDELITY_MIN[fmt] ?? 99;
+    const pct = fidelityPct(want, text);
+    check(`${fmt}: content fidelity >= ${min}% (got ${pct.toFixed(1)}%)`, pct >= min);
+  }
+}
+
 // ── Context: what the report actually contains ───────────────────────
 
 /** Collects every inline run in the IR (paragraphs, headings, lists, tables…). */
@@ -138,6 +239,7 @@ export function makeContext(jsonStr) {
     : "";
   return {
     parsed,
+    irWords: irWords(parsed),
     expectI18n: i18nSample.length > 0,
     i18nPreserved: (s) => i18nSample.every((c) => s.includes(c)),
     expectTables: parsed ? (parsed.blocks || []).some((b) => b && b.type === "table") : true,
@@ -282,7 +384,8 @@ export function checkHtml(check, html, ctx) {
   }
   check("special chars escaped (&amp; &lt; &gt;)", html.includes("&amp;") || !html.match(/[&](?!amp;|lt;|gt;|quot;|#\d+;|#x[0-9a-f]+;)/i));
   check("no unclosed <img> (self-closing or closed)", !html.match(/<img\b[^>]*>(?!<\/img>)/) || !html.match(/<img\b[^>]*[^/]>/));
-  check("all tags balanced", tagsBalanced(html.replace(/<!DOCTYPE[^>]*>/i, ""), true));
+  check("all tags balanced",
+    tagsBalanced(stripInlineAssets(html).replace(/<!DOCTYPE[^>]*>/i, ""), true));
   check("no object stringification leak", noObjectLeak(html));
 
   // The static stylesheet always defines .fn-ref — only actual usage in the
@@ -307,6 +410,83 @@ export function checkHtml(check, html, ctx) {
   }
 
   if (ctx.expectI18n) check("non-ASCII chars preserved (i18n)", ctx.i18nPreserved(html));
+}
+
+/**
+ * Reader / print-PDF documents. Both are standalone HTML built on
+ * `GEP.pdf.bodyHtml`, but with their own shells (reader chrome + footer,
+ * print CSS), so `checkHtml`'s expectations (`class="doc-title"`, `<style>`
+ * placement) don't apply verbatim.
+ */
+export function checkStandaloneHtml(check, doc, ctx, { rootClass } = {}) {
+  check("has DOCTYPE", doc.startsWith("<!DOCTYPE html"));
+  check("has <title>", /<title>.*<\/title>/.test(doc));
+  check("has charset meta", /charset="?utf-8/i.test(doc));
+  check("has <body>", doc.includes("<body"));
+  if (rootClass) check(`has ${rootClass} root`, doc.includes(rootClass));
+  const markup = stripInlineAssets(doc).replace(/<!DOCTYPE[^>]*>/i, "");
+  check("tags balanced", tagsBalanced(markup, true));
+  check("no unescaped ampersands", !/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-f]+;)/i.test(markup));
+  check("no object stringification leak", noObjectLeak(doc));
+  if (ctx.expectTables) check("has tables", doc.includes("<table"));
+  if (ctx.expectI18n) check("non-ASCII chars preserved (i18n)", ctx.i18nPreserved(doc));
+}
+
+/** CSL-JSON: the interchange format Zotero/Pandoc read for bibliographies. */
+export function checkCslJson(check, str, ctx) {
+  let items = null;
+  try { items = JSON.parse(str); } catch { /* reported below */ }
+  check("valid JSON", items !== null);
+  if (!items) return;
+  check("is an array", Array.isArray(items));
+  if (!Array.isArray(items)) return;
+
+  const fnCount = ctx.parsed ? (ctx.parsed.footnotes || []).length : items.length;
+  check("one item per source", items.length === fnCount);
+  if (!items.length) return;
+
+  check("every item has an id", items.every((i) => typeof i.id === "string" && i.id.length > 0));
+  check("item ids unique", new Set(items.map((i) => i.id)).size === items.length);
+  check("every item has a type", items.every((i) => typeof i.type === "string" && i.type.length > 0));
+  check("every item has a title", items.every((i) => typeof i.title === "string" && i.title.length > 0));
+  // CSL date-parts: [[yyyy, mm, dd]] — Zotero rejects other shapes.
+  check("accessed uses CSL date-parts", items.every((i) => {
+    const p = i.accessed && i.accessed["date-parts"];
+    return Array.isArray(p) && Array.isArray(p[0]) && p[0].length === 3 && p[0].every((n) => typeof n === "number");
+  }));
+  check("URLs are absolute when present",
+    items.every((i) => i.URL === undefined || /^https?:\/\//.test(i.URL)));
+  check("no object stringification leak", noObjectLeak(str));
+}
+
+/** Obsidian-vault bundle: `buildEntries()` -> [{ name, data }]. */
+export function checkVaultEntries(check, entries, ctx) {
+  check("returns entries", Array.isArray(entries) && entries.length >= 1);
+  if (!Array.isArray(entries) || !entries.length) return;
+
+  const names = entries.map((e) => e.name);
+  check("entry names unique", new Set(names).size === names.length);
+  check("every entry has string data", entries.every((e) => typeof e.data === "string" && e.data.length > 0));
+  // The bundle is unzipped into a vault, so names must be filesystem-safe and
+  // must not escape the target folder.
+  check("names are filesystem-safe", names.every((n) => !/[<>:"\\|?*]|^\/|\.\./.test(n)));
+  check("has exactly one main .md at the root",
+    names.filter((n) => n.endsWith(".md") && !n.includes("/") && n !== "references.md").length === 1);
+
+  const tableCount = ctx.parsed ? (ctx.parsed.blocks || []).filter((b) => b && b.type === "table").length : 0;
+  const csvNames = names.filter((n) => n.startsWith("tables/") && n.endsWith(".csv"));
+  check("one CSV per table", csvNames.length === tableCount);
+  check("table CSVs are zero-padded and ordered",
+    csvNames.every((n, i) => n === `tables/table-${String(i + 1).padStart(2, "0")}.csv`));
+  for (const e of entries.filter((x) => csvNames.includes(x.name))) {
+    check(`${e.name}: starts with UTF-8 BOM`, e.data.charCodeAt(0) === 0xfeff);
+  }
+
+  const hasFootnotes = ctx.parsed ? (ctx.parsed.footnotes || []).length > 0 : false;
+  check("references.md present exactly when sources exist",
+    names.includes("references.md") === hasFootnotes);
+
+  for (const e of entries) check(`${e.name}: no object leak`, noObjectLeak(e.data));
 }
 
 export function checkJson(check, json, ctx) {

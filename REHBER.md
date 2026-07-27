@@ -31,7 +31,7 @@ Depodaki manifest Chrome/Edge içindir (`background.service_worker`). Firefox MV
 | --- | --- |
 | `npm run test:edge` | Exporter'ların birim/entegrasyon testleri (IR → çıktı, Türkçe karakterler, uç durumlar). |
 | `npm run test:validate` | Yüksek seviye çıktı doğrulaması + manifest bütünlüğü (elle alınan `validate/output.*` seti üzerinde). |
-| `npm run test:corpus` | `referance/reports/` korpusundaki her raporu tam hattan geçirir (DOM → extractor → IR → tüm exporter'lar) ve `test:validate` ile aynı yapısal kontrolleri uygular. Kontroller `test/format-checks.mjs`'te paylaşılır. |
+| `npm run test:corpus` | `referance/reports/` korpusundaki her raporu tam hattan geçirir (DOM → extractor → IR → tüm exporter'lar). Dört katman: yapı (`test/format-checks.mjs`, `test:validate` ile paylaşılır), **içerik bütünlüğü** (IR kelimelerinin ≥%99'u çıktıda), **regresyon taban çizgisi** (`test/corpus-baseline.json`) ve boyut/süre bütçesi. Ayrıca en zengin rapor 19 seçenek kombinasyonundan (flavor / atıf stili / TOC-dipnot / sayfa düzeni) geçer. |
 | `npm run test:extractor` | Gerçek extractor, sentetik Gemini DOM fixture'ına karşı. |
 | `npm run test:menu` | Paylaşım menüsü enjeksiyonu (tespit, filtreleme, 12 öğe sınırı). |
 | `npm run test:background` | Service worker (bağlam menüsü, kısayollar, ilk kurulum) — sahte `chrome` API ile. |
@@ -58,7 +58,7 @@ git tag v2.2.0 && git push origin master v2.2.0   # 5. gerisi otomatik
 
 | Workflow | Tetikleyici | Ne yapar |
 | --- | --- | --- |
-| `.github/workflows/ci.yml` | Her push ve PR (`master`) | İki paralel iş: `test` (`npm ci` → lint → typecheck → tüm testler → `lint:amo`) ve `e2e` (Chromium indirip `npm run test:e2e`). Kırmızıysa merge etmeyin. |
+| `.github/workflows/ci.yml` | Her push ve PR (`master`); ayrıca haftalık + elle | İki paralel iş: `test` (`npm ci` → lint → typecheck → tüm testler → `lint:amo`) ve `e2e` (Chromium indirip `npm run test:e2e`). Kırmızıysa merge etmeyin. Üçüncü iş `external-validate` yalnızca haftalık zamanlamada ve `workflow_dispatch` ile koşar (pandoc + LaTeX kurup `npm run validate:corpus`); her push'ta koşmayacak kadar yavaştır. |
 | `.github/workflows/release.yml` | `v*` tag push'u | Önce tag'in `manifest.json` sürümüyle eşleştiğini doğrular (eşleşmezse durur), sonra lint + typecheck + testler → `npm run build` → iki zip'i GitHub Release'e ekler. |
 
 Release oluştuğunda zip'leri **Releases** sayfasından indirip mağazalara yüklersiniz: Chrome Web Store ve Edge Add-ons normal zip'i, addons.mozilla.org (AMO) `-firefox` uzantılı zip'i alır — ikisi yalnızca `manifest.json` bakımından farklıdır (Firefox event-page background kullanır; adımlar: `store/listings/README.md`). Mağaza yüklemesi otomatik değildir.
@@ -70,7 +70,7 @@ Release oluştuğunda zip'leri **Releases** sayfasından indirip mağazalara yü
 | `scripts/build.mjs` | Mağaza zip'leri: Chrome/Edge + Firefox (dosya listesi `manifest.json`'dan türetilir; Firefox paketinin manifest'i event-page background'a çevrilir; `npm run build`). |
 | `scripts/lint-amo.mjs` | Paket + `addons-linter` (`npm run lint:amo`); CI'da her push'ta koşar. |
 | `scripts/bump.mjs` | Sürüm numarası güncelleme (`npm run bump -- x.y.z`). |
-| `scripts/external-validate.mjs` | Debug export çıktısını harici araçlarla doğrular (`npm run validate:external`). |
+| `scripts/external-validate.mjs` | Çıktıları harici referans araçlarıyla doğrular — pandoc, LaTeX motoru, EPUBCheck, W3C `vnu.jar`, LibreOffice, CSL şeması (`npm run validate:external <klasör>`). Kurulu olmayan her araç FAIL değil SKIP verir. `npm run validate:corpus` korpusun 8 raporunu diske yazıp (`test/corpus.mjs --out`) tümünü bu araçlardan geçirir. |
 | `scripts/validate-rtl.mjs` | Sağdan-sola (RTL) çıktı doğrulaması (`npm run validate:rtl`). |
 | `scripts/build-katex.mjs`, `build-hljs-vendor.mjs` | `src/vendor/` altındaki tek dosyalık KaTeX / highlight.js paketlerini yeniden üretir (yalnızca vendor güncellerken gerekir). |
 
@@ -93,4 +93,5 @@ Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir. Dil var
 - **Yeni ayar kartı ekleyeceğim:** `src/options/modules/` altına yeni modül + `options.js`'te `init` çağrısı; `test/options.mjs`'e kontrol ekleyin.
 - **Yeni export formatı ekleyeceğim:** `src/exporters/` + `manifest.json` `web_accessible_resources` + `settings.js` DEFAULTS + `export-opts.js`; `test/edge-cases.mjs`'e test ekleyin (build dosya listesi manifest'ten geldiği için pakete otomatik girer).
 - **Gemini DOM'u değişti (menü çıkmıyor / içerik bulunamıyor):** tüm Gemini seçicileri tek dosyada — `src/lib/selectors.js`. Düzeltmeyi orada yapın, `referance/reports/` korpusuna `report[N].md` adıyla güncel bir DOM (outerHTML) kopyası ekleyip `npm run test:extractor` + `npm run test:corpus` ile doğrulayın (korpus dosyaları otomatik taranır); kullanıcı tarafında Settings → Tools → Run diagnostics çıktısı (artık cihazdaki son hataları da içerir) ipucu verir.
+- **Korpusa yeni rapor ekledim / çıkarma bilinçli olarak değişti:** `npm run test:corpus -- --update` taban çizgisini yeniden yazar. **Diff'i mutlaka okuyun**: blok/tablo/dipnot sayıları yalnızca çıkarma gerçekten iyileştiğinde değişmeli; beklenmedik bir düşüş regresyondur, taban çizgisini güncelleyerek susturulmamalıdır.
 - **CI kırmızı ama yerelde yeşil:** CI Ubuntu'da çalışır; yol ayracı / satır sonu (CRLF) farklarına bakın.

@@ -1,0 +1,273 @@
+{
+  "note": "Regression baseline for test/corpus.mjs. Regenerate with `npm run test:corpus -- --update` and review the diff: structural counts must only change when extraction genuinely improves.",
+  "reports": {
+    "report[1].md": {
+      "title": "量子计算发展与算法深度研究报告",
+      "blockTotal": 68,
+      "blockTypes": {
+        "code": 1,
+        "heading": 21,
+        "list": 8,
+        "math": 2,
+        "paragraph": 34,
+        "table": 2
+      },
+      "tables": 2,
+      "footnotes": 30,
+      "footnotesWithUrl": 30,
+      "inlineMath": 28,
+      "sizes": {
+        "bibtex": 10873,
+        "csljson": 11392,
+        "csv": 1819,
+        "docx": 121554,
+        "epub": 488535,
+        "html": 485852,
+        "json": 150772,
+        "latex": 39078,
+        "markdown": 33750,
+        "reader": 628945,
+        "ris": 6648,
+        "rtf": 81088,
+        "txt": 34229,
+        "vault": 39859,
+        "xlsx": 11099
+      }
+    },
+    "report[2].md": {
+      "title": "Büyük Dil Modellerinde (LLM) Dikkat Mekanizmaları: Matematiksel Temeller, Verimlilik Optimizasyonları ve Çok Dilli Değerlendirme",
+      "blockTotal": 62,
+      "blockTypes": {
+        "blockquote": 1,
+        "code": 2,
+        "heading": 12,
+        "list": 2,
+        "math": 4,
+        "paragraph": 39,
+        "table": 2
+      },
+      "tables": 2,
+      "footnotes": 27,
+      "footnotesWithUrl": 27,
+      "inlineMath": 36,
+      "sizes": {
+        "bibtex": 11449,
+        "csljson": 11312,
+        "csv": 2092,
+        "docx": 99656,
+        "epub": 468501,
+        "html": 466487,
+        "json": 117446,
+        "latex": 38642,
+        "markdown": 34301,
+        "reader": 609670,
+        "ris": 7042,
+        "rtf": 47531,
+        "txt": 34949,
+        "vault": 41352,
+        "xlsx": 9359
+      }
+    },
+    "report[3].md": {
+      "title": "量子计算发展与算法深度研究报告",
+      "blockTotal": 68,
+      "blockTypes": {
+        "code": 1,
+        "heading": 21,
+        "list": 8,
+        "math": 2,
+        "paragraph": 34,
+        "table": 2
+      },
+      "tables": 2,
+      "footnotes": 30,
+      "footnotesWithUrl": 30,
+      "inlineMath": 28,
+      "sizes": {
+        "bibtex": 10873,
+        "csljson": 11392,
+        "csv": 1819,
+        "docx": 121554,
+        "epub": 488535,
+        "html": 485852,
+        "json": 150772,
+        "latex": 39078,
+        "markdown": 33750,
+        "reader": 628945,
+        "ris": 6648,
+        "rtf": 81088,
+        "txt": 34229,
+        "vault": 39859,
+        "xlsx": 11099
+      }
+    },
+    "report[4].md": {
+      "title": "Yapay Zekânın Bilim Tarihindeki Dönüm Noktaları: Felsefi Temellerden Algoritmik Öğrenme Çağına",
+      "blockTotal": 56,
+      "blockTypes": {
+        "code": 1,
+        "heading": 13,
+        "math": 2,
+        "paragraph": 39,
+        "table": 1
+      },
+      "tables": 1,
+      "footnotes": 28,
+      "footnotesWithUrl": 28,
+      "inlineMath": 8,
+      "sizes": {
+        "bibtex": 11475,
+        "csljson": 11583,
+        "csv": 1400,
+        "docx": 86798,
+        "epub": 437901,
+        "html": 435327,
+        "json": 71445,
+        "latex": 42443,
+        "markdown": 39283,
+        "reader": 578480,
+        "ris": 7155,
+        "rtf": 59012,
+        "txt": 39860,
+        "vault": 45731,
+        "xlsx": 6260
+      }
+    },
+    "report[5].md": {
+      "title": "تقرير بحثي معمق حول الذكاء الاصطناعي وتطبيقاته الطبية: الديناميكيات السريرية، التكنولوجية، والاقتصادية",
+      "blockTotal": 79,
+      "blockTypes": {
+        "blockquote": 1,
+        "code": 1,
+        "heading": 22,
+        "list": 6,
+        "math": 2,
+        "paragraph": 45,
+        "table": 2
+      },
+      "tables": 2,
+      "footnotes": 20,
+      "footnotesWithUrl": 20,
+      "inlineMath": 2,
+      "sizes": {
+        "bibtex": 8688,
+        "csljson": 8430,
+        "csv": 1372,
+        "docx": 106445,
+        "epub": 444891,
+        "html": 441182,
+        "json": 84760,
+        "latex": 50372,
+        "markdown": 47194,
+        "reader": 584423,
+        "ris": 5266,
+        "rtf": 140590,
+        "txt": 48515,
+        "vault": 52254,
+        "xlsx": 8984
+      }
+    },
+    "report[6].md": {
+      "title": "Protein Yapı Tahmininde Derin Öğrenme: AlphaFold ve Yeni Nesil Mimarilerin Kapsamlı Analizi",
+      "blockTotal": 96,
+      "blockTypes": {
+        "blockquote": 3,
+        "code": 3,
+        "heading": 26,
+        "list": 7,
+        "math": 3,
+        "paragraph": 51,
+        "table": 3
+      },
+      "tables": 3,
+      "footnotes": 0,
+      "footnotesWithUrl": 0,
+      "inlineMath": 24,
+      "sizes": {
+        "bibtex": 216,
+        "csljson": 3,
+        "csv": 1289,
+        "docx": 108074,
+        "epub": 500435,
+        "html": 496165,
+        "json": 153048,
+        "latex": 36971,
+        "markdown": 35165,
+        "reader": 639309,
+        "ris": 155,
+        "rtf": 47414,
+        "txt": 34910,
+        "vault": 36412,
+        "xlsx": 10216
+      }
+    },
+    "report[7].md": {
+      "title": "Hızlı Fourier Dönüşümü (FFT) ve Dijital Ses İşlemedeki Uygulamaları: Kapsamlı ve Analitik Bir İnceleme",
+      "blockTotal": 80,
+      "blockTypes": {
+        "blockquote": 1,
+        "code": 3,
+        "heading": 24,
+        "list": 3,
+        "math": 4,
+        "paragraph": 43,
+        "table": 2
+      },
+      "tables": 2,
+      "footnotes": 20,
+      "footnotesWithUrl": 20,
+      "inlineMath": 48,
+      "sizes": {
+        "bibtex": 7792,
+        "csljson": 7795,
+        "csv": 2459,
+        "docx": 121365,
+        "epub": 473696,
+        "html": 470162,
+        "json": 128114,
+        "latex": 41910,
+        "markdown": 38421,
+        "reader": 613325,
+        "ris": 4631,
+        "rtf": 54277,
+        "txt": 39196,
+        "vault": 43937,
+        "xlsx": 11110
+      }
+    },
+    "report[8].md": {
+      "title": "2030-2050 Küresel Mega-Trendler: Yapay Zeka, Uzay, İklim ve Hatay-Amik Ovası Projeksiyonları Üzerine Kapsamlı Sistem Mimarisi ve İhracat Doğrulama Raporu",
+      "blockTotal": 161,
+      "blockTypes": {
+        "blockquote": 2,
+        "code": 23,
+        "heading": 46,
+        "list": 6,
+        "math": 24,
+        "paragraph": 53,
+        "table": 7
+      },
+      "tables": 7,
+      "footnotes": 29,
+      "footnotesWithUrl": 29,
+      "inlineMath": 19,
+      "sizes": {
+        "bibtex": 11801,
+        "csljson": 11584,
+        "csv": 3607,
+        "docx": 239091,
+        "epub": 556389,
+        "html": 550202,
+        "json": 230260,
+        "latex": 53460,
+        "markdown": 46854,
+        "reader": 693412,
+        "ris": 6998,
+        "rtf": 71072,
+        "txt": 47615,
+        "vault": 55094,
+        "xlsx": 24375
+      }
+    }
+  }
+}

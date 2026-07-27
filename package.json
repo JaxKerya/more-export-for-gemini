@@ -23,6 +23,7 @@
     "lint:amo": "node scripts/lint-amo.mjs",
     "typecheck": "tsc --noEmit",
     "validate:external": "node scripts/external-validate.mjs",
+    "validate:corpus": "node test/corpus.mjs --out && node scripts/external-validate.mjs validate/corpus",
     "validate:rtl": "node scripts/validate-rtl.mjs"
   },
   "devDependencies": {
