@@ -5,9 +5,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node test/edge-cases.mjs && node test/validate.mjs && node test/extractor.mjs && node test/menu-injector.mjs && node test/background.mjs && node test/content.mjs && node test/history.mjs && node test/options.mjs && node test/i18n.mjs",
+    "test": "node test/edge-cases.mjs && node test/validate.mjs && node test/corpus.mjs && node test/extractor.mjs && node test/menu-injector.mjs && node test/background.mjs && node test/content.mjs && node test/history.mjs && node test/options.mjs && node test/i18n.mjs",
     "test:edge": "node test/edge-cases.mjs",
     "test:validate": "node test/validate.mjs",
+    "test:corpus": "node test/corpus.mjs",
     "test:extractor": "node test/extractor.mjs",
     "test:menu": "node test/menu-injector.mjs",
     "test:background": "node test/background.mjs",

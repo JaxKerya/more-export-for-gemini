@@ -33,9 +33,10 @@ npm install
 
 | Command                    | What it does                                                        |
 | -------------------------- | ------------------------------------------------------------------- |
-| `npm test`                 | Full suite: edge cases, validation + manifest integrity, extractor (linkedom), menu injector, background worker, content script. |
+| `npm test`                 | Full suite: edge cases, validation + manifest integrity, report corpus, extractor (linkedom), menu injector, background worker, content script. |
 | `npm run test:edge`        | Unit/integration checks on the exporters (IR → output).             |
-| `npm run test:validate`    | High-level output validation + manifest integrity.                  |
+| `npm run test:validate`    | High-level output validation + manifest integrity (hand-exported `validate/` set). |
+| `npm run test:corpus`      | Every capture in `referance/reports/` through the full pipeline (DOM → extractor → all exporters), with the same structural checks as `test:validate` (shared in `test/format-checks.mjs`). |
 | `npm run test:extractor`   | Real extractor against a synthetic Gemini DOM fixture.              |
 | `npm run test:menu`        | Menu-injection tests (detection, filtering, caps).                  |
 | `npm run test:background`  | Service-worker tests with a mocked `chrome` API.                    |

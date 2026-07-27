@@ -30,7 +30,8 @@ Depodaki manifest Chrome/Edge içindir (`background.service_worker`). Firefox MV
 | Komut | Kapsam |
 | --- | --- |
 | `npm run test:edge` | Exporter'ların birim/entegrasyon testleri (IR → çıktı, Türkçe karakterler, uç durumlar). |
-| `npm run test:validate` | Yüksek seviye çıktı doğrulaması + manifest bütünlüğü. |
+| `npm run test:validate` | Yüksek seviye çıktı doğrulaması + manifest bütünlüğü (elle alınan `validate/output.*` seti üzerinde). |
+| `npm run test:corpus` | `referance/reports/` korpusundaki her raporu tam hattan geçirir (DOM → extractor → IR → tüm exporter'lar) ve `test:validate` ile aynı yapısal kontrolleri uygular. Kontroller `test/format-checks.mjs`'te paylaşılır. |
 | `npm run test:extractor` | Gerçek extractor, sentetik Gemini DOM fixture'ına karşı. |
 | `npm run test:menu` | Paylaşım menüsü enjeksiyonu (tespit, filtreleme, 12 öğe sınırı). |
 | `npm run test:background` | Service worker (bağlam menüsü, kısayollar, ilk kurulum) — sahte `chrome` API ile. |
@@ -91,5 +92,5 @@ Arayüz metinleri `_locales/<dil>/messages.json` kataloglarından gelir. Dil var
 - **Kod değiştirdim, göndermeden önce:** `npm run lint && npm run typecheck && npm test`
 - **Yeni ayar kartı ekleyeceğim:** `src/options/modules/` altına yeni modül + `options.js`'te `init` çağrısı; `test/options.mjs`'e kontrol ekleyin.
 - **Yeni export formatı ekleyeceğim:** `src/exporters/` + `manifest.json` `web_accessible_resources` + `settings.js` DEFAULTS + `export-opts.js`; `test/edge-cases.mjs`'e test ekleyin (build dosya listesi manifest'ten geldiği için pakete otomatik girer).
-- **Gemini DOM'u değişti (menü çıkmıyor / içerik bulunamıyor):** tüm Gemini seçicileri tek dosyada — `src/lib/selectors.js`. Düzeltmeyi orada yapın, `referance/reports/` korpusuna güncel bir DOM kopyası ekleyip `npm run test:extractor` ile doğrulayın; kullanıcı tarafında Settings → Tools → Run diagnostics çıktısı (artık cihazdaki son hataları da içerir) ipucu verir.
+- **Gemini DOM'u değişti (menü çıkmıyor / içerik bulunamıyor):** tüm Gemini seçicileri tek dosyada — `src/lib/selectors.js`. Düzeltmeyi orada yapın, `referance/reports/` korpusuna `report[N].md` adıyla güncel bir DOM (outerHTML) kopyası ekleyip `npm run test:extractor` + `npm run test:corpus` ile doğrulayın (korpus dosyaları otomatik taranır); kullanıcı tarafında Settings → Tools → Run diagnostics çıktısı (artık cihazdaki son hataları da içerir) ipucu verir.
 - **CI kırmızı ama yerelde yeşil:** CI Ubuntu'da çalışır; yol ayracı / satır sonu (CRLF) farklarına bakın.
