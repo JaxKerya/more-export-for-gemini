@@ -875,6 +875,48 @@
     toast(t("toastDebugExport", String(count)));
   }
 
+  /**
+   * Validation set: one zip holding the fixed-name files that
+   * test/validate.mjs PART 1 reads from /validate (output.md, output.txt, …).
+   * Extract it into the repo's validate/ folder and the suite's output-file
+   * sections stop skipping. Options are pinned to what those assertions were
+   * written against: gfm + numbered citations, TOC and footnotes on.
+   */
+  async function onValidateExport() {
+    await loadExporters(); // full stack — the set spans every exporter
+    const ir0 = getIR();
+    if (!ir0) throw new Error("no report content found");
+
+    const opts = {
+      ...getExportOpts(),
+      flavor: "gfm",
+      citationStyle: "numbered",
+      includeToc: true,
+      includeFootnotes: true,
+    };
+    const ir = GEP.sourceHygiene ? GEP.sourceHygiene.apply(ir0, opts) : ir0;
+
+    const entries = [
+      { name: "output.md", data: GEP.markdown.convert(ir, opts) },
+      { name: "output.txt", data: GEP.txt.convert(ir, opts) },
+      { name: "output.html", data: GEP.html.convert(ir, opts) },
+      { name: "output.json", data: GEP.json.convert(ir) },
+      { name: "output.tex", data: GEP.latex.convert(ir, opts) },
+      { name: "output.csv", data: GEP.csv.convert(ir) },
+      { name: "output.bib", data: GEP.bibtex.convert(ir) },
+      { name: "output.ris", data: GEP.ris.convert(ir) },
+      { name: "output.rtf", data: GEP.rtf.convert(ir, opts) },
+    ];
+    progress(0, 1, "Validate: documents…");
+    entries.push({ name: "output.docx", data: new Uint8Array(await GEP.docx.convert(ir, opts).arrayBuffer()) });
+    entries.push({ name: "output.epub", data: new Uint8Array(await GEP.epub.convert(ir, opts).arrayBuffer()) });
+    await yieldToUI();
+
+    progress(1, 1, "Validate: packaging ZIP…");
+    GEP.download.downloadBlob(GEP.zip.build(entries), "validate-set.zip", MIME.zip);
+    toast(t("toastDebugExport", String(entries.length)));
+  }
+
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (!msg || typeof msg.type !== "string") return;
 
@@ -894,6 +936,13 @@
         return true;
       }
       onExport(msg.format)
+        .then(() => sendResponse({ ok: true }))
+        .catch((err) => sendResponse({ ok: false, error: String(err) }));
+      return true;
+    }
+
+    if (msg.type === "GEP_VALIDATE_EXPORT") {
+      onValidateExport()
         .then(() => sendResponse({ ok: true }))
         .catch((err) => sendResponse({ ok: false, error: String(err) }));
       return true;

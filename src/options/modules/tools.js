@@ -77,6 +77,45 @@ export function initTools() {
     });
   }
 
+  // ── Validation set (fixed-name output.* files for test/validate.mjs) ──
+  const validateBtn = document.getElementById("validateExportBtn");
+  const validateStatus = document.getElementById("validateStatus");
+
+  function setValidateStatus(msg, type) {
+    validateStatus.textContent = msg;
+    validateStatus.className = "debug-status visible " + (type || "");
+  }
+
+  if (validateBtn) {
+    validateBtn.addEventListener("click", async () => {
+      validateBtn.disabled = true;
+      setValidateStatus(t("optSearchingTab"), "");
+
+      try {
+        const target = await resolveGeminiTab();
+        if (!target) {
+          setValidateStatus(t("optNoGeminiTab"), "error");
+          validateBtn.disabled = false;
+          return;
+        }
+        setValidateStatus(t("optExportingAll"), "");
+        chrome.tabs.sendMessage(target.id, { type: "GEP_VALIDATE_EXPORT" }, (resp) => {
+          if (chrome.runtime.lastError) {
+            setValidateStatus(t("optNoContentScript"), "error");
+          } else if (resp && resp.ok) {
+            setValidateStatus(t("optValidateZipDone"), "success");
+          } else {
+            setValidateStatus(resp?.error || t("optExportFailedShort"), "error");
+          }
+          validateBtn.disabled = false;
+        });
+      } catch (err) {
+        setValidateStatus(t("optErrorPrefix", err.message), "error");
+        validateBtn.disabled = false;
+      }
+    });
+  }
+
   // ── Run diagnostics ──
   const diagnoseBtn = document.getElementById("diagnoseBtn");
   const diagnoseStatus = document.getElementById("diagnoseStatus");

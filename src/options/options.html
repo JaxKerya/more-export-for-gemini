@@ -1149,6 +1149,17 @@
         <div class="debug-status" id="debugStatus" aria-live="polite"></div>
         <div class="debug-row">
           <div class="debug-info">
+            <span class="debug-title" data-i18n="optValidateExportTitle">Validation Set</span>
+            <span class="toggle-hint" data-i18n-html="optValidateExportHint">Exports every format once with fixed names (<code>output.md</code>, <code>output.docx</code>, …) as one ZIP — extract it into the repo's <code>validate/</code> folder to enable the test suite's output-file checks. Requires an active Gemini Deep Research page.</span>
+          </div>
+          <button class="debug-btn" id="validateExportBtn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            <span data-i18n="optValidateExportBtn">Export Set</span>
+          </button>
+        </div>
+        <div class="debug-status" id="validateStatus" aria-live="polite"></div>
+        <div class="debug-row">
+          <div class="debug-info">
             <span class="debug-title" data-i18n="optDiagRowTitle">Run Diagnostics</span>
             <span class="toggle-hint" data-i18n-html="optDiagRowHint">Checks how robustly the current Gemini page maps onto the extractor (content root, block counts, source/footnote matching, math). Downloads <code>gep-diagnostics.txt</code>. Requires an active Gemini Deep Research page.</span>
           </div>

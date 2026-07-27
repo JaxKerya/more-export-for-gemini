@@ -263,6 +263,36 @@ let fullMarkdown = "";
 }
 
 {
+  // Validation set: one zip of fixed-name output.* files that unzips straight
+  // into /validate to feed test/validate.mjs PART 1.
+  downloads.length = 0;
+  const res = await send({ type: "GEP_VALIDATE_EXPORT" });
+  await tick();
+  check("validate set responds ok", res && res.ok === true);
+  check("validate set downloads one zip",
+    downloads.length === 1 && downloads[0].fileName === "validate-set.zip");
+
+  // Walk the local file headers sequentially (entries are stored, so compSize
+  // skips each body — including the nested zips inside output.docx/epub).
+  const buf = Buffer.from(await downloads[0].data.arrayBuffer());
+  const names = [];
+  let off = 0;
+  while (off + 30 <= buf.length && buf.readUInt32LE(off) === 0x04034b50) {
+    const compSize = buf.readUInt32LE(off + 18);
+    const nameLen = buf.readUInt16LE(off + 26);
+    const extraLen = buf.readUInt16LE(off + 28);
+    names.push(buf.toString("utf8", off + 30, off + 30 + nameLen));
+    off = off + 30 + nameLen + extraLen + compSize;
+  }
+  const expected = [
+    "output.md", "output.txt", "output.html", "output.json", "output.tex",
+    "output.csv", "output.bib", "output.ris", "output.rtf", "output.docx", "output.epub",
+  ];
+  check("validate set holds exactly the 11 fixed names",
+    names.length === expected.length && expected.every((n) => names.includes(n)));
+}
+
+{
   downloads.length = 0;
   const res = await send({ type: "GEP_EXPORT", format: 123 });
   check("non-string format rejected", res && res.ok === false);
