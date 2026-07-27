@@ -207,6 +207,18 @@ try {
   });
   check("no raw i18n keys visible on options page", rawKeys === 0);
 
+  // data-i18n-html hints are built element by element from a tag whitelist
+  // instead of being assigned as innerHTML; in a real browser they must still
+  // come out as markup, not as escaped "<code>" text.
+  const markup = await options.evaluate(() => {
+    const el = document.querySelector("[data-i18n-html]");
+    const withTags = [...document.querySelectorAll("[data-i18n-html]")]
+      .filter((n) => n.querySelector("code, strong, em, kbd, a")).length;
+    return { any: !!el, withTags, literal: (el ? el.textContent : "").includes("<") };
+  });
+  check("localized hints render as real elements", markup.any && markup.withTags > 0);
+  check("localized hints leave no literal tag text", !markup.literal);
+
   const stored = await options.evaluate(() => chrome.storage.sync.get(null));
   check("options page can read sync storage", typeof stored === "object" && stored !== null);
 

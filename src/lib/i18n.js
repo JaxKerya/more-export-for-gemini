@@ -25,7 +25,8 @@
  * elements with data-i18n attributes; localizeDocument() overwrites them
  * from messages at load. `data-i18n-html` values may contain markup — they
  * come exclusively from our own bundled messages.json, never from user or
- * page input.
+ * page input, and are built into elements through a fixed tag whitelist
+ * rather than assigned as innerHTML.
  */
 (function () {
   const root = typeof globalThis !== "undefined" ? globalThis : self;
@@ -103,9 +104,96 @@
   }
 
   /**
+   * The markup `data-i18n-html` messages are allowed to use, and the
+   * attributes each tag may carry. Everything else is rendered as literal
+   * text, so a typo in a catalog shows up in the UI instead of silently
+   * building an element nobody vetted.
+   */
+  const ALLOWED_TAGS = {
+    strong: [], em: [], code: [], kbd: [],
+    a: ["href", "target", "rel"],
+  };
+  const NAMED_ENTITIES = { amp: "&", lt: "<", gt: ">", quot: "\"", apos: "'", nbsp: "\u00a0" };
+  const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)((?:\s+[a-zA-Z-]+(?:="[^"]*")?)*)\s*\/?>/g;
+  const ATTR = /([a-zA-Z-]+)(?:="([^"]*)")?/g;
+
+  function decodeEntities(text) {
+    return text.replace(/&(#[0-9]+|#x[0-9a-fA-F]+|[a-zA-Z]+);/g, (match, body) => {
+      if (body[0] === "#") {
+        const code = body[1] === "x" || body[1] === "X"
+          ? parseInt(body.slice(2), 16)
+          : parseInt(body.slice(1), 10);
+        return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : match;
+      }
+      const named = NAMED_ENTITIES[body.toLowerCase()];
+      return named === undefined ? match : named;
+    });
+  }
+
+  /** Only values our own catalogs actually use, so nothing else can slip in. */
+  function attrAllowed(tag, name, value) {
+    if (tag !== "a") return false;
+    if (name === "href") return /^https:\/\//i.test(value);
+    if (name === "target") return value === "_blank";
+    if (name === "rel") return /^[a-z]+(?: [a-z]+)*$/.test(value);
+    return false;
+  }
+
+  /**
+   * Renders a bundled message's limited markup into `el` by building the
+   * elements itself. Equivalent to assigning innerHTML for the strings we
+   * ship, minus the possibility of that assignment ever meaning more than
+   * the five tags above.
+   */
+  function setLocalizedMarkup(el, markup) {
+    const doc = el.ownerDocument || (typeof document !== "undefined" ? document : null);
+    if (!doc) return;
+    while (el.firstChild) el.removeChild(el.firstChild);
+
+    const open = [{ node: el, name: "" }];
+    const top = () => open[open.length - 1].node;
+    const addText = (text) => {
+      if (text) top().appendChild(doc.createTextNode(decodeEntities(text)));
+    };
+
+    let cursor = 0;
+    let match;
+    TAG.lastIndex = 0;
+    while ((match = TAG.exec(markup)) !== null) {
+      const [full, closing, rawName, rawAttrs] = match;
+      addText(markup.slice(cursor, match.index));
+      cursor = TAG.lastIndex;
+
+      const name = rawName.toLowerCase();
+      const allowed = ALLOWED_TAGS[name];
+      if (!allowed) { addText(full); continue; }
+
+      if (closing) {
+        const depth = open.findIndex((entry) => entry.name === name);
+        if (depth > 0) open.length = depth;
+        continue;
+      }
+
+      const child = doc.createElement(name);
+      ATTR.lastIndex = 0;
+      let attr;
+      while ((attr = ATTR.exec(rawAttrs)) !== null) {
+        const attrName = attr[1].toLowerCase();
+        const value = decodeEntities(attr[2] || "");
+        if (allowed.includes(attrName) && attrAllowed(name, attrName, value)) {
+          child.setAttribute(attrName, value);
+        }
+      }
+      top().appendChild(child);
+      open.push({ node: child, name });
+    }
+    addText(markup.slice(cursor));
+  }
+
+  /**
    * Applies messages to a document (options / popup pages):
    *   data-i18n             -> textContent
-   *   data-i18n-html        -> innerHTML (trusted bundled strings only)
+   *   data-i18n-html        -> whitelisted markup (see setLocalizedMarkup)
    *   data-i18n-placeholder -> placeholder attribute
    *   data-i18n-title       -> title attribute
    *   data-i18n-aria        -> aria-label attribute
@@ -119,7 +207,7 @@
     });
     doc.querySelectorAll("[data-i18n-html]").forEach((el) => {
       const msg = raw(el.getAttribute("data-i18n-html"));
-      if (msg) el.innerHTML = msg;
+      if (msg) setLocalizedMarkup(el, msg);
     });
     const attrMap = [
       ["data-i18n-placeholder", "placeholder"],
@@ -142,5 +230,5 @@
     });
   } catch { /* chrome.storage unavailable (tests) */ }
 
-  GEP.i18n = { t, raw, localizeDocument, init, normalizeLang, SUPPORTED_LOCALES };
+  GEP.i18n = { t, raw, localizeDocument, setLocalizedMarkup, init, normalizeLang, SUPPORTED_LOCALES };
 })();
