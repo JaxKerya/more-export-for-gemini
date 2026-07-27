@@ -13,8 +13,7 @@
   "permissions": ["activeTab", "contextMenus", "storage"],
   "host_permissions": ["https://gemini.google.com/*"],
   "background": {
-    "service_worker": "src/background.js",
-    "scripts": ["src/lib/i18n.js", "src/lib/settings.js", "src/background.js"]
+    "service_worker": "src/background.js"
   },
   "browser_specific_settings": {
     "gecko": {

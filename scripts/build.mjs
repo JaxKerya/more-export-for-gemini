@@ -1,22 +1,45 @@
 /**
- * Build script (#18): creates a clean, compressed .zip package for Chrome
- * Web Store upload. Platform-independent (Node only, no dependencies) so it
- * runs identically on Windows, macOS, Linux and in CI.
+ * Build script (#18): creates clean, compressed .zip packages for store
+ * upload. Platform-independent (Node only, no dependencies) so it runs
+ * identically on Windows, macOS, Linux and in CI.
+ *
+ * Two packages, identical except for manifest.json:
+ *   • store/more-export-for-gemini-v<version>.zip          Chrome Web Store + Edge
+ *   • store/more-export-for-gemini-firefox-v<version>.zip  addons.mozilla.org
+ *
+ * Chrome MV3 rejects `background.scripts` with an install warning and Firefox
+ * has no MV3 service workers, so the repo manifest stays Chrome-flavored
+ * (service_worker only) and the Firefox zip swaps in an event-page background.
  *
  * Usage: node scripts/build.mjs   (or: npm run build)
- * Output: store/more-export-for-gemini-v<version>.zip
  */
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { deflateRawSync } from "node:zlib";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const manifest = JSON.parse(readFileSync(join(root, "manifest.json"), "utf8"));
 const version = manifest.version;
-const outName = `more-export-for-gemini-v${version}.zip`;
-const outPath = join(root, "store", outName);
+
+/**
+ * Firefox event-page background: dependency order mirrors the service
+ * worker's importScripts call (i18n → settings) with background.js last.
+ * Exported so the tests assert against the exact list that ships.
+ */
+export const FIREFOX_BACKGROUND_SCRIPTS = [
+  "src/lib/i18n.js",
+  "src/lib/settings.js",
+  "src/background.js",
+];
+
+/** The AMO manifest: same as Chrome's, background swapped to an event page. */
+export function firefoxManifest(m) {
+  const clone = structuredClone(m);
+  clone.background = { scripts: FIREFOX_BACKGROUND_SCRIPTS };
+  return clone;
+}
 
 // ── Packaged file list ──
 // Derived straight from manifest.json so it can never drift out of sync with
@@ -29,10 +52,10 @@ const include = [
   "icons/icon16.png",
   "icons/icon48.png",
   "icons/icon128.png",
-  // Background entry points: service_worker (Chrome/Edge) and the event-page
-  // scripts list (Firefox). They overlap today; the Set below dedupes.
+  // Background entry points: the Chrome/Edge service worker plus the Firefox
+  // event-page list. They overlap today; the Set below dedupes.
   manifest.background.service_worker,
-  ...(manifest.background.scripts || []),
+  ...FIREFOX_BACKGROUND_SCRIPTS,
   ...cs.js,
   ...cs.css,
   // Lazy-loaded exporter stack: fetched at runtime via import(), so it lives
@@ -144,17 +167,35 @@ function buildZip(entries) {
 }
 
 // ── Build ──
-const entries = files.map((file) => ({
-  name: file.replace(/\\/g, "/"),
-  data: readFileSync(join(root, file)),
-}));
+// Skipped when this module is imported for its manifest helpers (tests).
+const isMain = process.argv[1]
+  && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
-mkdirSync(join(root, "store"), { recursive: true });
-const zip = buildZip(entries);
-writeFileSync(outPath, zip);
+if (isMain) {
+  const entries = files.map((file) => ({
+    name: file.replace(/\\/g, "/"),
+    data: readFileSync(join(root, file)),
+  }));
 
-const sizeKb = Math.round((zip.length / 1024) * 10) / 10;
-console.log("");
-console.log(`  Package built: store/${outName} (${sizeKb} KB)`);
-console.log(`  Files included: ${files.length}`);
-console.log("");
+  mkdirSync(join(root, "store"), { recursive: true });
+  console.log("");
+
+  const targets = [
+    { name: `more-export-for-gemini-v${version}.zip`, entries },
+    {
+      name: `more-export-for-gemini-firefox-v${version}.zip`,
+      entries: entries.map((e) => e.name === "manifest.json"
+        ? { name: e.name, data: Buffer.from(JSON.stringify(firefoxManifest(manifest), null, 2) + "\n") }
+        : e),
+    },
+  ];
+
+  for (const t of targets) {
+    const zip = buildZip(t.entries);
+    writeFileSync(join(root, "store", t.name), zip);
+    const sizeKb = Math.round((zip.length / 1024) * 10) / 10;
+    console.log(`  Package built: store/${t.name} (${sizeKb} KB)`);
+  }
+  console.log(`  Files included: ${files.length}`);
+  console.log("");
+}

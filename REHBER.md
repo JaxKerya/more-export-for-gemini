@@ -11,9 +11,9 @@ npm install        # test/lint araç zinciri (eklentinin kendisi sıfır bağım
 Node.js 20+ gerekir. Eklentiyi denemek için:
 
 - **Chrome / Edge:** `chrome://extensions` (Edge: `edge://extensions`) → Geliştirici modu → **Paketlenmemiş öğe yükle** → depo kök klasörü.
-- **Firefox (140+):** `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → `manifest.json`. Geçici eklenti tarayıcı kapanınca kalkar.
+- **Firefox (140+):** önce `npm run build`, sonra `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → `store/more-export-for-gemini-firefox-v<sürüm>.zip`. Geçici eklenti tarayıcı kapanınca kalkar.
 
-Tek manifest üç tarayıcıya hizmet eder: Chrome/Edge `background.service_worker` çalıştırır, Firefox (MV3 service worker desteklemez) aynı kodu `background.scripts` üzerinden event page olarak yükler; her taraf diğerinin anahtarını yok sayar. `src/background.js` içindeki `importScripts` çağrısı bu yüzden `typeof importScripts === "function"` guard'ı arkasındadır.
+Depodaki manifest Chrome/Edge içindir (`background.service_worker`). Firefox MV3 service worker desteklemediğinden build, yalnızca Firefox paketinin manifest'ine event-page `background.scripts` listesini koyar — bu anahtar ortak manifest'te dursa Chrome kurulum uyarısı gösterir. `src/background.js` içindeki `importScripts` çağrısı bu yüzden `typeof importScripts === "function"` guard'ı arkasındadır (event page'de yoktur).
 
 ## Günlük komutlar
 
@@ -58,15 +58,15 @@ git tag v2.2.0 && git push origin master v2.2.0   # 5. gerisi otomatik
 | Workflow | Tetikleyici | Ne yapar |
 | --- | --- | --- |
 | `.github/workflows/ci.yml` | Her push ve PR (`master`) | İki paralel iş: `test` (`npm ci` → lint → typecheck → tüm testler → `lint:amo`) ve `e2e` (Chromium indirip `npm run test:e2e`). Kırmızıysa merge etmeyin. |
-| `.github/workflows/release.yml` | `v*` tag push'u | Önce tag'in `manifest.json` sürümüyle eşleştiğini doğrular (eşleşmezse durur), sonra lint + typecheck + testler → `npm run build` → zip'i GitHub Release'e ekler. |
+| `.github/workflows/release.yml` | `v*` tag push'u | Önce tag'in `manifest.json` sürümüyle eşleştiğini doğrular (eşleşmezse durur), sonra lint + typecheck + testler → `npm run build` → iki zip'i GitHub Release'e ekler. |
 
-Release oluştuğunda zip'i **Releases** sayfasından indirip üç mağazaya da yüklersiniz — Chrome Web Store, addons.mozilla.org (AMO) ve Edge Add-ons aynı zip'i kabul eder (adımlar: `store/listings/README.md`). Mağaza yüklemesi otomatik değildir.
+Release oluştuğunda zip'leri **Releases** sayfasından indirip mağazalara yüklersiniz: Chrome Web Store ve Edge Add-ons normal zip'i, addons.mozilla.org (AMO) `-firefox` uzantılı zip'i alır — ikisi yalnızca `manifest.json` bakımından farklıdır (Firefox event-page background kullanır; adımlar: `store/listings/README.md`). Mağaza yüklemesi otomatik değildir.
 
 ## Yardımcı betikler (`scripts/`)
 
 | Betik | Amaç |
 | --- | --- |
-| `scripts/build.mjs` | Mağaza zip'i (dosya listesi `manifest.json`'dan türetilir; `npm run build`). |
+| `scripts/build.mjs` | Mağaza zip'leri: Chrome/Edge + Firefox (dosya listesi `manifest.json`'dan türetilir; Firefox paketinin manifest'i event-page background'a çevrilir; `npm run build`). |
 | `scripts/lint-amo.mjs` | Paket + `addons-linter` (`npm run lint:amo`); CI'da her push'ta koşar. |
 | `scripts/bump.mjs` | Sürüm numarası güncelleme (`npm run bump -- x.y.z`). |
 | `scripts/external-validate.mjs` | Debug export çıktısını harici araçlarla doğrular (`npm run validate:external`). |

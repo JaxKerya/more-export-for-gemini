@@ -14,6 +14,7 @@ import vm from "node:vm";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getMessage } from "./i18n-mock.mjs";
+import { FIREFOX_BACKGROUND_SCRIPTS } from "../scripts/build.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -42,7 +43,7 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
  * Builds a sandbox with a recording chrome mock and loads background.js.
  * @param {object} storedData what chrome.storage.sync "contains"
  * @param {{firefox?: boolean}} [opts] firefox:true simulates the MV3 event
- *   page: no importScripts — dependencies arrive via the manifest's
+ *   page: no importScripts — dependencies arrive via the AMO build's
  *   background.scripts list, loaded in order before background.js.
  */
 function makeWorker(storedData, opts) {
@@ -109,10 +110,11 @@ function makeWorker(storedData, opts) {
   }
   vm.createContext(sandbox);
   if (firefox) {
-    // Firefox event page: the manifest's background.scripts list, in order
+    // Firefox event page: the AMO build's background.scripts list, in order
     // (background.js last). importScripts stays undefined, like in Firefox.
-    const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
-    for (const rel of manifest.background.scripts) {
+    // The list lives in scripts/build.mjs, which swaps it into the manifest
+    // of the Firefox zip only (Chrome MV3 warns on background.scripts).
+    for (const rel of FIREFOX_BACKGROUND_SCRIPTS) {
       vm.runInContext(fs.readFileSync(path.join(root, rel), "utf8"), sandbox, { filename: rel });
     }
   } else {
@@ -153,9 +155,9 @@ section("Firefox event page (no importScripts)");
 
 {
   // Firefox has no MV3 service workers: background.js must boot with
-  // importScripts undefined, its dependencies coming from the manifest's
-  // background.scripts list instead. A regression here breaks the entire
-  // Firefox build at load time.
+  // importScripts undefined, its dependencies coming from the Firefox
+  // package's background.scripts list instead. A regression here breaks
+  // the entire Firefox build at load time.
   const { state, sandbox } = makeWorker({}, { firefox: true });
   check("boots without importScripts", !!(sandbox.GEP && sandbox.GEP.settings && sandbox.GEP.i18n));
   await install(state);

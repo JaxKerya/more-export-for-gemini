@@ -15,6 +15,7 @@ import fs from "node:fs";
 import vm from "node:vm";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { firefoxManifest, FIREFOX_BACKGROUND_SCRIPTS } from "../scripts/build.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -48,7 +49,10 @@ function check(label, cond) {
 function readFile(name) {
   const p = path.join(validateDir, name);
   if (!fs.existsSync(p)) return null;
-  return fs.readFileSync(p, "utf8");
+  // Strip a leading UTF-8 BOM (the CSV export intentionally starts with one
+  // for Excel-on-Windows) so ^-anchored assertions see the logical first line.
+  // Section 1.6 checks the BOM's presence on the raw bytes separately.
+  return fs.readFileSync(p, "utf8").replace(/^\uFEFF/, "");
 }
 
 function fileExists(name) {
@@ -289,8 +293,30 @@ if (txt) {
   section("Plain Text (output.txt)");
   check("not empty", txt.trim().length > 100);
   check("has underline headings (=== or ---)", /[=-]{4,}/.test(txt));
-  check("no markdown syntax leaked", !txt.includes("[^") && !txt.includes("**"));
-  check("no HTML tags", !txt.match(/<[a-z]+[\s>]/i));
+
+  // Code blocks are emitted verbatim into the .txt — a C++ `#include
+  // <iostream>` or Python's `d_k ** 0.5` is report content, not leaked
+  // markup. Mask lines that belong to code blocks (ground truth: the JSON
+  // IR) before scanning the remaining prose.
+  let txtProse = txt;
+  if (json) {
+    try {
+      const codeLines = new Set();
+      for (const b of JSON.parse(json).blocks || []) {
+        if (b.type === "code" && b.text) {
+          for (const l of b.text.split("\n")) {
+            const trimmed = l.trim();
+            if (trimmed) codeLines.add(trimmed);
+          }
+        }
+      }
+      if (codeLines.size) {
+        txtProse = txt.split("\r\n").filter((l) => !codeLines.has(l.trim())).join("\r\n");
+      }
+    } catch { /* invalid JSON is reported in section 1.4 */ }
+  }
+  check("no markdown syntax leaked (outside code blocks)", !txtProse.includes("[^") && !txtProse.includes("**"));
+  check("no HTML tags (outside code blocks)", !txtProse.match(/<[a-z]+[\s>]/i));
   check("tables are aligned", /^.+\|.+\|.+$/m.test(txt));
 
   const sourceSection = txt.includes("Sources");
@@ -432,6 +458,10 @@ if (tex) {
 if (csv) {
   section("CSV (output.csv)");
   check("not empty", csv.trim().length > 10);
+  // readFile strips the BOM for the string checks; assert it on raw bytes.
+  const csvRaw = fs.readFileSync(path.join(validateDir, "output.csv"));
+  check("starts with UTF-8 BOM (Excel on Windows)",
+    csvRaw[0] === 0xef && csvRaw[1] === 0xbb && csvRaw[2] === 0xbf);
 
   const tables = csv.split(/^--- Table \d+ ---$/m).filter(t => t.trim());
   check("has at least 1 table", tables.length >= 1);
@@ -1273,14 +1303,23 @@ check("host_permissions limited to gemini", (manifest.host_permissions || []).le
 check("has background service worker", typeof manifest.background.service_worker === "string");
 
 // ── Cross-browser background (Firefox port, #15) ──
-// Firefox runs an MV3 event page from background.scripts (no service worker);
-// the list must mirror the worker's importScripts order: i18n → settings →
-// background.js. Chrome/Edge (121+) ignore the scripts key.
-check("firefox: background.scripts present", Array.isArray(manifest.background.scripts));
-check("firefox: background.scripts order mirrors importScripts",
-  JSON.stringify(manifest.background.scripts) ===
+// The repo manifest is Chrome/Edge-flavored: MV3 Chrome shows an install
+// warning ("'background.scripts' requires manifest version of 2 or lower")
+// if the Firefox event-page key is present, so build.mjs swaps it in only
+// for the AMO package. The list must mirror the worker's importScripts
+// order: i18n → settings → background.js.
+check("chrome: no background.scripts in repo manifest (MV3 install warning)",
+  !("scripts" in manifest.background));
+const ffManifest = firefoxManifest(manifest);
+check("firefox build: background.scripts order mirrors importScripts",
+  JSON.stringify(ffManifest.background.scripts) ===
   JSON.stringify(["src/lib/i18n.js", "src/lib/settings.js", "src/background.js"]));
-for (const f of manifest.background.scripts || []) {
+check("firefox build: no service_worker key (event page only)",
+  !("service_worker" in ffManifest.background));
+check("firefox build: rest of the manifest untouched",
+  JSON.stringify({ ...ffManifest, background: null }) ===
+  JSON.stringify({ ...manifest, background: null }));
+for (const f of FIREFOX_BACKGROUND_SCRIPTS) {
   check(`firefox: background script exists: ${f}`, fs.existsSync(path.join(root, f)));
 }
 check("firefox: gecko id present",

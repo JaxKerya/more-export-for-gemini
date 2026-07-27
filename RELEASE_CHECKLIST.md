@@ -47,8 +47,10 @@ and the diagnostics report are the starting points.
 Playwright cannot load extensions into Firefox, so the e2e job is
 Chromium-only — this is the only Firefox coverage before a release.
 
-Load temporarily via `about:debugging#/runtime/this-firefox` → **Load
-Temporary Add-on…** → select `manifest.json`, open a Deep Research report:
+Run `npm run build`, then load temporarily via
+`about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** →
+select `store/more-export-for-gemini-firefox-v<version>.zip`, open a Deep
+Research report:
 
 - [ ] **Background loads** — right-click on the report page shows the export context menu (proves the event page booted without `importScripts`).
 - [ ] **Menu injection + Markdown export** — share menu entries appear; `.md` downloads.
@@ -67,9 +69,10 @@ git tag vX.Y.Z && git push origin master vX.Y.Z
 ```
 
 The `Release` workflow refuses tags that don't match `manifest.json`, runs the
-full suite, builds `store/more-export-for-gemini-vX.Y.Z.zip` and attaches it to
-the GitHub Release. Upload that **same zip** to all three stores — Chrome Web
-Store, addons.mozilla.org and Edge Add-ons (steps: `store/listings/README.md`).
+full suite, builds both zips and attaches them to the GitHub Release. Upload
+`more-export-for-gemini-vX.Y.Z.zip` to Chrome Web Store **and** Edge Add-ons,
+and `more-export-for-gemini-firefox-vX.Y.Z.zip` to addons.mozilla.org
+(steps: `store/listings/README.md`).
 
 ## Beta label
 

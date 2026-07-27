@@ -17,11 +17,11 @@ The extension is free and open source. If it saves you time, you can [support it
 
 **Firefox** (140+)
 
-1. Open `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on…** and select `manifest.json`.
+1. Run `npm run build` (Firefox needs the event-page manifest that only the Firefox package carries).
+2. Open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → select `store/more-export-for-gemini-firefox-v<version>.zip`.
 3. Temporary add-ons are removed when Firefox closes; reload after a restart.
 
-One manifest serves all three browsers: Chrome/Edge run `background.service_worker`, Firefox (no MV3 service workers) runs the same code as an event page via `background.scripts`, and each side ignores the other's key.
+The repo manifest is Chrome/Edge-flavored (`background.service_worker`); Firefox has no MV3 service workers, so the build swaps in an event-page `background.scripts` list for its package only — keeping that key in the shared manifest would show an install warning on Chrome.
 
 ## Development setup
 
@@ -54,7 +54,12 @@ CI (GitHub Actions) runs lint, typecheck, the full test suite and the AMO linter
 npm run build
 ```
 
-Produces `store/more-export-for-gemini-v<version>.zip` (works on any OS — plain Node, no dependencies). The file list is derived from `manifest.json` (content scripts + background scripts + `web_accessible_resources` + popup/options pages), so it cannot drift from what the extension actually loads. **The same zip is uploaded to all three stores** — Chrome Web Store, addons.mozilla.org (AMO) and Edge Add-ons; per-store steps live in [store/listings/README.md](store/listings/README.md).
+Produces two zips in `store/` that are identical except for `manifest.json` (works on any OS — plain Node, no dependencies):
+
+- `more-export-for-gemini-v<version>.zip` — **Chrome Web Store and Edge Add-ons** (service-worker background).
+- `more-export-for-gemini-firefox-v<version>.zip` — **addons.mozilla.org (AMO)** (Firefox has no MV3 service workers, so its manifest swaps in an event-page `background.scripts` list; that key would trigger an install warning on Chrome, which is why the repo manifest stays Chrome-flavored).
+
+The file list is derived from `manifest.json` (content scripts + background scripts + `web_accessible_resources` + popup/options pages), so it cannot drift from what the extension actually loads. Per-store upload steps live in [store/listings/README.md](store/listings/README.md).
 
 ## Releases
 

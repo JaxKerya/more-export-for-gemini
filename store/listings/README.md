@@ -4,7 +4,11 @@ Bu klasördeki her `<dil>.txt` dosyası, mağazadaki **ayrıntılı açıklaman�
 (detailed description) o dildeki tam metnidir. Diller, arayüz kataloglarıyla
 aynıdır: `en`, `tr`, `es`, `pt_BR`, `de`, `fr`, `ja`, `ko`.
 
-Aynı `npm run build` zip'i üç mağazaya da yüklenir; ayrı paket yoktur.
+`npm run build` iki zip üretir (içerikleri `manifest.json` dışında aynıdır):
+Chrome Web Store ve Edge Add-ons **normal zip'i**, addons.mozilla.org ise
+**`-firefox` uzantılı zip'i** alır (Firefox'ta MV3 service worker olmadığından
+o paketin manifest'i event-page `background.scripts` kullanır; bu anahtar
+Chrome'da kurulum uyarısı verdiği için ana manifest'te tutulmaz).
 
 ## Chrome Web Store
 
@@ -17,7 +21,8 @@ Aynı `npm run build` zip'i üç mağazaya da yüklenir; ayrı paket yoktur.
 ## Firefox — addons.mozilla.org (AMO)
 
 1. [Add-on Developer Hub](https://addons.mozilla.org/developers/) → **Submit a
-   New Add-on** → "On this site" → `npm run build` zip'ini yükle.
+   New Add-on** → "On this site" → `npm run build` çıktısındaki
+   **`more-export-for-gemini-firefox-v<sürüm>.zip`** dosyasını yükle.
 2. Yüklemeden önce `npm run lint:amo` temiz olmalı (CI zaten koşuyor) — bu,
    AMO'nun yükleme anında çalıştırdığı doğrulamanın kendisidir.
 3. Açıklamalar: ürün sayfası düzenleyicisinde dil başına aynı `<dil>.txt`
@@ -29,7 +34,8 @@ Aynı `npm run build` zip'i üç mağazaya da yüklenir; ayrı paket yoktur.
 ## Edge Add-ons
 
 1. [Partner Center](https://partner.microsoft.com/dashboard/microsoftedge) →
-   yeni uzantı → aynı zip'i yükle (Edge, Chrome paketini olduğu gibi kabul eder).
+   yeni uzantı → Chrome'la aynı zip'i yükle (Edge, Chrome paketini olduğu
+   gibi kabul eder).
 2. Açıklamalar: dil başına aynı `<dil>.txt` içerikleri.
 
 Notlar:

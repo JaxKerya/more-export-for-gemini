@@ -17,7 +17,8 @@ import { execFileSync } from "node:child_process";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const manifest = JSON.parse(readFileSync(join(root, "manifest.json"), "utf8"));
-const zip = join(root, "store", `more-export-for-gemini-v${manifest.version}.zip`);
+// The Firefox flavor is what actually goes to AMO (event-page background).
+const zip = join(root, "store", `more-export-for-gemini-firefox-v${manifest.version}.zip`);
 
 // 1. Fresh package (same script the release flow uses).
 execFileSync(process.execPath, [join(root, "scripts", "build.mjs")], {
