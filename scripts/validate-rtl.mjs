@@ -290,6 +290,67 @@ const enStyles = enDocx["word/styles.xml"] || "";
 check("docx(en): no bidi/rtl in defaults", !enStyles.includes("<w:bidi/>") && !enStyles.includes("<w:rtl/>"));
 check("docx(en): no table bidiVisual", !(enDocx["word/document.xml"] || "").includes("<w:bidiVisual/>"));
 
+section("LaTeX preamble (bidi + shaping)");
+// An RTL script needs three things from the preamble or it comes out as
+// unjoined letters in reversed order: the bidi algorithm, a font that covers
+// the script, and Arabic shaping. LuaTeX gets all three from babel; XeTeX can
+// only set the document language, so it handles RTL-dominant reports only.
+const arTex = GEP.latex.convert(arIR, opts);
+check("tex(ar): loads babel with bidi=basic", arTex.includes("\\usepackage[bidi=basic]{babel}"));
+check("tex(ar): arabic is the main language", arTex.includes("\\babelprovide[import, main, onchar=ids fonts]{arabic}"));
+check("tex(ar): per-character font switching", arTex.includes("onchar=ids fonts"));
+check("tex(ar): maps all three font families",
+  ["rm", "sf", "tt"].every((f) => arTex.includes(`\\babelfont[arabic]{${f}}{Amiri}`)));
+check("tex(ar): font fallbacks are guarded", arTex.includes("\\IfFontExistsTF{Amiri}")
+  && arTex.includes("Noto Naskh Arabic") && arTex.includes("Scheherazade New"));
+check("tex(ar): declares a Latin fallback for glyphs the RTL face lacks",
+  arTex.includes('luaotfload.add_fallback("gepRtlFallback"') && arTex.includes("RawFeature={fallback=gepRtlFallback}"));
+check("tex(ar): XeTeX branch sets the main language",
+  arTex.includes("\\usepackage{polyglossia}") && arTex.includes("\\setmainlanguage{arabic}"));
+check("tex(ar): XeTeX font requests Arabic shaping", arTex.includes("\\newfontfamily\\arabicfont{Amiri}[Script=Arabic]"));
+check("tex(ar): warns that pdfLaTeX cannot render it", arTex.includes("right-to-left (ar)"));
+// babel has to be loaded before hyperref or the two fight over \ref handling.
+check("tex(ar): babel precedes hyperref",
+  arTex.indexOf("{babel}") < arTex.indexOf("\\usepackage{hyperref}"));
+
+const heTex = GEP.latex.convert(heIR, opts);
+check("tex(he): hebrew is the main language", heTex.includes("\\babelprovide[import, main, onchar=ids fonts]{hebrew}"));
+// David CLM has no bullet glyph, so an itemize label would silently vanish
+// without the fallback.
+check("tex(he): uses a Hebrew font that ships with TeX Live",
+  heTex.includes("\\babelfont[hebrew]{rm}{David CLM}[RawFeature={fallback=gepRtlFallback}]"));
+check("tex(he): does not pull in Arabic", !heTex.includes("{arabic}"));
+
+// A Latin report that merely quotes an RTL passage must keep its LTR layout:
+// flipping the document direction there would right-align the whole report.
+const quoteIR = buildIR({
+  title: "Deep Research Report", lang: "en", dir: "ltr", t: TEXT.en,
+  extraParagraph: `The Cairo team (${TEXT.ar.quote}) reviewed the findings and published a long English summary of them.`,
+});
+const quoteTex = GEP.latex.convert(quoteIR, opts);
+check("tex(quote): arabic provided as a secondary language",
+  quoteTex.includes("\\babelprovide[import, onchar=ids fonts]{arabic}"));
+check("tex(quote): document direction is NOT flipped", !quoteTex.includes("main, onchar"));
+check("tex(quote): XeTeX gets it as an other language", quoteTex.includes("\\setotherlanguage{arabic}")
+  && !quoteTex.includes("\\setmainlanguage{arabic}"));
+check("tex(quote): notes the XeLaTeX limitation", quoteTex.includes("quoted inside a left-to-right report"));
+check("tex(quote): still maps the tt family (code spans)", quoteTex.includes("\\babelfont[arabic]{tt}{Amiri}"));
+
+// Reports with no RTL content must be byte-for-byte unaffected.
+const enTex = GEP.latex.convert(enIR, opts);
+check("tex(en): no babel", !enTex.includes("{babel}"));
+check("tex(en): no polyglossia", !enTex.includes("{polyglossia}"));
+check("tex(en): no bidi", !enTex.includes("bidi=basic"));
+const zhTex = GEP.latex.convert(zhIR, opts);
+check("tex(zh): CJK setup only, no RTL setup", zhTex.includes("luatexja-preset") && !zhTex.includes("bidi=basic"));
+
+const arHeIR = buildIR({ title: "تقرير", lang: "ar", dir: "rtl", t: TEXT.ar, extraParagraph: TEXT.he.lead });
+const arHeTex = GEP.latex.convert(arHeIR, opts);
+check("tex(ar+he): both scripts provided",
+  arHeTex.includes("{arabic}") && arHeTex.includes("{hebrew}"));
+check("tex(ar+he): only the dominant script is main",
+  arHeTex.includes("main, onchar=ids fonts]{arabic}") && !arHeTex.includes("main, onchar=ids fonts]{hebrew}"));
+
 // ════════════════════════════════════════════════════════════════════════════
 // 4. Sample artifacts for manual visual inspection
 // ════════════════════════════════════════════════════════════════════════════
@@ -300,17 +361,21 @@ if (write) {
     { name: "arabic", ir: arIR },
     { name: "hebrew", ir: heIR },
     { name: "mixed-ar-en", ir: mixedIR },
+    { name: "latin-with-ar-quote", ir: quoteIR },
     { name: "chinese", ir: zhIR },
   ];
   for (const { name, ir } of samples) {
     fs.writeFileSync(path.join(outDir, `${name}.html`), GEP.html.convert(ir, opts), "utf8");
     fs.writeFileSync(path.join(outDir, `${name}.reader.html`), GEP.reader.convert(ir, opts), "utf8");
     fs.writeFileSync(path.join(outDir, `${name}.pdf-print.html`), GEP.pdf.buildDocument(ir, opts), "utf8");
+    fs.writeFileSync(path.join(outDir, `${name}.tex`), GEP.latex.convert(ir, opts), "utf8");
     fs.writeFileSync(path.join(outDir, `${name}.epub`), Buffer.from(await GEP.epub.convert(ir, opts).arrayBuffer()));
     fs.writeFileSync(path.join(outDir, `${name}.docx`), Buffer.from(await GEP.docx.convert(ir, opts).arrayBuffer()));
-    console.log(`  wrote ${name}.{html,reader.html,pdf-print.html,epub,docx}`);
+    console.log(`  wrote ${name}.{html,reader.html,pdf-print.html,tex,epub,docx}`);
   }
   console.log("\n  Open the .html files in a browser; .epub in an e-reader; .docx in Word/LibreOffice.");
+  console.log("  Compile the .tex with lualatex (RTL needs it) and check the log for");
+  console.log("  \"Missing character\" lines -- there should be none.");
   console.log("  Tip: validate the .epub with EPUBCheck if installed.");
 }
 

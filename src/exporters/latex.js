@@ -61,6 +61,122 @@
     return null;
   }
 
+  const RTL_RANGES = {
+    // Arabic script, which also covers Persian, Urdu and Pashto.
+    ar: /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g,
+    he: /[\u0590-\u05FF\uFB1D-\uFB4F]/g,
+  };
+  const LTR_LETTERS = /[A-Za-z\u00C0-\u024F\u0370-\u03FF\u0400-\u04FF]/g;
+
+  /** Collects the report's prose (titles, runs, cells) — not URLs or IR keys. */
+  function harvestText(node, out) {
+    if (!node || typeof node !== "object") return out;
+    if (Array.isArray(node)) {
+      node.forEach((n) => harvestText(n, out));
+      return out;
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "href" || key === "url" || key === "src") continue;
+      if (typeof value === "string") {
+        if (key === "text" || key === "title") out.push(value);
+      } else harvestText(value, out);
+    }
+    return out;
+  }
+
+  /**
+   * Detect right-to-left content and how much of the report it makes up.
+   * `dominant` reports are typeset RTL end to end (main language); a report
+   * that merely quotes an RTL passage keeps its LTR layout and only needs the
+   * script's font, so flipping the document direction there would be wrong.
+   * @returns {{script: "ar"|"he", secondary: "ar"|"he"|null, dominant: boolean}|null}
+   */
+  function detectRtlScript(ir) {
+    const text = harvestText(ir, [ir && ir.title ? String(ir.title) : ""]).join(" ");
+    const counts = {
+      ar: (text.match(RTL_RANGES.ar) || []).length,
+      he: (text.match(RTL_RANGES.he) || []).length,
+    };
+    const rtl = counts.ar + counts.he;
+    if (!rtl) return null;
+
+    const script = counts.ar >= counts.he ? "ar" : "he";
+    const other = script === "ar" ? "he" : "ar";
+    const ltr = (text.match(LTR_LETTERS) || []).length;
+    return {
+      script,
+      secondary: counts[other] ? other : null,
+      // Source titles and bibliography entries in an otherwise Arabic report
+      // are often English, so the bar sits well below half.
+      dominant: rtl / (rtl + ltr) > 0.3,
+    };
+  }
+
+  const RTL_LANG = { ar: "arabic", he: "hebrew" };
+  // Both ship with TeX Live / MiKTeX (the amiri and culmus packages); the
+  // alternatives are tried in case a system only has the Noto families.
+  const RTL_FONTS = {
+    ar: ["Amiri", "Noto Naskh Arabic", "Scheherazade New"],
+    he: ["David CLM", "Noto Serif Hebrew", "FreeSerif"],
+  };
+
+  const FALLBACK_ID = "gepRtlFallback";
+
+  /** `\IfFontExistsTF{A}{use A}{\IfFontExistsTF{B}{use B}{}}`, nested. */
+  function fontFallback(fonts, use) {
+    return fonts.reduceRight((rest, font) => `\\IfFontExistsTF{${font}}{${use(font)}}{${rest}}`, "");
+  }
+
+  /**
+   * Preamble lines that make right-to-left scripts readable. Three things have
+   * to line up or the text comes out as unjoined letters in reversed order:
+   * the bidi algorithm, per-script font switching, and Arabic shaping.
+   *
+   * LuaTeX gets all three from babel — `bidi=basic` runs the Unicode bidi
+   * algorithm (without it nothing is reordered at all) and `onchar=ids fonts`
+   * switches language and font per character, so an Arabic quote inside a
+   * Turkish paragraph is handled with no markup in the body.
+   *
+   * XeTeX has no `onchar` equivalent, so polyglossia can only set the document
+   * language: an RTL-dominant report typesets correctly, but RTL quotes inside
+   * an LTR report would need explicit \textarabic{} wrapping. LuaLaTeX is
+   * therefore the recommended engine, as the generated header comment says.
+   */
+  function rtlSetup(rtl) {
+    const langs = [rtl.script, ...(rtl.secondary ? [rtl.secondary] : [])];
+    const lines = [
+      "  \\ifLuaTeX",
+      "    \\usepackage[bidi=basic]{babel}",
+      // Punctuation and list bullets are typeset in the active language's font,
+      // and the RTL faces do not all carry them (David CLM has no U+2022), so
+      // borrow anything they lack from Latin Modern instead of dropping it.
+      `    \\directlua{luaotfload.add_fallback("${FALLBACK_ID}", {"LatinModernRoman:mode=node;"})}`,
+    ];
+    langs.forEach((s, i) => {
+      const main = i === 0 && rtl.dominant ? "main, " : "";
+      lines.push(`    \\babelprovide[import, ${main}onchar=ids fonts]{${RTL_LANG[s]}}`);
+    });
+    langs.forEach((s) => {
+      // All three families, scoped to the language: `onchar=fonts` switches
+      // within whichever one is current, so a Latin code span keeps its
+      // monospace font while the Arabic characters inside it still render.
+      lines.push(`    ${fontFallback(RTL_FONTS[s], (f) => ["rm", "sf", "tt"]
+        .map((fam) => `\\babelfont[${RTL_LANG[s]}]{${fam}}{${f}}[RawFeature={fallback=${FALLBACK_ID}}]`).join(""))}`);
+    });
+    lines.push("  \\else", "    \\usepackage{polyglossia}");
+    if (rtl.dominant) {
+      lines.push(`    \\setmainlanguage{${RTL_LANG[rtl.script]}}`, "    \\setotherlanguage{english}");
+    } else {
+      langs.forEach((s) => lines.push(`    \\setotherlanguage{${RTL_LANG[s]}}`));
+    }
+    langs.forEach((s) => {
+      const cmd = `\\${RTL_LANG[s]}font`;
+      lines.push(`    ${fontFallback(RTL_FONTS[s], (f) => `\\newfontfamily${cmd}{${f}}[Script=${s === "ar" ? "Arabic" : "Hebrew"}]`)}`);
+    });
+    lines.push("  \\fi");
+    return lines;
+  }
+
   /**
    * Preamble lines (inside the non-pdfTeX branch, after fontspec) that load a
    * CJK-capable font automatically. All referenced fonts ship with TeX Live /
@@ -176,6 +292,7 @@
     const paper = layout.paper === "letter" ? "letterpaper" : "a4paper";
 
     const cjk = detectCjkScript(ir);
+    const rtl = detectRtlScript(ir);
 
     const out = [
       `\\documentclass[${fontSize}pt,${paper}]{article}`,
@@ -188,6 +305,15 @@
         `% This report contains CJK (${cjk}) text. pdfLaTeX cannot render CJK`,
         "% glyphs -- compile with LuaLaTeX (recommended) or XeLaTeX instead.",
         "% The font setup below is applied automatically on those engines.",
+      ] : []),
+      ...(rtl ? [
+        `% This report contains right-to-left (${rtl.script}) text. pdfLaTeX can`,
+        "% render neither the glyphs nor the reading direction -- compile with",
+        "% LuaLaTeX, which sets up bidi, fonts and Arabic shaping automatically.",
+        ...(rtl.dominant ? [] : [
+          "% The RTL text here is quoted inside a left-to-right report. XeLaTeX",
+          "% cannot switch fonts per script, so it needs LuaLaTeX to render it.",
+        ]),
       ] : []),
       "\\ifPDFTeX",
       "  \\usepackage[utf8]{inputenc}",
@@ -242,6 +368,8 @@
       "\\else",
       "  \\usepackage{fontspec}",
       ...(cjk ? CJK_FONT_SETUP[cjk] : []),
+      // babel has to be loaded before hyperref, which follows below.
+      ...(rtl ? rtlSetup(rtl) : []),
       "\\fi",
       "\\usepackage{amsmath}",
       "\\usepackage{amssymb}",
