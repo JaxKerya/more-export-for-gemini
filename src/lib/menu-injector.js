@@ -207,7 +207,39 @@
     return div;
   }
 
+  // ── Which button opened this menu? ────────────────────────────────
+  // Identifying the export menu purely by its contents proved too loose: the
+  // sidebar's settings menu carries an export/share-ish test id of its own, so
+  // our items were appended to it. Remembering the trigger scopes the decision
+  // to the menu the user actually opened from the report.
+  let lastTrigger = null;
+  let lastTriggerAt = 0;
+  /** A menu opens right after its trigger is activated; anything older is stale. */
+  const TRIGGER_TTL_MS = 4000;
+
+  /** Records the menu trigger a pointer/key event activated, if any. */
+  function noteTrigger(target) {
+    const el = target && target.closest ? target.closest(SEL.MENU_TRIGGER_ANY) : null;
+    if (!el) return;
+    lastTrigger = el;
+    lastTriggerAt = Date.now();
+  }
+
+  /**
+   * @returns {"yes"|"no"|"unknown"} whether the remembered trigger settles it.
+   * "unknown" means fall back to inspecting the menu's contents: either we
+   * never saw a trigger, or it sits in the report UI under a name we don't
+   * recognize (Gemini renamed the button) and the contents should decide.
+   */
+  function triggerVerdict() {
+    if (!lastTrigger || Date.now() - lastTriggerAt > TRIGGER_TTL_MS) return "unknown";
+    if (lastTrigger.matches(SEL.EXPORT_MENU_TRIGGER)) return "yes";
+    return lastTrigger.closest(SEL.REPORT_UI_SCOPES) ? "unknown" : "no";
+  }
+
   function isExportMenu(menuContent) {
+    const verdict = triggerVerdict();
+    if (verdict !== "unknown") return verdict === "yes";
     return !!menuContent.querySelector(SEL.EXPORT_MENU);
   }
 
@@ -244,12 +276,15 @@
   // Lightweight session counters surfaced in the diagnostics report, so a
   // silent injection failure (Gemini renamed its menu markup) becomes visible
   // when a user shares diagnostics.
-  const stats = { menusSeen: 0, exportMenusMatched: 0, injected: 0 };
+  const stats = { menusSeen: 0, exportMenusMatched: 0, injected: 0, rejectedByTrigger: 0 };
 
   function inject(menuContent, onExport, enabledFormats) {
     if (!menuContent || menuContent.getAttribute(PROCESSED_ATTR) === "1") return false;
     stats.menusSeen++;
-    if (!isExportMenu(menuContent)) return false;
+    if (!isExportMenu(menuContent)) {
+      if (triggerVerdict() === "no") stats.rejectedByTrigger++;
+      return false;
+    }
     stats.exportMenusMatched++;
 
     menuContent.setAttribute(PROCESSED_ATTR, "1");
@@ -300,5 +335,5 @@
     return true;
   }
 
-  GEP.menuInjector = { inject, isExportMenu, GROUPS, stats };
+  GEP.menuInjector = { inject, isExportMenu, noteTrigger, GROUPS, stats };
 })();

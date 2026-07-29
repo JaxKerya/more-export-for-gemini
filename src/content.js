@@ -744,6 +744,20 @@
     }
   }
 
+  // Remember which button opened a menu, so injection can be scoped to the
+  // report's own export menu. Capture phase, because Gemini stops propagation
+  // on some of its triggers; pointerdown/keydown both fire before the overlay
+  // is created, which is what the MutationObserver below reacts to.
+  const noteTrigger = (event) => {
+    try {
+      GEP.menuInjector.noteTrigger(event.target);
+    } catch { /* injector not loaded yet */ }
+  };
+  document.addEventListener("pointerdown", noteTrigger, true);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") noteTrigger(event);
+  }, true);
+
   const observer = new MutationObserver((mutations) => {
     if (!enabledFormats) {
       loadSettings().then(() => {
@@ -1047,6 +1061,7 @@
         `  menus seen      : ${menuStats.menusSeen}`,
         `  export menus    : ${menuStats.exportMenusMatched}`,
         `  injected        : ${menuStats.injected}`,
+        `  skipped (trigger): ${menuStats.rejectedByTrigger}`,
         ""
       );
     }

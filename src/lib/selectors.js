@@ -63,6 +63,35 @@
       '[data-test-id*="export"]',
       '[data-test-id*="share"]',
     ].join(", "),
+    /**
+     * Any Angular Material menu trigger, used to learn which button opened a
+     * menu. Gemini's own buttons carry both markers.
+     */
+    MENU_TRIGGER_ANY: '[aria-haspopup="menu"], .mat-mdc-menu-trigger',
+    /**
+     * The report's export/share button — the one trigger whose menu is
+     * definitely ours to extend. (Added 2026-07: the content test below also
+     * matched the sidebar's account/settings menu, which carries an
+     * export/share-ish test id of its own.)
+     */
+    EXPORT_MENU_TRIGGER: [
+      '[data-test-id="export-menu-button"]',
+      ".export-menu-button",
+      '[data-test-id*="export-menu"]',
+      '[data-test-id*="share-menu"]',
+    ].join(", "),
+    /**
+     * Containers that belong to a report rather than the app shell. A trigger
+     * inside one of these may still open an injectable menu even after Gemini
+     * renames the button, while sidebar/account menus stay out.
+     */
+    REPORT_UI_SCOPES: [
+      "deep-research-immersive-panel",
+      "immersive-panel",
+      "message-actions",
+      "response-container",
+      "toolbar",
+    ].join(", "),
     /** Native item cloned so injected entries inherit Gemini's styling. */
     MENU_REFERENCE_ITEM: '[data-test-id="copy-button"] gem-menu-item',
     MENU_ANY_ITEM: "gem-menu-item",

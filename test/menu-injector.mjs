@@ -41,6 +41,8 @@ function makeInjector(bodyHtml) {
   const { window, document } = parseHTML(`<!DOCTYPE html><html><body>${bodyHtml}</body></html>`);
   const sandbox = {
     window, document, console, Node: window.Node,
+    // Shared with the test so the trigger TTL can be exercised.
+    Date,
     chrome: { i18n: { getMessage } },
   };
   vm.createContext(sandbox);
@@ -48,7 +50,11 @@ function makeInjector(bodyHtml) {
   for (const f of ["src/lib/i18n.js", "src/lib/selectors.js", "src/lib/menu-injector.js"]) {
     vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), sandbox, { filename: f });
   }
-  return { injector: sandbox.window.GEP.menuInjector, document };
+  return {
+    injector: sandbox.window.GEP.menuInjector,
+    selectors: sandbox.window.GEP.selectors,
+    document,
+  };
 }
 
 /** A faithful mini export menu: native copy button + one cloneable item. */
@@ -103,6 +109,113 @@ section("Export menu detection");
   check("unrelated menu not detected", injector.isExportMenu(menu) === false);
   check("inject() refuses unrelated menu", injector.inject(menu, noop, {}) === false);
   check("unrelated menu left unmodified", menu.querySelectorAll(".gep-menu-item").length === 0);
+}
+
+// =====================================================================
+section("Trigger scoping (which button opened the menu)");
+
+// Gemini's sidebar settings menu carries an export/share-ish test id of its
+// own, so the content test alone matched it and appended our items to the
+// account menu. The trigger the user activated has to settle it instead.
+const SETTINGS_MENU_HTML = `
+  <bard-sidenav>
+    <div class="mavatar-footer-right">
+      <gem-icon-button data-test-id="mavatar-footer-settings-button" class="mavatar-settings-button">
+        <button class="mdc-icon-button mat-mdc-menu-trigger" aria-label="Ayarlar"
+                aria-haspopup="menu" aria-expanded="false"><span class="mat-ripple"></span></button>
+      </gem-icon-button>
+    </div>
+  </bard-sidenav>
+  <div class="mat-mdc-menu-content" id="settings-menu">
+    <div data-test-id="share-links-button"><gem-menu-item><span class="label">Public links</span></gem-menu-item></div>
+  </div>`;
+
+const REPORT_TOOLBAR_HTML = `
+  <deep-research-immersive-panel>
+    <toolbar>
+      <div class="action-buttons">
+        <button data-test-id="export-menu-button"
+                class="mdc-button mat-mdc-menu-trigger export-menu-button"
+                aria-haspopup="menu"><span class="mdc-button__label">Share &amp; export</span></button>
+      </div>
+    </toolbar>
+  </deep-research-immersive-panel>`;
+
+{
+  const { injector, selectors, document } = makeInjector(SETTINGS_MENU_HTML);
+  const menu = document.querySelector("#settings-menu");
+  // Content alone would match, exactly as it did in the wild.
+  check("settings menu would match on contents alone",
+    !!menu.querySelector(selectors.EXPORT_MENU));
+
+  injector.noteTrigger(document.querySelector(".mat-ripple"));
+  check("settings-menu trigger rejects the menu", injector.isExportMenu(menu) === false);
+  check("inject() refuses the settings menu", injector.inject(menu, noop, {}) === false);
+  check("settings menu left unmodified", menu.querySelectorAll(".gep-menu-item").length === 0);
+  check("stats: counted as trigger rejection", injector.stats.rejectedByTrigger === 1);
+}
+
+{
+  // The report's own export button: injectable even if Gemini renames every
+  // item inside the menu, which is what makes the trigger the primary signal.
+  const { injector, document } = makeInjector(REPORT_TOOLBAR_HTML + `
+    <div class="mat-mdc-menu-content" id="m">
+      <div data-test-id="totally-renamed"><gem-menu-item><span class="label">?</span></gem-menu-item></div>
+    </div>`);
+  const menu = document.querySelector("#m");
+  injector.noteTrigger(document.querySelector(".mdc-button__label"));
+  check("export-menu-button accepts the menu", injector.isExportMenu(menu) === true);
+  check("inject() succeeds on unrecognizable contents", injector.inject(menu, noop, {}) === true);
+}
+
+{
+  // Renamed trigger, still inside the report toolbar: fall back to contents
+  // rather than silently disabling injection.
+  const { injector, document } = makeInjector(`
+    <deep-research-immersive-panel><toolbar><div class="action-buttons">
+      <button data-test-id="brand-new-name" class="mat-mdc-menu-trigger" aria-haspopup="menu">
+        <span class="lbl">x</span></button>
+    </div></toolbar></deep-research-immersive-panel>` + EXPORT_MENU);
+  const menu = document.querySelector(".mat-mdc-menu-content");
+  injector.noteTrigger(document.querySelector(".lbl"));
+  check("renamed report trigger defers to contents", injector.isExportMenu(menu) === true);
+}
+
+{
+  // A report-scoped trigger that is NOT the export button (e.g. the table of
+  // contents menu) still has to be filtered out by the contents.
+  const { injector, document } = makeInjector(`
+    <deep-research-immersive-panel><toolbar>
+      <button data-test-id="toc-menu-button" class="mat-mdc-menu-trigger" aria-haspopup="menu">
+        <span class="lbl">TOC</span></button>
+    </toolbar></deep-research-immersive-panel>
+    <div class="mat-mdc-menu-content" id="m">
+      <div data-test-id="toc-entry"><gem-menu-item><span class="label">Intro</span></gem-menu-item></div>
+    </div>`);
+  const menu = document.querySelector("#m");
+  injector.noteTrigger(document.querySelector(".lbl"));
+  check("TOC menu not injected", injector.isExportMenu(menu) === false);
+}
+
+{
+  // No trigger ever recorded (programmatic open, or a listener that never
+  // fired): keep the pre-existing content-only behavior.
+  const { injector, document } = makeInjector(EXPORT_MENU);
+  const menu = document.querySelector(".mat-mdc-menu-content");
+  check("without a trigger, contents still decide", injector.isExportMenu(menu) === true);
+}
+
+{
+  // A stale trigger must not keep vetoing menus opened much later.
+  const { injector, document } = makeInjector(SETTINGS_MENU_HTML.replace("share-links-button", "copy-button"));
+  const menu = document.querySelector("#settings-menu");
+  injector.noteTrigger(document.querySelector(".mat-ripple"));
+  check("fresh settings trigger vetoes", injector.isExportMenu(menu) === false);
+  // linkedom shares the sandbox clock, so move the recorded time out of range.
+  const realNow = Date.now;
+  Date.now = () => realNow() + 10000;
+  check("stale trigger falls back to contents", injector.isExportMenu(menu) === true);
+  Date.now = realNow;
 }
 
 // =====================================================================

@@ -65,9 +65,36 @@ const EXPORT_MENU = `
     </div>
   </div>`;
 
+// Stand-in for Gemini's sidebar account menu: the trigger sits outside the
+// report UI and the panel it opens carries a share-ish test id — which is
+// exactly what used to make the injector adopt it. Built on click so the
+// MutationObserver sees it appear, like the real Angular overlay.
+const SETTINGS_MENU = `
+  <bard-sidenav>
+    <div class="mavatar-footer-right">
+      <gem-icon-button data-test-id="mavatar-footer-settings-button">
+        <button id="e2e-settings-btn" class="mat-mdc-menu-trigger" aria-haspopup="menu">
+          <span id="e2e-settings-icon">settings</span>
+        </button>
+      </gem-icon-button>
+    </div>
+  </bard-sidenav>
+  <script>
+    document.getElementById("e2e-settings-btn").addEventListener("click", function () {
+      var panel = document.createElement("div");
+      panel.className = "mat-mdc-menu-content";
+      panel.id = "e2e-settings-menu";
+      var item = document.createElement("div");
+      item.setAttribute("data-test-id", "share-links-button");
+      item.appendChild(document.createElement("gem-menu-item"));
+      panel.appendChild(item);
+      document.body.appendChild(panel);
+    });
+  <\/script>`;
+
 const fixtureHtml = fs
   .readFileSync(path.join(__dirname, "fixtures", "gemini-report.html"), "utf8")
-  .replace("</body>", `${EXPORT_MENU}\n</body>`);
+  .replace("</body>", `${EXPORT_MENU}\n${SETTINGS_MENU}\n</body>`);
 
 // selfsigned v5 is async.
 const pems = await selfsigned.generate(
@@ -142,6 +169,25 @@ try {
     .textContent();
   check("menu label localized (not a raw key)",
     !!mdLabel && mdLabel.trim().length > 0 && mdLabel.trim() !== "fmtMarkdown");
+
+  // ── Menus outside the report must be left alone ──
+  // Real click, so this also proves content.js wires the trigger listener;
+  // the unit tests call noteTrigger() directly and cannot see that.
+  section("Sidebar menu is not adopted");
+
+  await page.click("#e2e-settings-icon");
+  // The stub panel has no styling, so it never becomes "visible" — attached
+  // is what matters: the MutationObserver reacts to insertion.
+  await page.waitForSelector("#e2e-settings-menu", { state: "attached", timeout: 5000 });
+  await page.waitForTimeout(300); // let the MutationObserver settle
+  check("sidebar settings menu gets no export items",
+    (await page.locator("#e2e-settings-menu [data-gep-format]").count()) === 0);
+  check("sidebar settings menu not marked processed",
+    (await page.locator("#e2e-settings-menu[data-gep-processed]").count()) === 0);
+  await page.evaluate(() => {
+    const el = document.getElementById("e2e-settings-menu");
+    if (el) el.remove();
+  });
 
   // ── Real export: lazy stack import + extraction + download ──
   section("Markdown export end to end");
