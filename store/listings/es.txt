@@ -31,6 +31,7 @@ PAQUETES Y PORTAPAPELES
 CARACTERÍSTICAS DESTACADAS
 - Perfiles de exportación: guarda configuraciones completas (formatos + opciones) y cámbialas con un clic
 - Historial de exportación: los informes recientes se respaldan localmente y pueden reexportarse sin conexión, incluso si la conversación de Gemini ya no existe
+- Exportación por secciones: elige los títulos que necesites y exporta solo esas partes, con la lista de fuentes reducida a las referencias que citan
 - Controles de página y tipografía: tamaño de papel, márgenes, tamaño de fuente, interlineado y familia tipográfica para PDF, HTML, Word y LaTeX
 - Higiene de fuentes: elimina duplicados, ordena y enriquece tu lista de referencias
 - Matemáticas fieles (KaTeX), resaltado de código, tablas, notas al pie y soporte para idiomas de derecha a izquierda

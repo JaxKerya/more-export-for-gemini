@@ -31,6 +31,7 @@ PACOTES E ÁREA DE TRANSFERÊNCIA
 PRINCIPAIS RECURSOS
 - Perfis de exportação: salve configurações completas (formatos + opções) e alterne com um clique
 - Histórico de exportação: os relatórios recentes têm backup local e podem ser reexportados offline - mesmo depois que a conversa do Gemini não existir mais
+- Exportação por seções: escolha os títulos que precisa e exporte apenas essas partes, com a lista de fontes reduzida às referências que elas citam
 - Controles de página e tipografia: tamanho do papel, margens, tamanho da fonte, espaçamento entre linhas e família tipográfica para PDF, HTML, Word e LaTeX
 - Higiene de fontes: remova duplicatas, ordene e enriqueça sua lista de referências
 - Matemática fiel (KaTeX), realce de código, tabelas, notas de rodapé e suporte a idiomas da direita para a esquerda

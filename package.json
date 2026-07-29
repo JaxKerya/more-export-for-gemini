@@ -1,6 +1,6 @@
 {
   "name": "more-export-for-gemini",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Adds Markdown, TXT, HTML, JSON, DOCX, PDF, EPUB, LaTeX and many more export options to Gemini Deep Research.",
   "private": true,
   "type": "module",

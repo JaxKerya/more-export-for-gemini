@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - Beta
+
 ### Fixed
 - **Icon files resized to their declared dimensions:** `icons/icon16/48/128.png` were all 1512×1512 pixels (flagged by Mozilla's addons-linter); they are now real 16/48/128 px renders, shrinking the package by ~1.2 MB.
 - **Exports were broken by the language-switcher change (caught by the new e2e test):** making the `_locales` catalogs web-accessible added a glob entry to `web_accessible_resources`, which the lazy exporter loader then tried to `import()` as a script — every export failed with "Export modules could not be loaded" while all 1,000+ Node-sandbox checks stayed green. The loader now imports only `.js` entries; the new real-browser smoke test exists precisely to catch this class of bug.

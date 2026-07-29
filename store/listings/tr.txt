@@ -31,6 +31,7 @@ PAKETLER VE PANO
 ÖNE ÇIKAN ÖZELLİKLER
 - Dışa aktarma profilleri: eksiksiz kurulumları (formatlar + seçenekler) kaydedin, tek tıkla geçiş yapın
 - Dışa aktarma geçmişi: son raporlar yerel olarak yedeklenir ve Gemini sohbeti silinse bile çevrimdışı yeniden dışa aktarılabilir
+- Bölüm bazlı dışa aktarma: istediğiniz başlıkları seçip yalnızca o bölümleri dışa aktarın; kaynak listesi de yalnızca o bölümlerin atıf yaptığı referanslara indirilir
 - Sayfa ve tipografi kontrolleri: PDF, HTML, Word ve LaTeX için kâğıt boyutu, kenar boşlukları, yazı boyutu, satır aralığı ve yazı tipi
 - Kaynak temizliği: kaynakça listenizi tekrarsızlaştırın, sıralayın ve zenginleştirin
 - Aslına uygun matematik (KaTeX), kod renklendirme, tablolar, dipnotlar ve sağdan sola dil desteği

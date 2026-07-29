@@ -31,6 +31,7 @@ LOTS & PRESSE-PAPIERS
 FONCTIONNALITÉS CLÉS
 - Profils d'export : enregistrez des configurations complètes (formats + options) et changez en un clic
 - Historique d'export : les rapports récents sont sauvegardés localement et peuvent être réexportés hors ligne - même si la conversation Gemini n'existe plus
+- Export par sections : choisissez les titres voulus et n'exportez que ces parties, la liste des sources étant réduite aux références qu'elles citent
 - Contrôles de page et de typographie : format de papier, marges, taille de police, interligne et famille de polices pour PDF, HTML, Word et LaTeX
 - Hygiène des sources : dédupliquez, triez et enrichissez votre liste de références
 - Mathématiques fidèles (KaTeX), coloration du code, tableaux, notes de bas de page et prise en charge des langues de droite à gauche

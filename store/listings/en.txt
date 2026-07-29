@@ -31,6 +31,7 @@ BUNDLES & CLIPBOARD
 KEY FEATURES
 - Export profiles: save complete setups (formats + options) and switch them with one click
 - Export history: recent reports are backed up locally and can be re-exported offline - even after the Gemini conversation is gone
+- Section export: pick individual headings and export only those parts, with the source list trimmed to the references they cite
 - Page & typography controls: paper size, margins, font size, line spacing and font family for PDF, HTML, Word and LaTeX
 - Source hygiene: de-duplicate, sort and enrich your reference list
 - Faithful math (KaTeX), code highlighting, tables, footnotes and right-to-left language support

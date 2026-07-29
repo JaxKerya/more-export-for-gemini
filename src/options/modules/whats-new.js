@@ -5,6 +5,22 @@
 
 const RELEASE_NOTES = [
   {
+    version: "2.2.0",
+    date: "2026-07-29",
+    items: [
+      "The interface now speaks 8 languages - English, Turkish, Spanish, Portuguese (BR), German, French, Japanese and Korean. Pick one in Settings or let it follow your browser.",
+      "Excel export (.xlsx) - each table becomes its own worksheet with a frozen header row and genuinely numeric cells, so SUM() works right away.",
+      "Export a single section - choose the headings you need from the share menu and get just those, with the source list reduced to the references they actually cite.",
+      "Firefox and Edge are now supported alongside Chrome.",
+      "Export profiles - save a set of formats and options, then switch between them from the popup.",
+      "Recent reports - every export is backed up locally, so you can turn it into another format later without reopening Gemini.",
+      "Copy for Google Docs / Word - the same rich clipboard copy as before, now named for what it actually does.",
+      "Faster pages and a faster first export - the conversion stack and its heavy vendors load only when you actually export something.",
+      "The scary install warning is gone - the extension no longer requests the broad browsing-history permission.",
+      "Arabic, Hebrew and CJK reports now typeset correctly in LaTeX, with the right fonts set up automatically.",
+    ],
+  },
+  {
     version: "2.1.0",
     date: "2026-07-03",
     items: [

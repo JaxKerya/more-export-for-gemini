@@ -31,6 +31,7 @@ PAKETE & ZWISCHENABLAGE
 WICHTIGSTE FUNKTIONEN
 - Exportprofile: komplette Setups (Formate + Optionen) speichern und mit einem Klick wechseln
 - Exportverlauf: aktuelle Berichte werden lokal gesichert und lassen sich offline erneut exportieren - selbst wenn die Gemini-Unterhaltung nicht mehr existiert
+- Abschnittsweiser Export: einzelne Überschriften auswählen und nur diese Teile exportieren - die Quellenliste wird auf die dort zitierten Referenzen reduziert
 - Seiten- und Typografie-Einstellungen: Papierformat, Ränder, Schriftgröße, Zeilenabstand und Schriftfamilie für PDF, HTML, Word und LaTeX
 - Quellenhygiene: Referenzliste deduplizieren, sortieren und anreichern
 - Originalgetreue Mathematik (KaTeX), Code-Hervorhebung, Tabellen, Fußnoten und Unterstützung für Rechts-nach-links-Sprachen
