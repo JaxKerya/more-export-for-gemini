@@ -90,7 +90,7 @@ const SETTINGS_MENU = `
       panel.appendChild(item);
       document.body.appendChild(panel);
     });
-  <\/script>`;
+  </script>`;
 
 const fixtureHtml = fs
   .readFileSync(path.join(__dirname, "fixtures", "gemini-report.html"), "utf8")
