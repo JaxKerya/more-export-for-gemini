@@ -3,6 +3,8 @@
  * restore them later. Mutates the shared state via `ctx` (see options.js).
  */
 
+import { notify } from "./toast.js";
+
 export function initBackup(ctx) {
   const { DEFAULTS: FORMAT_DEFAULTS, OPTION_DEFAULTS, OPTION_ENUMS, sanitizeOverrides } = GEP.settings;
   const t = GEP.i18n.t;
@@ -10,13 +12,6 @@ export function initBackup(ctx) {
   const exportSettingsBtn = document.getElementById("exportSettingsBtn");
   const importSettingsBtn = document.getElementById("importSettingsBtn");
   const importSettingsInput = document.getElementById("importSettingsInput");
-  const backupStatus = document.getElementById("backupStatus");
-
-  function setBackupStatus(msg, type) {
-    if (!backupStatus) return;
-    backupStatus.textContent = msg;
-    backupStatus.className = "debug-status visible " + (type || "");
-  }
 
   if (exportSettingsBtn) {
     exportSettingsBtn.addEventListener("click", () => {
@@ -45,7 +40,7 @@ export function initBackup(ctx) {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
-      setBackupStatus(t("optSettingsExported"), "success");
+      notify(t("optSettingsExported"), "success");
     });
   }
 
@@ -106,22 +101,22 @@ export function initBackup(ctx) {
         const text = await file.text();
         let data;
         try { data = JSON.parse(text); }
-        catch { setBackupStatus(t("optInvalidJson"), "error"); return; }
+        catch { notify(t("optInvalidJson"), "error"); return; }
 
         const result = applyImportedSettings(data);
         if (!result.ok) {
-          setBackupStatus(result.error, "error");
+          notify(result.error, "error");
           return;
         }
         ctx.syncControlsFromState();
         await ctx.saveAll();
         ctx.refreshLastEnabled();
-        setBackupStatus(
+        notify(
           t("optImportedSummary", [String(result.formatCount), String(result.optionCount)]),
           "success"
         );
       } catch {
-        setBackupStatus(t("optFileReadError"), "error");
+        notify(t("optFileReadError"), "error");
       } finally {
         importSettingsInput.value = "";
       }

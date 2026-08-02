@@ -265,6 +265,56 @@ section("Profiles: save / apply / delete");
 }
 
 // =====================================================================
+section("Action feedback surfaces in the page toast");
+
+{
+  // Card actions used to write results into an inline .debug-status line at
+  // the bottom of their card; feedback now goes to one fixed page toast.
+  check("no in-card status lines remain", document.querySelectorAll(".debug-status").length === 0);
+
+  // The previous section's save/apply/delete already routed through it.
+  const toast = document.getElementById("pageToast");
+  check("toast host created on demand", !!toast);
+  check("toast reflects the last action (delete -> success)",
+    !!toast && toast.classList.contains("visible") && toast.classList.contains("success"));
+  check("routine results announce politely (role=status)",
+    !!toast && toast.getAttribute("role") === "status");
+
+  // Validation error: saving a profile without a name.
+  const nameInput = document.getElementById("profileName");
+  const saveBtn = document.getElementById("profileSaveBtn");
+  nameInput.value = "   ";
+  saveBtn.dispatchEvent(new window.Event("click"));
+  await tick();
+  check("empty profile name raises an error toast",
+    toast.classList.contains("error")
+      && toast.textContent.includes(GEP.i18n.t("optProfileNameFirst")));
+  check("errors interrupt (role=alert)", toast.getAttribute("role") === "alert");
+
+  // The next action replaces the toast in place — never a second element.
+  nameInput.value = "Toasty";
+  saveBtn.dispatchEvent(new window.Event("click"));
+  await tick();
+  check("follow-up success replaces the error in place",
+    toast.classList.contains("success") && !toast.classList.contains("error")
+      && toast.textContent.includes("Toasty"));
+  check("single toast instance", document.querySelectorAll("#pageToast").length === 1);
+
+  // Click dismisses without waiting for the auto-hide timer.
+  toast.dispatchEvent(new window.Event("click"));
+  check("click dismisses the toast", !toast.classList.contains("visible"));
+
+  // Clean up the throwaway profile so later sections see the same store.
+  const delBtn = document.querySelector("#profileList .profile-item .backup-btn.danger");
+  if (delBtn) {
+    delBtn.dispatchEvent(new window.Event("click"));
+    await tick();
+  }
+  check("cleanup removed the throwaway profile",
+    !(syncStore.profiles && syncStore.profiles.Toasty));
+}
+
+// =====================================================================
 section("Sync quota indicator");
 
 {

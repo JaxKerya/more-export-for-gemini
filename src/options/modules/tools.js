@@ -4,6 +4,8 @@
  * quality check. Also owns the hidden debug-card unlock (tap the logo).
  */
 
+import { notify } from "./toast.js";
+
 async function resolveGeminiTab() {
   // https only: URL-filtered tabs.query relies on the gemini host permission
   // (there is no broad "tabs" permission), which is granted for https alone.
@@ -18,7 +20,7 @@ async function resolveGeminiTab() {
 export function initTools() {
   const t = GEP.i18n.t;
 
-  // ── Debug mode (tap logo 15 times) ──
+  // â”€â”€ Debug mode (tap logo 15 times) â”€â”€
   const debugCard = document.querySelector('.card[data-section="debug"]');
   const logoTap = document.getElementById("logoTap");
   let tapCount = 0;
@@ -38,112 +40,93 @@ export function initTools() {
     });
   }
 
-  // ── Debug export ──
+  // â”€â”€ Debug export â”€â”€
   const debugBtn = document.getElementById("debugExportBtn");
-  const debugStatus = document.getElementById("debugStatus");
-
-  function setDebugStatus(msg, type) {
-    debugStatus.textContent = msg;
-    debugStatus.className = "debug-status visible " + (type || "");
-  }
 
   if (debugBtn) {
     debugBtn.addEventListener("click", async () => {
       debugBtn.disabled = true;
-      setDebugStatus(t("optSearchingTab"), "");
+      notify(t("optSearchingTab"), "");
 
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setDebugStatus(t("optNoGeminiTab"), "error");
+          notify(t("optNoGeminiTab"), "error");
           debugBtn.disabled = false;
           return;
         }
-        setDebugStatus(t("optExportingAll"), "");
+        notify(t("optExportingAll"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_DEBUG_EXPORT" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setDebugStatus(t("optNoContentScript"), "error");
+            notify(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
-            setDebugStatus(t("optDebugZipDone"), "success");
+            notify(t("optDebugZipDone"), "success");
           } else {
-            setDebugStatus(resp?.error || t("optExportFailedShort"), "error");
+            notify(resp?.error || t("optExportFailedShort"), "error");
           }
           debugBtn.disabled = false;
         });
       } catch (err) {
-        setDebugStatus(t("optErrorPrefix", err.message), "error");
+        notify(t("optErrorPrefix", err.message), "error");
         debugBtn.disabled = false;
       }
     });
   }
 
-  // ── Validation set (fixed-name output.* files for test/validate.mjs) ──
+  // â”€â”€ Validation set (fixed-name output.* files for test/validate.mjs) â”€â”€
   const validateBtn = document.getElementById("validateExportBtn");
-  const validateStatus = document.getElementById("validateStatus");
-
-  function setValidateStatus(msg, type) {
-    validateStatus.textContent = msg;
-    validateStatus.className = "debug-status visible " + (type || "");
-  }
 
   if (validateBtn) {
     validateBtn.addEventListener("click", async () => {
       validateBtn.disabled = true;
-      setValidateStatus(t("optSearchingTab"), "");
+      notify(t("optSearchingTab"), "");
 
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setValidateStatus(t("optNoGeminiTab"), "error");
+          notify(t("optNoGeminiTab"), "error");
           validateBtn.disabled = false;
           return;
         }
-        setValidateStatus(t("optExportingAll"), "");
+        notify(t("optExportingAll"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_VALIDATE_EXPORT" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setValidateStatus(t("optNoContentScript"), "error");
+            notify(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
-            setValidateStatus(t("optValidateZipDone"), "success");
+            notify(t("optValidateZipDone"), "success");
           } else {
-            setValidateStatus(resp?.error || t("optExportFailedShort"), "error");
+            notify(resp?.error || t("optExportFailedShort"), "error");
           }
           validateBtn.disabled = false;
         });
       } catch (err) {
-        setValidateStatus(t("optErrorPrefix", err.message), "error");
+        notify(t("optErrorPrefix", err.message), "error");
         validateBtn.disabled = false;
       }
     });
   }
 
-  // ── Run diagnostics ──
+  // â”€â”€ Run diagnostics â”€â”€
   const diagnoseBtn = document.getElementById("diagnoseBtn");
-  const diagnoseStatus = document.getElementById("diagnoseStatus");
-
-  function setDiagnoseStatus(msg, type) {
-    if (!diagnoseStatus) return;
-    diagnoseStatus.textContent = msg;
-    diagnoseStatus.className = "debug-status visible " + (type || "");
-  }
 
   if (diagnoseBtn) {
     diagnoseBtn.addEventListener("click", async () => {
       diagnoseBtn.disabled = true;
-      setDiagnoseStatus(t("optSearchingTab"), "");
+      notify(t("optSearchingTab"), "");
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setDiagnoseStatus(t("optNoGeminiTab"), "error");
+          notify(t("optNoGeminiTab"), "error");
           diagnoseBtn.disabled = false;
           return;
         }
-        setDiagnoseStatus(t("optRunningDiag"), "");
+        notify(t("optRunningDiag"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_DIAGNOSE" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setDiagnoseStatus(t("optNoContentScript"), "error");
+            notify(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
             const r = resp.report || {};
-            setDiagnoseStatus(
+            notify(
               t("optDiagResult", [
                 r.ok ? t("optOkLabel") : t("optIssuesDetected"),
                 String(r.blockTotal || 0),
@@ -152,27 +135,20 @@ export function initTools() {
               r.ok ? "success" : "error"
             );
           } else {
-            setDiagnoseStatus(resp?.error || t("optDiagFailedShort"), "error");
+            notify(resp?.error || t("optDiagFailedShort"), "error");
           }
           diagnoseBtn.disabled = false;
         });
       } catch (err) {
-        setDiagnoseStatus(t("optErrorPrefix", err.message), "error");
+        notify(t("optErrorPrefix", err.message), "error");
         diagnoseBtn.disabled = false;
       }
     });
   }
 
-  // ── Quality check ──
+  // â”€â”€ Quality check â”€â”€
   const qualityBtn = document.getElementById("qualityBtn");
-  const qualityStatus = document.getElementById("qualityStatus");
   const qualityFindings = document.getElementById("qualityFindings");
-
-  function setQualityStatus(msg, type) {
-    if (!qualityStatus) return;
-    qualityStatus.textContent = msg;
-    qualityStatus.className = "debug-status visible " + (type || "");
-  }
 
   function renderQualityFindings(report) {
     if (!qualityFindings) return;
@@ -202,21 +178,21 @@ export function initTools() {
     qualityBtn.addEventListener("click", async () => {
       qualityBtn.disabled = true;
       if (qualityFindings) { qualityFindings.replaceChildren(); qualityFindings.classList.remove("visible"); }
-      setQualityStatus(t("optSearchingTab"), "");
+      notify(t("optSearchingTab"), "");
       try {
         const target = await resolveGeminiTab();
         if (!target) {
-          setQualityStatus(t("optNoGeminiTab"), "error");
+          notify(t("optNoGeminiTab"), "error");
           qualityBtn.disabled = false;
           return;
         }
-        setQualityStatus(t("optCheckingQuality"), "");
+        notify(t("optCheckingQuality"), "");
         chrome.tabs.sendMessage(target.id, { type: "GEP_QUALITY" }, (resp) => {
           if (chrome.runtime.lastError) {
-            setQualityStatus(t("optNoContentScript"), "error");
+            notify(t("optNoContentScript"), "error");
           } else if (resp && resp.ok) {
             const s = (resp.report && resp.report.stats) || {};
-            setQualityStatus(
+            notify(
               t("optQualityResult", [
                 resp.report.ok ? t("optQualityOkShort") : t("optIssuesDetected"),
                 String(s.errors || 0), String(s.warnings || 0), String(s.infos || 0),
@@ -225,12 +201,12 @@ export function initTools() {
             );
             renderQualityFindings(resp.report);
           } else {
-            setQualityStatus(resp?.error || t("optQualityFailedShort"), "error");
+            notify(resp?.error || t("optQualityFailedShort"), "error");
           }
           qualityBtn.disabled = false;
         });
       } catch (err) {
-        setQualityStatus(t("optErrorPrefix", err.message), "error");
+        notify(t("optErrorPrefix", err.message), "error");
         qualityBtn.disabled = false;
       }
     });

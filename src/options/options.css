@@ -861,6 +861,74 @@ h1 {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ── Page toast (action feedback, bottom right) ──
+   The "Saved" badge keeps the bottom-center spot; card actions report here
+   so the two can show at once (e.g. applying a profile saves settings AND
+   confirms the profile) without overlapping. */
+.page-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  max-width: min(420px, calc(100vw - 48px));
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--text-dim);
+  padding: 11px 16px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  z-index: 150;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  cursor: pointer;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.page-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.page-toast.success { border-left-color: var(--ok); }
+.page-toast.success .page-toast-icon { color: var(--ok); }
+.page-toast.error { border-left-color: var(--danger); }
+.page-toast.error .page-toast-icon { color: var(--danger); }
+.page-toast.pending { border-left-color: var(--accent); }
+
+.page-toast-icon {
+  flex: none;
+  display: flex;
+  margin-top: 1px;
+}
+
+.page-toast-spinner {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin-top: 2px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: page-toast-spin 0.8s linear infinite;
+}
+
+@keyframes page-toast-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-toast { transition: none; transform: none; }
+  .page-toast-spinner { animation: none; }
+}
+
 /* ── Modal ── */
 .modal-overlay {
   position: fixed;
@@ -976,17 +1044,6 @@ h1 {
 }
 
 .debug-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.debug-status {
-  font-size: 11px;
-  padding: 0 var(--card-pad) 12px;
-  color: var(--text-dim);
-  display: none;
-}
-
-.debug-status.visible { display: block; }
-.debug-status.error { color: var(--danger); }
-.debug-status.success { color: var(--ok); }
 
 /* ── Quality check findings list ── */
 .quality-findings {

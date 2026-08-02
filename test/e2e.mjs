@@ -268,6 +268,28 @@ try {
   const stored = await options.evaluate(() => chrome.storage.sync.get(null));
   check("options page can read sync storage", typeof stored === "object" && stored !== null);
 
+  // Action feedback surfaces as the fixed page toast (not an in-card line):
+  // saving a profile without a name must raise the error variant. The
+  // profiles card may sit in a hidden nav panel, so dispatch the click
+  // directly instead of scrolling it into view.
+  const toastState = await options.evaluate(() => {
+    document.getElementById("profileSaveBtn").click();
+    const el = document.getElementById("pageToast");
+    if (!el) return null;
+    const style = getComputedStyle(el);
+    return {
+      cls: el.className,
+      role: el.getAttribute("role"),
+      text: el.textContent,
+      fixed: style.position === "fixed",
+      visible: style.opacity !== "0",
+    };
+  });
+  check("empty profile name raises the page toast",
+    !!toastState && toastState.cls.includes("error") && toastState.text.trim().length > 0);
+  check("toast is fixed, visible and announced as alert",
+    !!toastState && toastState.fixed && toastState.visible && toastState.role === "alert");
+
   // ── Popup renders ──
   section("Popup");
 

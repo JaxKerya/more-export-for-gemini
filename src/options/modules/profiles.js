@@ -4,6 +4,8 @@
  * live in chrome.storage.sync (validated via GEP.settings.sanitizeProfiles).
  */
 
+import { notify } from "./toast.js";
+
 export async function initProfiles(ctx) {
   const { DEFAULTS: FORMAT_DEFAULTS, sanitizeOverrides } = GEP.settings;
   const t = GEP.i18n.t;
@@ -11,14 +13,7 @@ export async function initProfiles(ctx) {
   const profileNameInput = document.getElementById("profileName");
   const profileSaveBtn = document.getElementById("profileSaveBtn");
   const profileListEl = document.getElementById("profileList");
-  const profileStatus = document.getElementById("profileStatus");
   const profiles = await GEP.settings.loadProfiles();
-
-  function setProfileStatus(msg, type) {
-    if (!profileStatus) return;
-    profileStatus.textContent = msg;
-    profileStatus.className = "debug-status visible " + (type || "");
-  }
 
   // ── Sync quota indicator (#8) ──
   // chrome.storage.sync is hard-capped (100 KB total / 8 KB per item); the
@@ -71,7 +66,7 @@ export async function initProfiles(ctx) {
     ctx.syncControlsFromState();
     await ctx.saveAll();
     ctx.refreshLastEnabled();
-    setProfileStatus(t("optProfileApplied", name), "success");
+    notify(t("optProfileApplied", name), "success");
   }
 
   function renderProfiles() {
@@ -114,7 +109,7 @@ export async function initProfiles(ctx) {
         await persistProfiles();
         renderProfiles();
         refreshQuota();
-        setProfileStatus(t("optProfileDeleted", name), "success");
+        notify(t("optProfileDeleted", name), "success");
       });
 
       li.append(info, applyBtn, delBtn);
@@ -126,13 +121,13 @@ export async function initProfiles(ctx) {
     profileSaveBtn.addEventListener("click", async () => {
       const name = profileNameInput.value.trim().slice(0, GEP.settings.MAX_PROFILE_NAME);
       if (!name) {
-        setProfileStatus(t("optProfileNameFirst"), "error");
+        notify(t("optProfileNameFirst"), "error");
         profileNameInput.focus();
         return;
       }
       const isNew = !(name in profiles);
       if (isNew && Object.keys(profiles).length >= GEP.settings.MAX_PROFILES) {
-        setProfileStatus(t("optProfileLimit", String(GEP.settings.MAX_PROFILES)), "error");
+        notify(t("optProfileLimit", String(GEP.settings.MAX_PROFILES)), "error");
         return;
       }
       profiles[name] = currentSnapshot();
@@ -140,13 +135,13 @@ export async function initProfiles(ctx) {
         await persistProfiles();
       } catch (e) {
         delete profiles[name];
-        setProfileStatus(t("optProfileSaveFailed", e && e.message ? e.message : String(e)), "error");
+        notify(t("optProfileSaveFailed", e && e.message ? e.message : String(e)), "error");
         return;
       }
       profileNameInput.value = "";
       renderProfiles();
       refreshQuota();
-      setProfileStatus(t(isNew ? "optProfileSaved" : "optProfileUpdated", name), "success");
+      notify(t(isNew ? "optProfileSaved" : "optProfileUpdated", name), "success");
     });
     profileNameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") profileSaveBtn.click();

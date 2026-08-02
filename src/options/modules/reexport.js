@@ -4,6 +4,8 @@
  * fully offline, using the live export options + source hygiene.
  */
 
+import { notify } from "./toast.js";
+
 export function initReexport(ctx) {
   const t = GEP.i18n.t;
   const reexportFileInput = document.getElementById("reexportFileInput");
@@ -11,14 +13,7 @@ export function initReexport(ctx) {
   const reexportFileName = document.getElementById("reexportFileName");
   const reexportFormat = document.getElementById("reexportFormat");
   const reexportBtn = document.getElementById("reexportBtn");
-  const reexportStatus = document.getElementById("reexportStatus");
   let reexportIR = null;
-
-  function setReexportStatus(msg, type) {
-    if (!reexportStatus) return;
-    reexportStatus.textContent = msg;
-    reexportStatus.className = "debug-status visible " + (type || "");
-  }
 
   if (reexportFormat && window.GEP && GEP.exportOpts) {
     const labels = GEP.exportOpts.LABELS || {};
@@ -82,7 +77,7 @@ export function initReexport(ctx) {
           reexportIR = null;
           if (reexportBtn) reexportBtn.disabled = true;
           if (reexportFileName) reexportFileName.textContent = t("optChooseFilePrompt");
-          setReexportStatus(res.error, "error");
+          notify(res.error, "error");
           return;
         }
         reexportIR = res.ir;
@@ -91,9 +86,9 @@ export function initReexport(ctx) {
           reexportFileName.textContent =
             t("optFileMeta", [file.name, String(res.ir.blocks.length), String(res.ir.footnotes.length)]);
         }
-        setReexportStatus(t("optReportLoaded"), "success");
+        notify(t("optReportLoaded"), "success");
       } catch {
-        setReexportStatus(t("optFileReadError"), "error");
+        notify(t("optFileReadError"), "error");
       } finally {
         reexportFileInput.value = "";
       }
@@ -102,8 +97,8 @@ export function initReexport(ctx) {
 
   if (reexportBtn) {
     reexportBtn.addEventListener("click", async () => {
-      if (!reexportIR) { setReexportStatus(t("optLoadFirst"), "error"); return; }
-      if (!window.GEP || !GEP.exportOpts) { setReexportStatus(t("optModulesFailed"), "error"); return; }
+      if (!reexportIR) { notify(t("optLoadFirst"), "error"); return; }
+      if (!window.GEP || !GEP.exportOpts) { notify(t("optModulesFailed"), "error"); return; }
       const format = reexportFormat ? reexportFormat.value : "markdown";
       const MIME = GEP.exportOpts.MIME;
       const EXT = GEP.exportOpts.EXT;
@@ -122,34 +117,34 @@ export function initReexport(ctx) {
         if (textConverters[format]) {
           const result = textConverters[format].convert(ir, opts);
           GEP.download.downloadBlob(result, name(EXT[format]), MIME[format]);
-          setReexportStatus(t("optExportedFile", name(EXT[format])), "success");
+          notify(t("optExportedFile", name(EXT[format])), "success");
           return;
         }
         if (format === "docx") {
           GEP.download.downloadBlob(GEP.docx.convert(ir, opts), name(EXT.docx), MIME.docx);
-          setReexportStatus(t("optExportedWord"), "success"); return;
+          notify(t("optExportedWord"), "success"); return;
         }
         if (format === "xlsx") {
           GEP.download.downloadBlob(GEP.xlsx.convert(ir), name(EXT.xlsx), MIME.xlsx);
-          setReexportStatus(t("optExportedExcel"), "success"); return;
+          notify(t("optExportedExcel"), "success"); return;
         }
         if (format === "epub") {
           GEP.download.downloadBlob(GEP.epub.convert(ir, opts), name(EXT.epub), MIME.epub);
-          setReexportStatus(t("optExportedEpub"), "success"); return;
+          notify(t("optExportedEpub"), "success"); return;
         }
         if (format === "vault") {
           const entries = GEP.vault.buildEntries(ir, opts);
-          if (!entries.length) { setReexportStatus(t("toastVaultEmpty"), "error"); return; }
+          if (!entries.length) { notify(t("toastVaultEmpty"), "error"); return; }
           GEP.download.downloadBlob(GEP.zip.build(entries), name(EXT.vault), MIME.vault);
-          setReexportStatus(t("optExportedVault", String(entries.length)), "success"); return;
+          notify(t("optExportedVault", String(entries.length)), "success"); return;
         }
         if (format === "pdf") {
           await GEP.pdf.exportPdf(ir, opts);
-          setReexportStatus(t("toastPdfPrint"), "success"); return;
+          notify(t("toastPdfPrint"), "success"); return;
         }
-        setReexportStatus(t("optUnsupportedFormat", format), "error");
+        notify(t("optUnsupportedFormat", format), "error");
       } catch (e) {
-        setReexportStatus(t("optExportFailed", e && e.message ? e.message : String(e)), "error");
+        notify(t("optExportFailed", e && e.message ? e.message : String(e)), "error");
       }
     });
   }
@@ -167,7 +162,7 @@ export function initReexport(ctx) {
   function loadHistoryEntry(entry) {
     const ir = entry && entry.ir;
     if (!ir || !Array.isArray(ir.blocks)) {
-      setReexportStatus(t("optBackupUnreadable"), "error");
+      notify(t("optBackupUnreadable"), "error");
       return;
     }
     reexportIR = normalizeIR(ir);
@@ -179,7 +174,7 @@ export function initReexport(ctx) {
         String(reexportIR.footnotes.length),
       ]);
     }
-    setReexportStatus(t("optLoadedFromHistory"), "success");
+    notify(t("optLoadedFromHistory"), "success");
   }
 
   async function renderRecentReports() {
@@ -221,7 +216,7 @@ export function initReexport(ctx) {
       loadBtn.addEventListener("click", async () => {
         const entry = await GEP.history.get(item.id);
         if (!entry) {
-          setReexportStatus(t("optBackupGone"), "error");
+          notify(t("optBackupGone"), "error");
           renderRecentReports();
           return;
         }
@@ -248,7 +243,7 @@ export function initReexport(ctx) {
       if (!window.GEP || !GEP.history) return;
       await GEP.history.clear();
       renderRecentReports();
-      setReexportStatus(t("optBackupsCleared"), "success");
+      notify(t("optBackupsCleared"), "success");
     });
   }
 
