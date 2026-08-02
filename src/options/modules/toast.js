@@ -3,10 +3,10 @@
  *
  * Card actions (save profile, clear backups, run diagnostics…) used to write
  * their result into an inline status line at the bottom of their own card,
- * which was easy to miss and looked unfinished next to the fixed "Saved"
- * badge. All transient feedback now surfaces in a single toast in the
- * bottom-right corner; the badge keeps the bottom-center spot, so the two
- * never overlap. Persistent state descriptions (the override summary, the
+ * and the "Saved" confirmation was a separate bottom-center badge. All
+ * transient feedback — including "Settings saved" and the format-limit
+ * warning — now surfaces in this single bottom-right toast, so notifications
+ * have one home. Persistent state descriptions (the override summary, the
  * quality findings list) are not notifications and stay inline in their card.
  *
  * One toast instance that updates in place: a pending message ("Looking for
@@ -16,11 +16,12 @@
 
 const ICON_PATHS = {
   success: "M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z",
+  warn: "M12 2 1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z",
   error: "M12 2 1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z",
 };
 
 /** Auto-hide delays; a pending toast (type "") stays until replaced. */
-const HIDE_MS = { success: 3200, error: 6000 };
+const HIDE_MS = { success: 3200, warn: 5000, error: 6000 };
 
 let host = null;
 let hideTimer = null;
@@ -68,13 +69,14 @@ function buildIcon(type) {
 /**
  * Shows (or updates) the page toast.
  * @param {string} msg  Already-localized text.
- * @param {"success"|"error"|""} [type]  "" = pending, sticks until replaced.
+ * @param {"success"|"warn"|"error"|""} [type]  "" = pending, sticks until replaced.
  */
 export function notify(msg, type) {
   const el = ensureHost();
   el.className = "page-toast visible " + (type || "pending");
-  // Errors should interrupt the screen reader; routine results should not.
-  el.setAttribute("role", type === "error" ? "alert" : "status");
+  // Errors and blocked actions should interrupt the screen reader;
+  // routine results should not.
+  el.setAttribute("role", type === "error" || type === "warn" ? "alert" : "status");
   el.replaceChildren(buildIcon(type || ""));
 
   const text = document.createElement("span");

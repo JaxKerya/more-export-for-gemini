@@ -834,37 +834,10 @@ h1 {
 }
 
 /* ── Saved badge ── */
-.saved-badge {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  background: var(--surface-2);
-  color: var(--ok);
-  border: 1px solid rgba(129, 201, 149, 0.25);
-  padding: 10px 20px;
-  border-radius: var(--r-md);
-  font-size: 13px;
-  font-weight: 500;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s, transform 0.25s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  z-index: 100;
-}
-
-.saved-badge.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
 /* ── Page toast (action feedback, bottom right) ──
-   The "Saved" badge keeps the bottom-center spot; card actions report here
-   so the two can show at once (e.g. applying a profile saves settings AND
-   confirms the profile) without overlapping. */
+   The single home for every transient notification: card action results,
+   the "Settings saved" confirmation and the format-limit warning. One
+   instance that updates in place, so rapid actions never stack. */
 .page-toast {
   position: fixed;
   right: 24px;
@@ -899,6 +872,8 @@ h1 {
 
 .page-toast.success { border-left-color: var(--ok); }
 .page-toast.success .page-toast-icon { color: var(--ok); }
+.page-toast.warn { border-left-color: var(--warn); }
+.page-toast.warn .page-toast-icon { color: var(--warn); }
 .page-toast.error { border-left-color: var(--danger); }
 .page-toast.error .page-toast-icon { color: var(--danger); }
 .page-toast.pending { border-left-color: var(--accent); }

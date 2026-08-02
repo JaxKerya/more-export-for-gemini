@@ -13,6 +13,7 @@
  * order is guaranteed by the manifest); only extension pages use modules.
  */
 
+import { notify } from "./modules/toast.js";
 import { initNav } from "./modules/nav.js";
 import { initBackup } from "./modules/backup.js";
 import { initProfiles } from "./modules/profiles.js";
@@ -92,46 +93,15 @@ const ctx = {
 
 const formatToggles = document.querySelectorAll(".toggle[data-format]");
 const optionToggles = document.querySelectorAll(".toggle[data-option]");
-const badge = document.getElementById("savedBadge");
-let badgeTimer = null;
-let maxToastTimer = null;
 
+// Both used to be a dedicated bottom-center badge; every notification now
+// goes through the same bottom-right toast so feedback has one home.
 function showSaved() {
-  badge.classList.add("visible");
-  clearTimeout(badgeTimer);
-  badgeTimer = setTimeout(() => badge.classList.remove("visible"), 1500);
+  notify(t("optSavedBadge"), "success");
 }
 
 function showMaxToast() {
-  const el = badge;
-  el.textContent = "";
-  const icon = document.createElement("span");
-  icon.textContent = "⚠ ";
-  const msg = document.createTextNode(t("optMaxToast", String(MAX_ENABLED_FORMATS)));
-  el.appendChild(icon);
-  el.appendChild(msg);
-  el.style.borderColor = "rgba(249, 171, 0, 0.35)";
-  el.style.color = "#f9ab00";
-  el.classList.add("visible");
-  clearTimeout(maxToastTimer);
-  maxToastTimer = setTimeout(() => {
-    el.classList.remove("visible");
-    setTimeout(() => {
-      el.textContent = "";
-      const checkSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      checkSvg.setAttribute("viewBox", "0 0 24 24");
-      checkSvg.setAttribute("width", "14");
-      checkSvg.setAttribute("height", "14");
-      checkSvg.setAttribute("fill", "currentColor");
-      const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      p.setAttribute("d", "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z");
-      checkSvg.appendChild(p);
-      el.appendChild(checkSvg);
-      el.appendChild(document.createTextNode(" " + t("optSavedBadge")));
-      el.style.borderColor = "";
-      el.style.color = "";
-    }, 300);
-  }, 2500);
+  notify(t("optMaxToast", String(MAX_ENABLED_FORMATS)), "warn");
 }
 
 async function saveAll() {

@@ -312,6 +312,30 @@ section("Action feedback surfaces in the page toast");
   }
   check("cleanup removed the throwaway profile",
     !(syncStore.profiles && syncStore.profiles.Toasty));
+
+  // "Settings saved" was a separate bottom-center badge; it is the same
+  // bottom-right toast now, so all feedback appears in one place.
+  check("legacy saved badge removed from the page", !document.getElementById("savedBadge"));
+  const optInput = document.querySelector(".toggle[data-option] input");
+  optInput.checked = !optInput.checked;
+  optInput.dispatchEvent(new window.Event("change"));
+  await tick();
+  check("settings save confirms via the toast",
+    toast.classList.contains("success")
+      && toast.textContent.includes(GEP.i18n.t("optSavedBadge")));
+  // restore the flipped option
+  optInput.checked = !optInput.checked;
+  optInput.dispatchEvent(new window.Event("change"));
+  await tick();
+
+  // The format-limit warning uses the warn variant: amber, role=alert.
+  const { notify } = await import(
+    pathToFileURL(path.join(root, "src", "options", "modules", "toast.js")).href
+  );
+  notify("limit reached", "warn");
+  check("warn toast carries the warn class and alerts",
+    toast.classList.contains("warn") && toast.getAttribute("role") === "alert");
+  toast.dispatchEvent(new window.Event("click")); // leave it hidden
 }
 
 // =====================================================================
