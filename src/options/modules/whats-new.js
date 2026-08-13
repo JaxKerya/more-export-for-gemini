@@ -15,6 +15,7 @@ const RELEASE_NOTES = [
       "Export profiles - save a set of formats and options, then switch between them from the popup.",
       "Recent reports - every export is backed up locally, so you can turn it into another format later without reopening Gemini.",
       "Copy for Google Docs / Word - the same rich clipboard copy as before, now named for what it actually does.",
+      "Reader upgrades - hover a [n] citation marker to preview the source in place, the reading shell follows your UI language, and right-to-left reports mirror the whole layout.",
       "Faster pages and a faster first export - the conversion stack and its heavy vendors load only when you actually export something.",
       "The scary install warning is gone - the extension no longer requests the broad browsing-history permission.",
       "Arabic, Hebrew and CJK reports now typeset correctly in LaTeX, with the right fonts set up automatically.",

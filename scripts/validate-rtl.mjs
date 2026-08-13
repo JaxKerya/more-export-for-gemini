@@ -250,6 +250,13 @@ const arReader = GEP.reader.convert(arIR, opts);
 check("reader: <html lang=ar dir=rtl>", /<html[^>]*\slang="ar"/.test(arReader) && /<html[^>]*\sdir="rtl"/.test(arReader));
 check("reader: no hardcoded lang=en", !arReader.includes('lang="en"'));
 check("reader: blocks carry dir=auto", arReader.includes('<p dir="auto">'));
+// Shell mirroring: layout is written in logical CSS, so dir=rtl flips the
+// sidebar/drawer/anchors without any RTL-specific rules beyond the drawer var.
+check("reader: drawer hides toward the inline end under dir=rtl",
+  arReader.includes('html[dir="rtl"]{ --drawer-hide:102%; }') && arReader.includes("translateX(var(--drawer-hide))"));
+check("reader: shell chrome positioned with logical properties",
+  arReader.includes("inset-inline-end:1.4rem") && arReader.includes("inset-inline-start:-1.1em") &&
+  arReader.includes("border-inline-end"));
 
 const arPdf = GEP.pdf.buildDocument(arIR, opts);
 check("pdf-print: <html lang=ar dir=rtl>", /<html[^>]*\slang="ar"/.test(arPdf) && /<html[^>]*\sdir="rtl"/.test(arPdf));

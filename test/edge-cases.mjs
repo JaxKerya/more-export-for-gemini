@@ -144,6 +144,44 @@ check("reader: footer credits extension + reading time", (() => {
   const h = GEP.reader.convert(emptyIR, opts);
   return h.includes("reader-footer") && h.includes("More Export for Gemini") && /~\d+ min read/.test(h);
 })());
+check("reader: shell strings injected for the runtime script (JSON, < escaped)", (() => {
+  const h = GEP.reader.convert(emptyIR, opts);
+  // Sandbox has no GEP.i18n, so the English fallback table must be baked in.
+  return h.includes('"onThisPage":"On this page"') && h.includes('"backToTop":"Back to top"') &&
+    h.includes('"linkToSection":"Link to this section"') && h.includes("Skip to content") &&
+    h.includes('aria-label="Toggle outline"') && !h.includes("__READER_STRINGS__");
+})());
+check("reader: shell strings honor GEP.i18n when present", (() => {
+  const TR = {
+    readerOnThisPage: "Bu sayfada", readerSkipToContent: "İçeriğe atla",
+    readerBackToTop: "Başa dön", readerToggleOutline: "İçindekileri aç/kapat",
+    readerLinkToSection: "Bu bölüme bağlantı", readerMinRead: "~$1 dk okuma",
+    readerGeneratedWith: "$1 ile oluşturuldu",
+  };
+  GEP.i18n = { t: (key, sub) => (TR[key] || key).replace("$1", sub == null ? "" : String(sub)) };
+  try {
+    const h = GEP.reader.convert(emptyIR, opts);
+    return h.includes('"onThisPage":"Bu sayfada"') && h.includes("İçeriğe atla") &&
+      h.includes('aria-label="İçindekileri aç/kapat"') && /~\d+ dk okuma/.test(h) &&
+      // localized sentence keeps the bolded app name despite reversed word order
+      h.includes("<strong>More Export for Gemini</strong> ile oluşturuldu") &&
+      !h.includes("min read") && !h.includes("Skip to content");
+  } finally { delete GEP.i18n; }
+})());
+check("reader: footnote previews (script + card style, hidden in print)", (() => {
+  const h = GEP.reader.convert(emptyIR, opts);
+  return h.includes(".reader-fnpop{") && h.includes("'.fn-ref a'") &&
+    h.includes("role','tooltip'") && h.includes(".skip-link,.reader-fnpop{ display:none !important; }");
+})());
+check("reader: shell uses logical CSS (mirrors under dir=rtl)", (() => {
+  const h = GEP.reader.convert(emptyIR, opts);
+  return h.includes("--drawer-hide:-102%") && h.includes('html[dir="rtl"]{ --drawer-hide:102%; }') &&
+    h.includes("translateX(var(--drawer-hide))") &&
+    h.includes("inset-inline-start") && h.includes("inset-inline-end") &&
+    h.includes("border-inline-end") &&
+    // no leftover physical positioning on the mirrored shell pieces
+    !/reader-top\{[^}]*right:/.test(h) && !/h-anchor\{[^}]*left:/.test(h);
+})());
 check("reader: no code => no highlight.js payload", (() =>
   !GEP.reader.convert(emptyIR, opts).includes("code.hljs{background:transparent"))());
 check("reader: code => highlight.js payload inlined", (() => {

@@ -441,5 +441,13 @@
   "optCheckingQuality": { "message": "Qualität wird geprüft..." },
   "optQualityResult": { "message": "$1 - $2 Fehler, $3 Warnung(en), $4 Hinweis(e).", "description": "$1 = Quality OK/Issues detected, $2/$3/$4 = counts" },
   "optQualityOkShort": { "message": "Qualität OK" },
-  "optQualityFailedShort": { "message": "Qualitätsprüfung fehlgeschlagen." }
+  "optQualityFailedShort": { "message": "Qualitätsprüfung fehlgeschlagen." },
+
+  "readerOnThisPage": { "message": "Auf dieser Seite" },
+  "readerSkipToContent": { "message": "Zum Inhalt springen" },
+  "readerBackToTop": { "message": "Nach oben" },
+  "readerToggleOutline": { "message": "Gliederung ein-/ausblenden", "description": "aria-label of the outline drawer button in Reader HTML" },
+  "readerLinkToSection": { "message": "Link zu diesem Abschnitt", "description": "aria-label of the # anchor next to Reader headings" },
+  "readerMinRead": { "message": "~$1 Min. Lesezeit", "description": "$1 = estimated minutes, shown in the Reader footer" },
+  "readerGeneratedWith": { "message": "Erstellt mit $1", "description": "$1 = extension name, shown in the Reader footer" }
 }

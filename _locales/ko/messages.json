@@ -441,5 +441,13 @@
   "optCheckingQuality": { "message": "품질 검사 중..." },
   "optQualityResult": { "message": "$1 - 오류 $2건, 경고 $3건, 정보 $4건.", "description": "$1 = Quality OK/Issues detected, $2/$3/$4 = counts" },
   "optQualityOkShort": { "message": "품질 정상" },
-  "optQualityFailedShort": { "message": "품질 검사에 실패했습니다." }
+  "optQualityFailedShort": { "message": "품질 검사에 실패했습니다." },
+
+  "readerOnThisPage": { "message": "이 페이지의 내용" },
+  "readerSkipToContent": { "message": "본문으로 건너뛰기" },
+  "readerBackToTop": { "message": "맨 위로" },
+  "readerToggleOutline": { "message": "목차 표시 전환", "description": "aria-label of the outline drawer button in Reader HTML" },
+  "readerLinkToSection": { "message": "이 섹션 링크", "description": "aria-label of the # anchor next to Reader headings" },
+  "readerMinRead": { "message": "약 $1분 소요", "description": "$1 = estimated minutes, shown in the Reader footer" },
+  "readerGeneratedWith": { "message": "$1(으)로 생성됨", "description": "$1 = extension name, shown in the Reader footer" }
 }

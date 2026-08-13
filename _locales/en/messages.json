@@ -441,5 +441,13 @@
   "optCheckingQuality": { "message": "Checking quality..." },
   "optQualityResult": { "message": "$1 - $2 error(s), $3 warning(s), $4 info.", "description": "$1 = Quality OK/Issues detected, $2/$3/$4 = counts" },
   "optQualityOkShort": { "message": "Quality OK" },
-  "optQualityFailedShort": { "message": "Quality check failed." }
+  "optQualityFailedShort": { "message": "Quality check failed." },
+
+  "readerOnThisPage": { "message": "On this page" },
+  "readerSkipToContent": { "message": "Skip to content" },
+  "readerBackToTop": { "message": "Back to top" },
+  "readerToggleOutline": { "message": "Toggle outline", "description": "aria-label of the outline drawer button in Reader HTML" },
+  "readerLinkToSection": { "message": "Link to this section", "description": "aria-label of the # anchor next to Reader headings" },
+  "readerMinRead": { "message": "~$1 min read", "description": "$1 = estimated minutes, shown in the Reader footer" },
+  "readerGeneratedWith": { "message": "Generated with $1", "description": "$1 = extension name, shown in the Reader footer" }
 }

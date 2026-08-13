@@ -441,5 +441,13 @@
   "optCheckingQuality": { "message": "品質をチェック中..." },
   "optQualityResult": { "message": "$1 - エラー $2 件、警告 $3 件、情報 $4 件。", "description": "$1 = Quality OK/Issues detected, $2/$3/$4 = counts" },
   "optQualityOkShort": { "message": "品質 OK" },
-  "optQualityFailedShort": { "message": "品質チェックに失敗しました。" }
+  "optQualityFailedShort": { "message": "品質チェックに失敗しました。" },
+
+  "readerOnThisPage": { "message": "このページの内容" },
+  "readerSkipToContent": { "message": "本文へスキップ" },
+  "readerBackToTop": { "message": "トップへ戻る" },
+  "readerToggleOutline": { "message": "目次の表示切り替え", "description": "aria-label of the outline drawer button in Reader HTML" },
+  "readerLinkToSection": { "message": "このセクションへのリンク", "description": "aria-label of the # anchor next to Reader headings" },
+  "readerMinRead": { "message": "約$1分で読めます", "description": "$1 = estimated minutes, shown in the Reader footer" },
+  "readerGeneratedWith": { "message": "$1 で生成", "description": "$1 = extension name, shown in the Reader footer" }
 }

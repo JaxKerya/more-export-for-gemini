@@ -441,5 +441,13 @@
   "optCheckingQuality": { "message": "Kalite denetleniyor..." },
   "optQualityResult": { "message": "$1 - $2 hata, $3 uyarı, $4 bilgi.", "description": "$1 = Quality OK/Issues detected, $2/$3/$4 = counts" },
   "optQualityOkShort": { "message": "Kalite tamam" },
-  "optQualityFailedShort": { "message": "Kalite denetimi başarısız oldu." }
+  "optQualityFailedShort": { "message": "Kalite denetimi başarısız oldu." },
+
+  "readerOnThisPage": { "message": "Bu sayfada" },
+  "readerSkipToContent": { "message": "İçeriğe atla" },
+  "readerBackToTop": { "message": "Başa dön" },
+  "readerToggleOutline": { "message": "İçindekileri aç/kapat", "description": "aria-label of the outline drawer button in Reader HTML" },
+  "readerLinkToSection": { "message": "Bu bölüme bağlantı", "description": "aria-label of the # anchor next to Reader headings" },
+  "readerMinRead": { "message": "~$1 dk okuma", "description": "$1 = estimated minutes, shown in the Reader footer" },
+  "readerGeneratedWith": { "message": "$1 ile oluşturuldu", "description": "$1 = extension name, shown in the Reader footer" }
 }

@@ -14,9 +14,16 @@
  *     Auto/Light/Dark toggle remembered in localStorage,
  *   - a top reading-progress bar, a back-to-top button and a skip link,
  *   - hover anchors on headings, a :target highlight, and balanced typography,
+ *   - footnote previews: hovering/focusing a [n] marker shows the source in a
+ *     small card, so checking a citation never loses the reading position,
  *   - syntax-highlighted code (highlight.js) — inlined only when the report
  *     actually contains code,
  *   - a footer crediting the extension plus an estimated reading time.
+ *
+ * The shell strings (outline title, buttons, footer) are baked in the
+ * extension's UI language (all 8 locales); the layout is written in logical
+ * CSS properties, so right-to-left reports mirror the whole shell (sidebar,
+ * drawer, anchors, back-to-top) automatically.
  *
  * Progressive: with JavaScript disabled it is still a clean, fully readable
  * single-column article (the sidebar/topbar controls simply stay inert and the
@@ -36,6 +43,29 @@
 
   function esc(s) {
     return GEP.pdf && GEP.pdf.htmlEscape ? GEP.pdf.htmlEscape(s) : String(s == null ? "" : s);
+  }
+
+  /**
+   * Chrome strings baked into the exported file, resolved in the extension's
+   * UI language at export time (the report body keeps its own language; only
+   * the reading-app shell is ours). The fallback table keeps stripped-down
+   * sandboxes — tests, harnesses without i18n.js — producing English.
+   */
+  const STRINGS = {
+    readerOnThisPage: "On this page",
+    readerSkipToContent: "Skip to content",
+    readerBackToTop: "Back to top",
+    readerToggleOutline: "Toggle outline",
+    readerLinkToSection: "Link to this section",
+    readerMinRead: "~$1 min read",
+    readerGeneratedWith: "Generated with $1",
+  };
+  function t(key, sub) {
+    if (GEP.i18n && typeof GEP.i18n.t === "function") {
+      const msg = GEP.i18n.t(key, sub);
+      if (msg && msg !== key) return msg;
+    }
+    return STRINGS[key].replace("$1", sub == null ? "" : String(sub));
   }
 
   /** Minimal SEO/attribution <meta> tags from document metadata, if any. */
@@ -69,7 +99,10 @@
       --topbar-bg:rgba(253,253,252,.82);
       --topbar-h:3.25rem; --sidebar-w:17.5rem; --measure:48rem;
       --shadow:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);
+      /* Which way the mobile drawer hides; flipped for RTL documents. */
+      --drawer-hide:-102%;
     }
+    html[dir="rtl"]{ --drawer-hide:102%; }
     /* OS dark — unless the reader has been manually pinned to light. */
     @media (prefers-color-scheme: dark){
       :root:not([data-theme="light"]){
@@ -138,7 +171,7 @@
     :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
 
     .skip-link{
-      position:fixed; top:.5rem; left:.5rem; z-index:120;
+      position:fixed; inset-block-start:.5rem; inset-inline-start:.5rem; z-index:120;
       background:var(--surface); color:var(--text); border:1px solid var(--border);
       border-radius:8px; padding:.5rem .9rem; font-size:.85rem; font-weight:600;
       transform:translateY(-160%); transition:transform .15s;
@@ -187,8 +220,8 @@
       :root.has-outline .reader-sidebar{
         display:block; position:sticky; top:var(--topbar-h);
         height:calc(100vh - var(--topbar-h)); overflow-y:auto;
-        border-right:1px solid var(--border); background:var(--bg);
-        padding:1.4rem 1rem 2rem 1.2rem;
+        border-inline-end:1px solid var(--border); background:var(--bg);
+        padding-block:1.4rem 2rem; padding-inline:1.2rem 1rem;
       }
       /* The report's own inline TOC is redundant next to the sidebar. */
       :root.has-outline main.reader .toc{ display:none; }
@@ -202,12 +235,12 @@
     .reader-sidebar ul{ list-style:none; margin:0; padding:0; }
     .reader-sidebar li{ margin:0; }
     .reader-sidebar a{
-      display:block; padding:.32rem .6rem .32rem .8rem; border-radius:6px;
+      display:block; padding-block:.32rem; padding-inline:.8rem .6rem; border-radius:6px;
       color:var(--muted); text-decoration:none; font-size:.86rem; line-height:1.35;
       transition:color .15s, background-color .15s;
     }
     .reader-sidebar a:hover{ color:var(--text); background:var(--surface); }
-    .reader-sidebar a.lvl-3{ padding-left:1.7rem; font-size:.82rem; }
+    .reader-sidebar a.lvl-3{ padding-inline-start:1.7rem; font-size:.82rem; }
     /* Active section: the soft pill and accent weight carry the state on
        their own — a straight edge bar inside the rounded pill looked off. */
     .reader-sidebar a.active{
@@ -218,11 +251,11 @@
     @media (max-width:63.99rem){
       :root.has-outline .reader-menu{ display:inline-flex; }
       :root.has-outline .reader-sidebar{
-        display:block; position:fixed; top:0; left:0; z-index:100;
+        display:block; position:fixed; inset-block-start:0; inset-inline-start:0; z-index:100;
         width:min(20rem,82vw); height:100vh; overflow-y:auto;
-        background:var(--bg); border-right:1px solid var(--border);
+        background:var(--bg); border-inline-end:1px solid var(--border);
         padding:calc(var(--topbar-h) + 1rem) 1.1rem 2rem;
-        transform:translateX(-102%); transition:transform .22s ease;
+        transform:translateX(var(--drawer-hide)); transition:transform .22s ease;
         box-shadow:var(--shadow);
       }
       :root.has-outline .reader-sidebar.open{ transform:none; }
@@ -280,6 +313,16 @@
     .footnotes a{ color:var(--accent); }
     .fn-back{ text-decoration:none; margin-inline-start:.3rem; }
 
+    /* Footnote preview card (hover/focus on a [n] marker; script-built). */
+    .reader-fnpop{
+      position:absolute; z-index:130; max-width:min(22rem,calc(100vw - 1.5rem));
+      background:var(--surface); color:var(--text);
+      border:1px solid var(--border); border-radius:10px;
+      padding:.6rem .8rem; font-size:.85rem; line-height:1.5;
+      box-shadow:var(--shadow); overflow-wrap:break-word;
+    }
+    .reader-fnpop a{ color:var(--accent); }
+
     /* Jump highlight when navigating to a section, footnote, etc. */
     :target{ scroll-margin-top:calc(var(--topbar-h) + 1rem); }
     h2:target,h3:target,h4:target,li:target,.footnote-item:target{
@@ -289,7 +332,7 @@
 
     /* Hover anchors on headings (added by script). */
     .h-anchor{
-      position:absolute; left:-1.1em; top:0; padding-right:.3em;
+      position:absolute; inset-inline-start:-1.1em; inset-block-start:0; padding-inline-end:.3em;
       color:var(--muted); text-decoration:none; opacity:0; transition:opacity .15s;
       font-weight:400;
     }
@@ -298,12 +341,12 @@
 
     /* Reading-progress bar (sits on the topbar's bottom edge). */
     .reader-progress{
-      position:fixed; top:0; left:0; height:3px; width:0; z-index:110;
+      position:fixed; inset-block-start:0; inset-inline-start:0; height:3px; width:0; z-index:110;
       background:var(--accent); transition:width .12s linear;
     }
     /* Floating back-to-top button (created by script). */
     .reader-top{
-      position:fixed; bottom:1.4rem; right:1.4rem; z-index:70;
+      position:fixed; inset-block-end:1.4rem; inset-inline-end:1.4rem; z-index:70;
       width:2.6rem; height:2.6rem; border-radius:999px;
       box-shadow:var(--shadow);
       opacity:0; pointer-events:none; transform:translateY(.4rem);
@@ -326,7 +369,7 @@
     @media print{
       :root{ --bg:#fff; --text:#000; --surface:#f4f6f8; --border:#ccc; }
       body{ font-size:11pt; }
-      .reader-topbar,.reader-progress,.reader-top,.reader-sidebar,.reader-scrim,.h-anchor,.skip-link{ display:none !important; }
+      .reader-topbar,.reader-progress,.reader-top,.reader-sidebar,.reader-scrim,.h-anchor,.skip-link,.reader-fnpop{ display:none !important; }
       .reader-shell{ display:block !important; }
       main.reader{ max-width:none; margin:0; padding:0; }
       main.reader .toc{ display:block !important; }
@@ -342,6 +385,9 @@
   const READER_JS = `(function(){
     var doc=document, root=doc.documentElement, main=doc.querySelector('main.reader');
     if(!main) return;
+    // Shell strings, injected at export time in the extension's UI language.
+    var L=__READER_STRINGS__;
+    function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
     // ---- Reading-progress bar (omitted when disabled in settings). ----
     var bar=null;
@@ -351,7 +397,7 @@
 
     // ---- Floating back-to-top button. ----
     var topBtn=doc.createElement('button'); topBtn.className='reader-icon-btn reader-top'; topBtn.type='button';
-    topBtn.setAttribute('aria-label','Back to top');
+    topBtn.setAttribute('aria-label',L.backToTop);
     topBtn.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
     topBtn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
     doc.body.appendChild(topBtn);
@@ -359,7 +405,7 @@
     // ---- Hover anchors on headings. ----
     [].slice.call(main.querySelectorAll('h2[id],h3[id],h4[id]')).forEach(function(h){
       var a=doc.createElement('a'); a.className='h-anchor'; a.href='#'+h.id;
-      a.textContent='#'; a.setAttribute('aria-label','Link to this section'); a.setAttribute('tabindex','-1');
+      a.textContent='#'; a.setAttribute('aria-label',L.linkToSection); a.setAttribute('tabindex','-1');
       h.insertBefore(a,h.firstChild);
     });
 
@@ -368,11 +414,11 @@
     var spy=[].slice.call(main.querySelectorAll('h2[id],h3[id]'));
     var links=[];
     if(sidebar && spy.length>=3){
-      var html='<p class="side-title">On this page</p><ul>';
+      var html='<p class="side-title">'+escHtml(L.onThisPage)+'</p><ul>';
       spy.forEach(function(h){
         var lv=h.tagName==='H3'?3:2;
         var label=(h.textContent||'').replace(/^#/,'').trim();
-        html+='<li><a class="lvl-'+lv+'" href="#'+h.id+'">'+label.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</a></li>';
+        html+='<li><a class="lvl-'+lv+'" href="#'+h.id+'">'+escHtml(label)+'</a></li>';
       });
       sidebar.innerHTML=html+'</ul>';
       links=[].slice.call(sidebar.querySelectorAll('a'));
@@ -417,6 +463,46 @@
     },{passive:true});
     onScroll();
 
+    // ---- Footnote previews: hover/focus a [n] marker to peek at the source
+    // without losing the reading position. Content is the footnote item
+    // itself (minus its back-link), so titles and URLs stay clickable.
+    var pop=null, popHide=null;
+    function hidePop(){
+      if(popHide){ clearTimeout(popHide); popHide=null; }
+      if(pop){ pop.remove(); pop=null; }
+    }
+    function hidePopSoon(){
+      if(popHide) clearTimeout(popHide);
+      popHide=setTimeout(hidePop,180);
+    }
+    function showPop(ref){
+      var href=ref.getAttribute('href')||'';
+      if(href.charAt(0)!=='#') return;
+      var li=doc.getElementById(href.slice(1));
+      if(!li) return;
+      hidePop();
+      pop=doc.createElement('div'); pop.className='reader-fnpop'; pop.setAttribute('role','tooltip');
+      pop.innerHTML=li.innerHTML;
+      var back=pop.querySelector('.fn-back'); if(back) back.remove();
+      // Keep it open while the pointer is over the card (links are clickable).
+      pop.addEventListener('mouseenter',function(){ if(popHide){ clearTimeout(popHide); popHide=null; } });
+      pop.addEventListener('mouseleave',hidePopSoon);
+      doc.body.appendChild(pop);
+      var r=ref.getBoundingClientRect(), margin=12;
+      var w=pop.offsetWidth, h=pop.offsetHeight;
+      var x=Math.min(Math.max(margin,r.left+r.width/2-w/2),window.innerWidth-w-margin);
+      var yTop=window.pageYOffset||doc.documentElement.scrollTop||0;
+      var y=r.top-h-10>margin ? r.top-h-10 : r.bottom+10;
+      pop.style.left=x+'px'; pop.style.top=(y+yTop)+'px';
+    }
+    function refOf(e){ return e.target && e.target.closest ? e.target.closest('.fn-ref a') : null; }
+    main.addEventListener('mouseover',function(e){ var ref=refOf(e); if(ref) showPop(ref); });
+    main.addEventListener('mouseout',function(e){ if(refOf(e)) hidePopSoon(); });
+    main.addEventListener('focusin',function(e){ var ref=refOf(e); if(ref) showPop(ref); });
+    main.addEventListener('focusout',function(e){ if(refOf(e)) hidePop(); });
+    doc.addEventListener('keydown',function(e){ if(e.key==='Escape') hidePop(); });
+    window.addEventListener('scroll',hidePop,{passive:true});
+
     // Syntax highlighting (payload inlined above only when code is present).
     if(window.hljs && typeof window.hljs.highlightAll==='function'){ try{ window.hljs.highlightAll(); }catch(e){} }
   })();`;
@@ -439,10 +525,14 @@
 
     const now = new Date();
     const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    // The app name is bolded inside a localized sentence whose word order we
+    // don't control, so substitute through a sentinel after escaping.
+    const genWith = esc(t("readerGeneratedWith", "\u0001"))
+      .replace("\u0001", `<strong>${esc(APP_NAME)}</strong>`);
     const footer =
       '<footer class="reader-footer">' +
-      `<span>Generated with <strong>${esc(APP_NAME)}</strong></span>` +
-      `<span>~${mins} min read \u00B7 ${date}</span>` +
+      `<span>${genWith}</span>` +
+      `<span>${esc(t("readerMinRead", String(mins)))} \u00B7 ${date}</span>` +
       "</footer>";
 
     const title = (ir && ir.title) || "Gemini Deep Research";
@@ -477,7 +567,7 @@
     const topbar =
       '<header class="reader-topbar">' +
       (outline
-        ? `<button class="reader-icon-btn reader-menu" type="button" aria-label="Toggle outline" aria-expanded="false" aria-controls="reader-sidebar">${ICON_MENU}</button>`
+        ? `<button class="reader-icon-btn reader-menu" type="button" aria-label="${esc(t("readerToggleOutline"))}" aria-expanded="false" aria-controls="reader-sidebar">${ICON_MENU}</button>`
         : "") +
       `<span class="reader-topbar-title">${esc(title)}</span>` +
       "</header>";
@@ -492,7 +582,7 @@
       katexCss +
       hljsCss +
       "</head><body>" +
-      '<a class="skip-link" href="#reader-content">Skip to content</a>' +
+      `<a class="skip-link" href="#reader-content">${esc(t("readerSkipToContent"))}</a>` +
       topbar +
       '<div class="reader-shell">' +
       (outline ? '<aside class="reader-sidebar" id="reader-sidebar" aria-label="Outline"></aside>' : "") +
@@ -500,7 +590,15 @@
       "</div>" +
       (outline ? '<div class="reader-scrim" hidden></div>' : "") +
       hljsJs +
-      `<script>${READER_JS}</script>` +
+      `<script>${READER_JS.replace(
+        "__READER_STRINGS__",
+        // \u003c-escape so a translated string can never close the <script>.
+        JSON.stringify({
+          onThisPage: t("readerOnThisPage"),
+          backToTop: t("readerBackToTop"),
+          linkToSection: t("readerLinkToSection"),
+        }).replace(/</g, "\\u003c")
+      )}</script>` +
       "</body></html>"
     );
   }
