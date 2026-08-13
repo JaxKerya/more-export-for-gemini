@@ -47,8 +47,9 @@
     ul, ol { margin: 0 0 0.8em; padding-inline-start: 1.5em; }
     li { margin: 0.2em 0; }
     blockquote { margin: 0 0 0.8em; padding: 0.5em 1em; border-inline-start: 3px solid #ccc; color: #555; font-style: italic; }
-    code { font-family: Consolas, monospace; background: #f5f5f5; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.9em; }
-    pre { background: #f5f5f5; padding: 1em; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; }
+    /* Code stays left-to-right in RTL books; bidi reordering scrambles it. */
+    code { font-family: Consolas, monospace; background: #f5f5f5; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.9em; direction: ltr; unicode-bidi: isolate; }
+    pre { background: #f5f5f5; padding: 1em; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; direction: ltr; text-align: left; }
     pre code { background: none; padding: 0; }
     table { border-collapse: collapse; width: 100%; margin: 0 0 1em; font-size: 0.9em; }
     th, td { border: 1px solid #ccc; padding: 0.4em 0.6em; text-align: start; }

@@ -257,6 +257,14 @@ check("reader: drawer hides toward the inline end under dir=rtl",
 check("reader: shell chrome positioned with logical properties",
   arReader.includes("inset-inline-end:1.4rem") && arReader.includes("inset-inline-start:-1.1em") &&
   arReader.includes("border-inline-end"));
+// Code and math must opt back OUT of the document direction: the bidi
+// algorithm right-aligns source lines and reorders their punctuation.
+check("reader: code blocks stay LTR in RTL reports",
+  /pre\{[^}]*direction:ltr; text-align:left;/.test(arReader) &&
+  /code\{[^}]*unicode-bidi:isolate;/.test(arReader) && arReader.includes(".katex{ direction:ltr;"));
+check("html/pdf-print: code blocks stay LTR in RTL reports",
+  /pre \{[^}]*direction: ltr; text-align: left;/.test(arHtml) &&
+  /code \{[^}]*unicode-bidi: isolate;/.test(arHtml));
 
 const arPdf = GEP.pdf.buildDocument(arIR, opts);
 check("pdf-print: <html lang=ar dir=rtl>", /<html[^>]*\slang="ar"/.test(arPdf) && /<html[^>]*\sdir="rtl"/.test(arPdf));
@@ -278,6 +286,7 @@ check("epub(ar): chapter <html dir=rtl>", /<html[^>]*\sdir="rtl"/.test(arEpub["O
 check("epub(ar): chapter xml:lang=ar", (arEpub["OEBPS/chapter.xhtml"] || "").includes('xml:lang="ar"'));
 check("epub(ar): <body dir=rtl>", (arEpub["OEBPS/chapter.xhtml"] || "").includes('<body dir="rtl">'));
 check("epub(ar): toc <html dir=rtl>", /<html[^>]*\sdir="rtl"/.test(arEpub["OEBPS/toc.xhtml"] || ""));
+check("epub(ar): code blocks stay LTR", /pre \{[^}]*direction: ltr; text-align: left;/.test(arEpub["OEBPS/style.css"] || ""));
 const enEpub = await epubParts(enIR);
 check("epub(en): <dc:language>en", (enEpub["OEBPS/content.opf"] || "").includes("<dc:language>en</dc:language>"));
 check("epub(en): chapter <html dir=ltr>", /<html[^>]*\sdir="ltr"/.test(enEpub["OEBPS/chapter.xhtml"] || ""));

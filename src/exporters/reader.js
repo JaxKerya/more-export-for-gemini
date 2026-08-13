@@ -281,9 +281,14 @@
     li::marker{ color:var(--muted); }
     blockquote{ margin:1.2rem 0; padding:.5rem 1.1rem; border-inline-start:3px solid var(--accent); background:var(--accent-soft); border-start-end-radius:8px; border-end-end-radius:8px; }
     blockquote p:last-child{ margin-bottom:0; }
-    code{ font-family:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace; font-size:.88em; background:var(--code-bg); padding:.12em .4em; border-radius:5px; }
-    pre{ background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:1rem 1.1rem; overflow:auto; line-height:1.55; }
+    /* Code and math stay left-to-right whatever the report's direction:
+       running source lines through the bidi algorithm right-aligns them and
+       reorders punctuation (physical 'left' here is deliberate, not a
+       mirroring gap). RTL comments inside the code still render RTL. */
+    code{ font-family:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace; font-size:.88em; background:var(--code-bg); padding:.12em .4em; border-radius:5px; direction:ltr; unicode-bidi:isolate; }
+    pre{ background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:1rem 1.1rem; overflow:auto; line-height:1.55; direction:ltr; text-align:left; }
     pre code{ background:none; padding:0; font-size:.86rem; }
+    .katex{ direction:ltr; unicode-bidi:isolate; }
     table{ width:100%; border-collapse:collapse; margin:1.3rem 0; font-size:.95rem; display:block; overflow-x:auto; }
     th,td{ border:1px solid var(--border); padding:.5rem .7rem; text-align:start; vertical-align:top; }
     thead th{ background:var(--surface); font-weight:650; }

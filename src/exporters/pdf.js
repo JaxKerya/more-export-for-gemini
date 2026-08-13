@@ -397,9 +397,12 @@
     ul, ol { margin: 0 0 10px; padding-inline-start: 22px; }
     li { margin: 2px 0; page-break-inside: avoid; break-inside: avoid; }
     blockquote { margin: 0 0 10px; padding: 4px 14px; border-inline-start: 3px solid #dadce0; color: #5f6368; page-break-inside: avoid; break-inside: avoid; }
-    code { font-family: Consolas, "SF Mono", monospace; background: #f1f3f4; padding: 1px 4px; border-radius: 4px; font-size: 0.9em; }
-    pre { background: #f1f3f4; padding: 12px; border-radius: 6px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; page-break-inside: avoid; break-inside: avoid; }
+    /* Code and math stay left-to-right in RTL reports; the bidi algorithm
+       would right-align source lines and reorder their punctuation. */
+    code { font-family: Consolas, "SF Mono", monospace; background: #f1f3f4; padding: 1px 4px; border-radius: 4px; font-size: 0.9em; direction: ltr; unicode-bidi: isolate; }
+    pre { background: #f1f3f4; padding: 12px; border-radius: 6px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; page-break-inside: avoid; break-inside: avoid; direction: ltr; text-align: left; }
     pre code { background: none; padding: 0; }
+    .katex { direction: ltr; unicode-bidi: isolate; }
     table { border-collapse: collapse; width: 100%; margin: 0 0 12px; font-size: 10pt; }
     thead { display: table-header-group; }
     tr { page-break-inside: avoid; break-inside: avoid; }

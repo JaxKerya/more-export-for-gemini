@@ -1278,6 +1278,14 @@ const rtlReader = GEP.reader.convert(rtlIR, opts);
 check("rtl reader: <html dir=rtl>", /<html[^>]*\sdir="rtl"/.test(rtlReader));
 check("rtl reader: lang=ar", /<html[^>]*\slang="ar"/.test(rtlReader));
 check("rtl reader: no hardcoded lang=en", !rtlReader.includes('lang="en"'));
+// Code and math opt back OUT of the document direction — inheriting rtl
+// right-aligns source lines and lets bidi reorder their punctuation.
+check("rtl reader: code blocks stay LTR", /pre\{[^}]*direction:ltr; text-align:left;/.test(rtlReader) &&
+  /code\{[^}]*unicode-bidi:isolate;/.test(rtlReader) && rtlReader.includes(".katex{ direction:ltr;"));
+check("rtl html: code blocks stay LTR", (() => {
+  const h = GEP.html.convert(rtlIR, opts);
+  return /pre \{[^}]*direction: ltr; text-align: left;/.test(h) && /code \{[^}]*unicode-bidi: isolate;/.test(h);
+})());
 
 // EPUB
 const rtlEpubParts = readZipText(Buffer.from(await GEP.epub.convert(rtlIR, opts).arrayBuffer()));
@@ -1285,6 +1293,7 @@ check("rtl epub: dc:language ar", (rtlEpubParts["OEBPS/content.opf"] || "").incl
 check("rtl epub: chapter html dir=rtl", /<html[^>]*\sdir="rtl"/.test(rtlEpubParts["OEBPS/chapter.xhtml"] || ""));
 check("rtl epub: chapter xml:lang ar", (rtlEpubParts["OEBPS/chapter.xhtml"] || "").includes('xml:lang="ar"'));
 check("rtl epub: body dir=rtl", (rtlEpubParts["OEBPS/chapter.xhtml"] || "").includes('<body dir="rtl">'));
+check("rtl epub: code blocks stay LTR", /pre \{[^}]*direction: ltr; text-align: left;/.test(rtlEpubParts["OEBPS/style.css"] || ""));
 const ltrEpubParts = readZipText(Buffer.from(await GEP.epub.convert(ltrIR, opts).arrayBuffer()));
 check("ltr epub: dc:language en", (ltrEpubParts["OEBPS/content.opf"] || "").includes("<dc:language>en</dc:language>"));
 check("epub default lang when undetected -> en", (readZipText(Buffer.from(await GEP.epub.convert(bareIR, opts).arrayBuffer()))["OEBPS/content.opf"] || "").includes("<dc:language>en</dc:language>"));
