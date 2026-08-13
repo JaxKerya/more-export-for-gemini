@@ -204,14 +204,14 @@
     .reader-sidebar a{
       display:block; padding:.32rem .6rem .32rem .8rem; border-radius:6px;
       color:var(--muted); text-decoration:none; font-size:.86rem; line-height:1.35;
-      border-left:2px solid transparent;
-      transition:color .15s, background-color .15s, border-color .15s;
+      transition:color .15s, background-color .15s;
     }
     .reader-sidebar a:hover{ color:var(--text); background:var(--surface); }
     .reader-sidebar a.lvl-3{ padding-left:1.7rem; font-size:.82rem; }
+    /* Active section: the soft pill and accent weight carry the state on
+       their own — a straight edge bar inside the rounded pill looked off. */
     .reader-sidebar a.active{
-      color:var(--accent); border-left-color:var(--accent);
-      background:var(--accent-soft); font-weight:600;
+      color:var(--accent); background:var(--accent-soft); font-weight:600;
     }
 
     /* Mobile: sidebar slides in as a drawer with a dimming scrim. */
