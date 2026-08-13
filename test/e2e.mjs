@@ -27,7 +27,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import selfsigned from "selfsigned";
 
-/* global chrome, document -- evaluate() callbacks run inside the browser */
+/* global chrome, document, getComputedStyle -- evaluate() callbacks run inside the browser */
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -314,3 +314,4 @@ console.log(`  ${passed}/${total} e2e checks passed.`);
 console.log(ok ? "  All e2e checks passed. ✓" : "  SOME CHECKS FAILED ✗");
 console.log("═".repeat(58) + "\n");
 process.exit(ok ? 0 : 1);
+

@@ -20,7 +20,7 @@ Depodaki manifest Chrome/Edge içindir (`background.service_worker`). Firefox MV
 | Komut | Ne yapar |
 | --- | --- |
 | `npm test` | Tüm test paketleri sırayla (~1.000 kontrol). Commit'ten önce çalıştırın. |
-| `npm run lint` | ESLint — kod stili ve hata avı (`src/`, `test/`, `scripts/`). |
+| `npm run lint` | ESLint — kod stili ve hata avı (`src/`, `test/`, `scripts/`). **Uyarı:** depo yolu ASCII dışı karakter içeriyorsa (ör. `C:\MASAÜSTLERİ\…` içindeki `Ü`/`İ`), ESLint'in düz yapılandırma desen eşlemesi Windows'ta sessizce bozulur ve *hiçbir kural uygulanmadan* 0 hata döner — CI kırmızıyken yerelin yeşil olmasının nedeni budur. Çözüm: depoya ASCII bir junction üzerinden lint atın: `mklink /J C:\gep-lint-probe "<depo yolu>"` sonra `cd C:\gep-lint-probe && npm run lint`. |
 | `npm run lint:amo` | Paketi kurup Mozilla'nın `addons-linter`'ını üzerinde çalıştırır — addons.mozilla.org'un yükleme anında yaptığı doğrulamanın aynısı. Hata varsa AMO paketi reddeder. |
 | `npm run typecheck` | TypeScript `checkJs` — tip hataları (derleme yok, sadece analiz). |
 | `npm run build` | Mağaza paketini üretir: `store/more-export-for-gemini-v<sürüm>.zip`. Her işletim sisteminde çalışır. |
